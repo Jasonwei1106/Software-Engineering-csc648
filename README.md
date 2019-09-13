@@ -1,3 +1,13 @@
+# csc648 section 04 team 206
+## Members
+| Name                   | Email                  | Role             |
+|------------------------|------------------------|------------------|
+| Phyo Thein Htut        | phtut@mail.sfsu.edu    | Lead             |
+| Eduardo Alexis Ramos   | eramos4@mail.sfsu.edu  | Frontend (UI/UX) |
+| Myles Pedronan         | mpedrona@mail.sfsu.edu | Backend Lead     |
+| Antonio Damaso Carmona | acarmona@mail.sfsu.edu | Git & DB Master  |
+| Zijie (Jason) Wei      | zwei@mail.sfsu.edu     | Frontend Lead    |
+
 # csc648 Repository
 
 ## Please when ready add your teams application URL or IP to the repository description. This will help with grading. Teams are expected to keep this value up to date.
