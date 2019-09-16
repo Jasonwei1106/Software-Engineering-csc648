@@ -1,6 +1,5 @@
 <template>
   <q-page>
-    <p>HAHAHAHA</p>
   </q-page>
 </template>
 
