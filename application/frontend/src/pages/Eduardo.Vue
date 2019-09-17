@@ -16,7 +16,7 @@
       </q-card>
     </div>
     <div style="padding: 40px; margin: 100px">
-    summary:
+      Summary: I am a computer science major and a senior at SFSU like everyone else in this class. I enjoy photography and film.   
     </div>
   </div>
 </template>
@@ -29,7 +29,7 @@ export default {
     }
   }
 }
-</script>
+</script> 
 
 <style>
 
