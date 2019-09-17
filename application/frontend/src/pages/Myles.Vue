@@ -16,7 +16,8 @@
       </q-card>
     </div>
     <div style="padding: 40px; margin: 100px">
-    summary:
+    Hello, my name is Myles. Currently I am a graduate student in
+    Embedded Electrical and Computer Systems. I enjoy cooking and bouldering.
     </div>
   </div>
 </template>
