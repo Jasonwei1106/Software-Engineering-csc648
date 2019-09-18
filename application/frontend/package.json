@@ -1,8 +1,8 @@
 {
-  "name": "a",
+  "name": "csc648-848",
   "version": "0.0.1",
-  "description": "a",
-  "productName": "a",
+  "description": "Class Project for CSC648/848 at SFSU.",
+  "productName": "CSC648/848",
   "cordovaId": "org.cordova.quasar.app",
   "author": "Jason Wei <jason.wei.1106@gmail.com>",
   "private": true,

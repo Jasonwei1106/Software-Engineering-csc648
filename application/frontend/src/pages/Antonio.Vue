@@ -2,6 +2,14 @@
   <div>
     <div>
       <q-card>
+        <div class="q-pa-xs">
+          <q-btn
+            color="secondary"
+            round
+            icon="arrow_back"
+            @click="goBack"
+          />
+        </div>
         <q-card-section>
           <q-avatar
             size="200px"
@@ -34,6 +42,11 @@ export default {
   data () {
     return {
       intro: `Hi, I'm Antonio Carmona. I'm currently an undergraduate Computer Science student at San Francisco State University. I manage the project's GitHub repository and MySQL database. Outside of programming, my hobbies include gaming and working with electronics.`
+    }
+  },
+  methods: {
+    goBack () {
+      this.$router.go(-1)
     }
   }
 }

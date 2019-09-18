@@ -25,7 +25,7 @@
       content-class="bg-grey-2"
     >
       <q-list>
-        <q-item-label header>Nevigation</q-item-label>
+        <q-item-label header>Navigation</q-item-label>
         <q-item to="/">
           <q-item-section avatar>
             <q-icon name="list" />

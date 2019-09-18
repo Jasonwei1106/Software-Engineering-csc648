@@ -2,6 +2,14 @@
   <div>
     <div>
       <q-card>
+        <div class="q-pa-xs">
+          <q-btn
+            color="secondary"
+            round
+            icon="arrow_back"
+            @click="goBack"
+          />
+        </div>
         <q-card-section>
           <q-avatar
             size="200px"
@@ -34,6 +42,11 @@ export default {
   data () {
     return {
       intro: `I'm Jason Wei, last year in SFSU, major in Computer Science. Nothing too interesting about me, loves sports and games.`
+    }
+  },
+  methods: {
+    goBack () {
+      this.$router.go(-1)
     }
   }
 }
