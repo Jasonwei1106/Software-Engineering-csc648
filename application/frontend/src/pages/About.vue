@@ -11,10 +11,9 @@
       >
         <q-list separator bordered>
           <q-item
-            clickable
-            v-ripple
-            v-for="group in groups"
-            :key="group.id"
+            clickable v-ripple
+            v-for="(group, ind) in groups"
+            :key="ind"
             class="q-my-sm"
             @click="openNewPage(group.path)"
           >
@@ -52,38 +51,33 @@ export default {
     return {
       groups: [
         {
-          id: 1,
           avatar: '../statics/square_phyo.jpg',
           name: 'Phyo Htut',
-          path: '/phyo',
+          path: '/about/phyo',
           role: 'Team Lead'
         },
         {
-          id: 2,
           avatar: '../statics/antonio.jpg',
           name: 'Antonio Carmona',
-          path: '/antonio',
+          path: '/about/antonio',
           role: 'Git Master'
         },
         {
-          id: 3,
           avatar: '../statics/myles.jpg',
           name: 'Myles Padronan',
-          path: '/myles',
+          path: '/about/myles',
           role: 'Backend Lead'
         },
         {
-          id: 4,
           avatar: '../statics/IMG_8454.jpg',
           name: 'Eduardo Ramos',
-          path: '/eduardo',
+          path: '/about/eduardo',
           role: 'UI/UX'
         },
         {
-          id: 5,
           avatar: '../statics/json.jpeg',
           name: 'Jason Wei',
-          path: '/jason',
+          path: '/about/jason',
           role: 'Frontend Lead'
         }
       ]
