@@ -3,18 +3,19 @@
     <q-header elevated>
       <q-toolbar>
         <q-btn
-          flat
-          dense
-          round
-          @click="leftDrawerOpen = !leftDrawerOpen"
+          flat dense round
           aria-label="Menu"
+          @click="leftDrawerOpen = !leftDrawerOpen"
         >
           <q-icon name="menu" />
         </q-btn>
 
         <q-toolbar-title class="absolute-center">
-          Team 206
+          DIYup
         </q-toolbar-title>
+
+        <q-space />
+        <q-btn flat no-caps label="Log In" @click="icon = true" />
       </q-toolbar>
     </q-header>
 
@@ -48,21 +49,30 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <q-dialog v-model="icon">
+      <q-card>
+        <LogIn @close="icon = false" />
+      </q-card>
+    </q-dialog>
   </q-layout>
 </template>
 
 <script>
-import { openURL } from 'quasar'
+import LogIn from '../pages/Login'
 
 export default {
   name: 'MyLayout',
+  components: {
+    LogIn
+  },
   data () {
     return {
-      leftDrawerOpen: false
+      leftDrawerOpen: false,
+      icon: false
     }
   },
   methods: {
-    openURL
   }
 }
 </script>
