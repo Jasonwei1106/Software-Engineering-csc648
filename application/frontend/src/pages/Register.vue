@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-    <strong>Login</strong>
+    <strong>register</strong>
     <hr>
     <q-form @submit="onSubmit">
       <div class="q-pa-md">
@@ -28,11 +28,21 @@
             </template>
           </q-input>
         </div>
+        <div class ="row">
+          <q-input
+          type ="password"
+          placeholder="confirm your password"
+          prefix="Confirm password:"
+          v-model="logIn.conpassword">
+          <template v-slot:prepend>
+              <q-icon name="vpn_key" />
+            </template>
+            </q-input>
+      </div>
       </div>
 
       <div class="row q-gutter-sm">
-        <q-btn no-caps type="submit" >Log In</q-btn>
-        <q-btn no-caps @click="register = true" >Sign Up</q-btn>
+        <q-btn no-caps type="submit" v-close-popup >Confirm</q-btn>
       </div>
     </q-form>
         <q-dialog v-model="register">
@@ -44,11 +54,7 @@
 </template>
 
 <script>
-import Register from '../pages/Register'
 export default {
-  components: {
-    Register
-  },
   data () {
     return {
       logIn: {},
@@ -57,14 +63,8 @@ export default {
   },
   methods: {
     onSubmit: function () {
-      console.log('gigy')
-
       this.logIn = {}
     }
   }
 }
 </script>
-
-<style>
-
-</style>
