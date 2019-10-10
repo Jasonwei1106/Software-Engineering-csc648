@@ -51,7 +51,7 @@
     </q-page-container>
 
     <q-dialog v-model="icon">
-      <q-card>
+      <q-card >
         <LogIn @close="icon = false" />
       </q-card>
     </q-dialog>
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import LogIn from '../pages/Login'
+import LogIn from '../components/Login'
 
 export default {
   name: 'MyLayout',
@@ -76,3 +76,7 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+
+</style>

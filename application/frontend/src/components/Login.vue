@@ -1,9 +1,9 @@
 <template>
-  <q-card class="q-pa-md" style="width: 98%; margin: 1em auto;">
-    <strong>Register</strong>
+  <div class="q-pa-md" style="width: 20vw; min-width: 270px;" >
+    <strong>Login</strong>
     <hr>
     <q-form @submit="onSubmit">
-      <div class="q-pa-md">
+      <div class="q-pa-md" >
 
         <div>
           <strong>Email:</strong>
@@ -32,31 +32,31 @@
             </template>
           </q-input>
         </div>
-
-        <div>
-          <strong>Confirm Password:</strong>
-          <q-input
-            dense filled
-            type ="password"
-            placeholder="Password..."
-            v-model="logIn.conpassword"
-          >
-            <template v-slot:prepend>
-              <q-icon name="vpn_key" />
-            </template>
-          </q-input>
-        </div>
       </div>
 
-      <div class="q-gutter-sm" align="center" >
-        <q-btn no-caps type="submit" color="primary" label="Confirm" />
+      <div class="q-pa-xs">
+        <div align="center" class="q-mb-md">
+          <q-btn no-caps class="full-width" type="submit" color="primary" label="Log In" />
+          <br>
+        </div>
+
+        <router-link to="/forgot">
+          Forgot your email or password?
+        </router-link>
+        <br>
+
+        <span>
+          Don't have an acoount? <router-link to="/register">Sign up here!</router-link>
+        </span>
       </div>
     </q-form>
-  </q-card>
+  </div>
 </template>
 
 <script>
 export default {
+  components: {
+  },
   data () {
     return {
       logIn: {}
@@ -69,3 +69,7 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+
+</style>

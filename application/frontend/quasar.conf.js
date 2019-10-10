@@ -52,7 +52,16 @@ module.exports = function (ctx) {
         'QSpace',
         'QDialog',
         'QForm',
-        'QInput'
+        'QInput',
+        'QTabs',
+        'QTab',
+        'QRouteTab',
+        'QTabPanels',
+        'QTabPanel',
+        'QTable',
+        'QTh',
+        'QTr',
+        'QTd'
       ],
 
       directives: [
