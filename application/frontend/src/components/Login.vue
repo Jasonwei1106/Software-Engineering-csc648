@@ -39,7 +39,9 @@
           <q-btn no-caps class="full-width" type="submit" color="primary" label="Log In" />
           <br>
         </div>
-  <hr>
+
+        <hr>
+
         <router-link to="/forgot">
           Forgot your email or password?
         </router-link>

@@ -1,14 +1,16 @@
 <template>
-  <div class="q-pa-md">
+  <q-card class="q-pa-md" style="width: 98%; margin: 1em auto;">
     <strong>Reset Password</strong>
     <hr>
     <q-form @submit="onSubmit">
       <div class="q-pa-md">
-        <div class="row">
+
+        <div>
+          <strong>Email:</strong>
           <q-input
+            dense filled
             type="text"
-            placeholder="username here plz..."
-            prefix="Username:"
+            placeholder="Email..."
             v-model="logIn.name"
           >
             <template v-slot:prepend>
@@ -16,11 +18,13 @@
             </template>
           </q-input>
         </div>
-        <div class="row">
+
+        <div>
+          <strong>Password:</strong>
           <q-input
+            dense filled
             type="password"
-            placeholder="password..."
-            prefix="Password:"
+            placeholder="Password..."
             v-model="logIn.password"
           >
             <template v-slot:prepend>
@@ -28,37 +32,34 @@
             </template>
           </q-input>
         </div>
-        <div class ="row">
+
+        <div>
+          <strong>Confirm Password:</strong>
           <q-input
-          type ="password"
-          placeholder="confirm your password"
-          prefix="Confirm password:"
-          v-model="logIn.conpassword">
-          <template v-slot:prepend>
+            dense filled
+            type ="password"
+            placeholder="Password..."
+            v-model="logIn.conpassword"
+          >
+            <template v-slot:prepend>
               <q-icon name="vpn_key" />
             </template>
-            </q-input>
-      </div>
+          </q-input>
+        </div>
       </div>
 
-      <div class="row q-gutter-sm">
-        <q-btn no-caps type="submit" to="/" v-close-popup >Confirm</q-btn>
+      <div class="q-gutter-sm" align="center" >
+        <q-btn no-caps type="submit" color="primary" label="Confirm" />
       </div>
     </q-form>
-        <q-dialog v-model="forgetpass">
-         <q-card>
-           <Register @close="forgetpass = false" />
-         </q-card>
-        </q-dialog>
-  </div>
+  </q-card>
 </template>
 
 <script>
 export default {
   data () {
     return {
-      logIn: {},
-      forgetpass: false
+      logIn: {}
     }
   },
   methods: {
