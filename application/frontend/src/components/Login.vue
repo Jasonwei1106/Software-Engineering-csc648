@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md" style="width: 20vw; min-width: 270px;" >
+  <div class="q-pa-md" style="width: 23vw; min-width: 270px;" >
     <strong>Login</strong>
     <hr>
     <q-form @submit="onSubmit">
