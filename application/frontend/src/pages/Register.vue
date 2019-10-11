@@ -2,7 +2,7 @@
   <q-card class="q-pa-md" style="width: 98%; margin: 1em auto;">
     <strong>Register</strong>
     <hr>
-    <q-form @submit="onSubmit">
+    <q-form @submit.prevent.stop="onSubmit">
       <div class="q-pa-md">
 
         <div>
@@ -12,6 +12,7 @@
             type="text"
             placeholder="Email..."
             v-model="logIn.name"
+            required
           >
             <template v-slot:prepend>
               <q-icon name="mail" />
@@ -26,6 +27,7 @@
             type="password"
             placeholder="Password..."
             v-model="logIn.password"
+            required
           >
             <template v-slot:prepend>
               <q-icon name="vpn_key" />
@@ -40,12 +42,20 @@
             type ="password"
             placeholder="Password..."
             v-model="logIn.conpassword"
+            required
           >
             <template v-slot:prepend>
               <q-icon name="vpn_key" />
             </template>
           </q-input>
         </div>
+      </div>
+
+      <div class="q-gutter-sm">
+        <q-checkbox
+        v-model="accept"
+        label="Do you agree?"
+      />
       </div>
 
       <div class="q-gutter-sm" align="center" >
@@ -59,12 +69,25 @@
 export default {
   data () {
     return {
+      accept: 'no',
       logIn: {}
     }
   },
   methods: {
     onSubmit: function () {
-      this.logIn = {}
+      if (this.accept !== true) {
+        this.$q.notify({
+          color: 'negative',
+          message: 'You need to accept the license and terms first'
+        })
+      } else {
+        this.$q.notify({
+          icon: 'done',
+          color: 'positive',
+          message: 'Submitted'
+        })
+        this.logIn = {}
+      }
     }
   }
 }

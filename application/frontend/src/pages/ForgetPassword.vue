@@ -12,6 +12,7 @@
             type="text"
             placeholder="Email..."
             v-model="logIn.name"
+            required
           >
             <template v-slot:prepend>
               <q-icon name="mail" />
@@ -26,6 +27,7 @@
             type="password"
             placeholder="Password..."
             v-model="logIn.password"
+            required
           >
             <template v-slot:prepend>
               <q-icon name="vpn_key" />
@@ -40,6 +42,7 @@
             type ="password"
             placeholder="Password..."
             v-model="logIn.conpassword"
+            required
           >
             <template v-slot:prepend>
               <q-icon name="vpn_key" />
