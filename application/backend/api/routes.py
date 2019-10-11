@@ -1,43 +1,11 @@
-from flask import Flask, request, jsonify, make_response
-from flask_sqlalchemy import SQLAlchemy
+from flask import request, jsonify, make_response
+from api import app, db
+from api.models import User, Tutorials, Steps
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
 from functools import wraps
-
-app = Flask(__name__)
-
-app.config['SECRET_KEY'] = '870f57857b5d5a3cabf12bd56fc535d7'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///diy_api.db'
-
-db = SQLAlchemy(app)
-
-class User(db.Model):
-    email_address = db.Column(db.String(80), unique=True, nullable=False, primary_key=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
-    password = db.Column(db.String(60), nullable=False)
-    is_admin = db.Column(db.Boolean)
-
-class Tutorials(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(60), nullable=False)
-    user = db.Column(db.String(20), nullable=False)
-    description = db.Column(db.String(120), nullable=False)
-
-class Steps(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(120), nullable=False)
-    image = db.Column(db.String(80), nullable=False)
-    tutorial = db.Column(db.Integer)
-    next = db.Column(db.Integer)
-    previous = db.Column(db.Integer)
-
-## Functions to make
-# get_all
-# get_one
-# create_
-# delete_
 
 def token_required(f):
     @wraps(f)
@@ -60,6 +28,11 @@ def token_required(f):
 
     return decorated
 
+## Functions to make
+# get_all
+# get_one
+# create_
+# delete_
 
 @app.route('/user', methods=['GET'])
 @token_required
@@ -103,11 +76,7 @@ def get_one_user(current_user, email_address):
     return jsonify({'users' : user_data})
 
 @app.route('/user', methods=['POST'])
-@token_required
-def create_user(current_user):
-
-    if not current_user.is_admin:
-        return jsonify({'message' : 'Not an admin. Cannot perform that function!'})
+def create_user():
 
     data = request.get_json()
 
@@ -171,6 +140,3 @@ def login():
         return jsonify({'token' : token.decode('UTF-8')})
 
     return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
-
-if __name__ == '__main__':
-    app.run(debug=True)
