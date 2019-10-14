@@ -42,7 +42,6 @@
             type ="password"
             placeholder="Password..."
             v-model="logIn.conpassword"
-            required
           >
             <template v-slot:prepend>
               <q-icon name="vpn_key" />
@@ -79,6 +78,10 @@ export default {
         this.$q.notify({
           color: 'negative',
           message: 'You need to accept the license and terms first'
+        })
+      } else if (this.logIn.conpassword !== this.logIn.password) {
+        this.$q.notify({
+          message: 'Your confirm password doesn\'t match'
         })
       } else {
         this.$q.notify({
