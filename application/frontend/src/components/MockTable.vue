@@ -2,9 +2,10 @@
   <div class="q-pa-md">
     <q-table
       title="Treats"
+      row-key="name"
       :data="data"
       :columns="columns"
-      row-key="name"
+      :pagination="pagination"
     >
       <template v-slot:body-cell-name="props">
         <q-td :props="props">
@@ -42,7 +43,6 @@ export default {
         { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
         { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
       ],
-
       data: [
         {
           name: 'Frozen Yogurt',
@@ -154,7 +154,10 @@ export default {
           calcium: '12%',
           iron: '6%'
         }
-      ]
+      ],
+      pagination: {
+        rowsPerPage: 10
+      }
     }
   }
 }

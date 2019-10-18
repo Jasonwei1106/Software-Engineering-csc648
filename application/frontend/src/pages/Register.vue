@@ -52,9 +52,9 @@
 
       <div class="q-gutter-sm">
         <q-checkbox
-        v-model="accept"
-        label="Do you agree?"
-      />
+          v-model="accept"
+          label="Do you agree?"
+        />
       </div>
 
       <div class="q-gutter-sm" align="center" >
