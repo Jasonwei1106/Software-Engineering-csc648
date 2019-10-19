@@ -4,6 +4,7 @@
       title="Treats"
       row-key="name"
       :data="data"
+      :filter="filter"
       :columns="columns"
       :pagination="pagination"
     >
@@ -23,6 +24,7 @@
 
 <script>
 export default {
+  props: ['filter'],
   data () {
     return {
       columns: [

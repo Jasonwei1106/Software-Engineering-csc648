@@ -1,5 +1,12 @@
 <template>
   <q-page class="q-pa-sm">
+    <div style ="margin-left: 1200px; padding:4px; border: 1px solid grey;">
+        <q-input borderless dense debounce="300" color="primary" v-model="filter" placeholder = "search">
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+    </div>
     <div
       class="shadow-2 q-pa-md" align="center"
       style="
@@ -44,7 +51,7 @@
         <q-tab-panels v-model="pageTab" animated>
           <q-tab-panel name="hot">
             <div class="text-h6">What's Hot</div>
-            <MockTable />
+            <MockTable :filter = this.filter />
           </q-tab-panel>
 
           <q-tab-panel name="new">
@@ -73,6 +80,7 @@ export default {
   },
   data () {
     return {
+      filter: '',
       pageTab: ''
     }
   },

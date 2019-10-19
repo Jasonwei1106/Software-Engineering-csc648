@@ -23,6 +23,13 @@
         <q-space />
         <q-btn stretch flat no-caps label="Log In" @click="icon = true" /> |
         <q-btn stretch flat no-caps label="Sign Up" to="/register" />
+        <div>
+        <q-input borderless dense debounce="300" color="primary" v-model="filter" placeholder = "search">
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+        </div>
       </q-toolbar>
     </q-header>
 
