@@ -1,6 +1,5 @@
 from flask import request, jsonify, make_response
-from api import app, db
-from api.models import User, Tutorial, Step, Comment, List
+from api import app, db, mysql
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
@@ -21,7 +20,13 @@ def token_required(f):
 
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'])
-            current_user = User.query.filter_by(email_address=data['email_address']).first()
+
+            sql_query = "SELECT * FROM team206.users WHERE email_address=%s"
+            cur = mysql.connection.cursor()
+            cur.execute(sql_query, (data['email_address'],))
+            current_user = cur.fetchone()
+            cur.close()
+
         except:
             return jsonify({'message': 'Token is invalid!'}), 401
 
@@ -34,8 +39,8 @@ def token_required(f):
 ### HOME PAGE ###
 #################
 
-@app.route('/')
-@app.route('/home')
+@app.route('/api')
+@app.route('/api/home')
 def home():
     return jsonify({'message': 'Hello World!'})
 
@@ -43,137 +48,205 @@ def home():
 ### USER FUNCTIONS ###
 ######################
 
-@app.route('/user', methods=['GET'])
+@app.route('/api/user', methods=['GET'])
 @token_required
 def get_all_users(current_user):
 
-    if not current_user.is_admin:
+    if current_user[3] != True:
         return jsonify({'message' : 'Not an admin. Cannot perform that function!'})
 
-    users = User.query.all()
+    sql_query = "SELECT * FROM team206.users"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query)
+    users = cur.fetchall()
+    cur.close()
 
     output = []
 
     for user in users:
         user_data = {}
-        user_data['email_address'] = user.email_address
-        user_data['username'] = user.username
-        user_data['password'] = user.password
-        user_data['is_admin'] = user.is_admin
+        user_data['email_address'] = user[0]
+        user_data['username'] = user[1]
+        user_data['password'] = user[2]
+        user_data['is_admin'] = user[3]
+        user_data['avatar'] = user[4]
         output.append(user_data)
 
     return jsonify({'users' : output})
 
-@app.route('/user/<email_address>', methods=['GET'])
+@app.route('/api/user/<email_address>', methods=['GET'])
 @token_required
 def get_one_user(current_user, email_address):
 
-    if not current_user.is_admin:
+    if current_user[3] != True:
         return jsonify({'message' : 'Not an admin. Cannot perform that function!'})
 
-    user = User.query.filter_by(email_address=email_address).first()
+    sql_query = "SELECT * FROM team206.users WHERE email_address=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (email_address,))
+    user = cur.fetchone()
+    cur.close()
 
     if not user:
         return jsonify({'message' : 'No user found!'})
 
     user_data = {}
-    user_data['email_address'] = user.email_address
-    user_data['username'] = user.username
-    user_data['password'] = user.password
-    user_data['is_admin'] = user.is_admin
+    user_data['email_address'] = user[0]
+    user_data['username'] = user[1]
+    user_data['password'] = user[2]
+    user_data['is_admin'] = user[3]
+    user_data['avatar'] = user[4]
 
     return jsonify({'users' : user_data})
 
-@app.route('/user/current_user', methods=['GET'])
+@app.route('/api/user/current_user', methods=['GET'])
 @token_required
 def get_current_user(current_user):
 
-    user = User.query.filter_by(email_address=current_user.email_address).first()
+    sql_query = "SELECT * FROM team206.users WHERE email_address=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (current_user[0],))
+    user = cur.fetchone()
+    cur.close()
 
     if not user:
         return jsonify({'message' : 'No user found!'})
 
     user_data = {}
-    user_data['email_address'] = current_user.email_address
-    user_data['username'] = current_user.username
-    user_data['is_admin'] = current_user.is_admin
+    user_data['email_address'] = current_user[0]
+    user_data['username'] = current_user[1]
+    user_data['is_admin'] = current_user[3]
+    user_data['password'] = '****'
+    user_data['avatar'] = current_user[4]
 
     return jsonify({'current user' : user_data})
 
-@app.route('/user', methods=['POST'])
+@app.route('/api/user', methods=['POST'])
 def create_user():
 
     data = request.get_json()
 
-    hashed_password = generate_password_hash(data['password'], method='sha256')
+    email_address = data['email_address']
+    username = data['username']
+    password = data['password']
+    is_admin = '0'
+    avatar = 'default.jpg'
 
-    new_user = User(email_address=data['email_address'], username=data['username'], password=hashed_password, is_admin=False)
-    db.session.add(new_user)
-    db.session.commit()
+    # TO IMPLEMENT
+    hashed_password = generate_password_hash(password, method='sha256')
+
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO team206.users(email_address, username, password, is_admin, avatar) VALUES(%s, %s, %s, %s, %s)", (email_address, username, password, is_admin, avatar))
+    mysql.connection.commit()
+    cur.close()
 
     return jsonify({'message' : 'New user created!'})
 
-@app.route('/user/<email_address>', methods=['PUT'])
+@app.route('/api/user/<email_address>/promote', methods=['PUT'])
 @token_required
 def promote_user(current_user, email_address):
 
-    if not current_user.is_admin:
+    if current_user[3] != True:
         return jsonify({'message' : 'Not an admin. Cannot perform that function!'})
 
-    user = User.query.filter_by(email_address=email_address).first()
+    sql_query = "SELECT * FROM team206.users WHERE email_address=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (email_address,))
+    user = cur.fetchone()
 
     if not user:
         return jsonify({'message' : 'No user found!'})
 
-    user.is_admin = True
-    db.session.commit()
+    sql_update = "UPDATE team206.users SET is_admin = 1 WHERE email_address=%s"
+    cur.execute(sql_update, (email_address,))
+
+    mysql.connection.commit()
+    cur.close()
 
     return jsonify({'message' : 'User has been promoted!'})
 
-@app.route('/user/<email_address>', methods=['DELETE'])
+@app.route('/api/user/<email_address>/demote', methods=['PUT'])
 @token_required
-def delete_user(current_user, email_address):
+def demote_user(current_user, email_address):
 
-    if not current_user.is_admin:
+    if current_user[3] != True:
         return jsonify({'message' : 'Not an admin. Cannot perform that function!'})
 
-    user = User.query.filter_by(email_address=email_address).first()
+    sql_query = "SELECT * FROM team206.users WHERE email_address=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (email_address,))
+    user = cur.fetchone()
 
     if not user:
         return jsonify({'message' : 'No user found!'})
 
-    db.session.delete(user)
-    db.session.commit()
+    sql_update = "UPDATE team206.users SET is_admin = 0 WHERE email_address=%s"
+    cur.execute(sql_update, (email_address,))
 
-    return jsonify({'message' : 'User has been deleted'})
+    mysql.connection.commit()
+    cur.close()
 
-@app.route('/login')
+    return jsonify({'message' : 'User has been demoted!'})
+
+@app.route('/api/user/<email_address>', methods=['DELETE'])
+@token_required
+def delete_user(current_user, email_address):
+
+    if current_user[3] != True:
+        return jsonify({'message' : 'Not an admin. Cannot perform that function!'})
+
+    sql_query = "SELECT * FROM team206.users WHERE email_address=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (email_address,))
+    user = cur.fetchone()
+
+    if not user:
+        return jsonify({'message' : 'No user found!'})
+
+    sql_delete = "DELETE FROM team206.users WHERE email_address=%s"
+    cur.execute(sql_delete, (email_address,))
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify({'message' : 'User has been deleted!'})
+
+@app.route('/api/login')
 def login():
     auth = request.authorization
 
     if not auth or not auth.username or not auth.password:
-        return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+        return make_response('Could not verify auth', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
-    user = User.query.filter_by(email_address=auth.username).first()
+    sql_query = "SELECT * FROM team206.users WHERE email_address=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (auth.username,))
+    user = cur.fetchone()
 
     if not user:
-        return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+        return make_response('Could not verify user', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
-    if check_password_hash(user.password, auth.password):
-        token = jwt.encode({'email_address' : user.email_address, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
+    # TO DO #
+    # if check_password_hash(user[2], auth.password):
+    #     token = jwt.encode({'email_address' : user[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
+    #     return jsonify({'token' : token.decode('UTF-8')})
 
-        return jsonify({'token' : token.decode('UTF-8')})
+    # REMOVE AFTER #
+    token = jwt.encode({'email_address' : user[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
+    return jsonify({'token' : token.decode('UTF-8')})
 
-    return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+    # return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
 ##########################
 ### TUTORIAL FUNCTIONS ###
 ##########################
 
-@app.route('/tutorial', methods=['GET'])
+@app.route('/api/tutorial', methods=['GET'])
 @token_required
 def get_all_tutorials(current_user):
-    tutorials = Tutorial.query.all()
+    sql_query = "SELECT * FROM team206.tutorial"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query)
+    user = cur.fetchone()
 
     output = []
 
@@ -204,7 +277,7 @@ def get_all_tutorials(current_user):
 
     return jsonify({'tutorials' : output})
 
-@app.route('/tutorial/<username>', methods=['GET'])
+@app.route('/api/tutorial/<username>', methods=['GET'])
 def get_all_tutorials_by_user(username):
     tutorials = Tutorial.query.filter_by(username=username).all()
 
@@ -240,7 +313,7 @@ def get_all_tutorials_by_user(username):
 
     return jsonify({'tutorials' : output})
 
-@app.route('/tutorial/<username>/<tutorial_id>', methods=['GET'])
+@app.route('/api/tutorial/<username>/<tutorial_id>', methods=['GET'])
 def get_one_tutorial(username, tutorial_id):
 
     tutorial = Tutorial.query.filter_by(username=username, id=tutorial_id).first()
@@ -272,7 +345,7 @@ def get_one_tutorial(username, tutorial_id):
 
     return jsonify({'tutorial' : tutorial_data})
 
-@app.route('/tutorial', methods=['POST'])
+@app.route('/api/tutorial', methods=['POST'])
 @token_required
 def create_tutorial(current_user):
     data = request.get_json()
@@ -286,7 +359,7 @@ def create_tutorial(current_user):
 
     return jsonify({'message' : 'New tutorial created!'})
 
-@app.route('/tutorial/<username>/<tutorial_id>', methods=['DELETE'])
+@app.route('/api/tutorial/<username>/<tutorial_id>', methods=['DELETE'])
 @token_required
 def delete_tutorial(current_user, username, tutorial_id):
     if username != current_user.username or current_user.is_admin == False:
@@ -306,7 +379,7 @@ def delete_tutorial(current_user, username, tutorial_id):
 ### STEP FUNCTIONS ###
 ######################
 
-@app.route('/tutorial/<username>/<tutorial_id>/step', methods=['GET'])
+@app.route('/api/tutorial/<username>/<tutorial_id>/step', methods=['GET'])
 def get_all_steps(username, tutorial_id):
     steps = Step.query.filter_by(tutorial=tutorial_id, user=username).all()
 
@@ -326,7 +399,7 @@ def get_all_steps(username, tutorial_id):
 
     return jsonify({'steps' : output})
 
-@app.route('/tutorial/<username>/<tutorial_id>/step/<step_index>', methods=['GET'])
+@app.route('/api/tutorial/<username>/<tutorial_id>/step/<step_index>', methods=['GET'])
 def get_one_step(username, tutorial_id, step_index):
     steps = Step.query.filter_by(tutorial=tutorial_id, user=username, index=step_index).first()
 
@@ -342,7 +415,7 @@ def get_one_step(username, tutorial_id, step_index):
 
     return jsonify({'steps' : step_data})
 
-@app.route('/tutorial/<username>/<tutorial_id>/step', methods=['POST'])
+@app.route('/api/tutorial/<username>/<tutorial_id>/step', methods=['POST'])
 @token_required
 def create_tutorial_step(current_user, username, tutorial_id):
     if username != current_user.username or current_user.is_admin == False:
@@ -357,7 +430,7 @@ def create_tutorial_step(current_user, username, tutorial_id):
 
     return jsonify({'message' : 'Step has been created'})
 
-@app.route('/tutorial/<username>/<tutorial_id>/step/<step_index>', methods=['DELETE'])
+@app.route('/api/tutorial/<username>/<tutorial_id>/step/<step_index>', methods=['DELETE'])
 @token_required
 def delete_tutorial_step(current_user, username, tutorial_id, step_index):
     if username != current_user.username or current_user.is_admin == False:
@@ -374,6 +447,6 @@ def delete_tutorial_step(current_user, username, tutorial_id, step_index):
     return jsonify({'message' : 'Step has been deleted'})
 
 # Test list
-@app.route('/test', methods=['GET'])
+@app.route('/api/test', methods=['GET'])
 def test_route():
     return ''
