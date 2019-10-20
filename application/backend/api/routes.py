@@ -48,7 +48,7 @@ def home():
 ### USER FUNCTIONS ###
 ######################
 
-@app.route('/api/user', methods=['GET'])
+@app.route('/api/user/get', methods=['GET'])
 @token_required
 def get_all_users(current_user):
 
@@ -121,7 +121,7 @@ def get_current_user(current_user):
 
     return jsonify({'current user' : user_data})
 
-@app.route('/api/user', methods=['POST'])
+@app.route('/api/user/create', methods=['POST'])
 def create_user():
 
     data = request.get_json()
@@ -221,18 +221,14 @@ def login():
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (auth.username,))
     user = cur.fetchone()
+    cur.close()
 
     if not user:
         return make_response('Could not verify user', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
-    # TO DO #
     if check_password_hash(user[2], auth.password):
         token = jwt.encode({'email_address' : user[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
         return jsonify({'token' : token.decode('UTF-8')})
-
-    # # REMOVE AFTER #
-    # token = jwt.encode({'email_address' : user[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
-    # return jsonify({'token' : token.decode('UTF-8')})
 
     return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
@@ -240,7 +236,7 @@ def login():
 ### TUTORIAL FUNCTIONS ###
 ##########################
 
-@app.route('/api/tutorial', methods=['GET'])
+@app.route('/api/tutorial/get', methods=['GET'])
 @token_required
 def get_all_tutorials(current_user):
     sql_query = "SELECT * FROM team206.tutorials"
@@ -368,7 +364,7 @@ def get_one_tutorial(username, tutorial_id):
 
     return jsonify({'tutorial' : tutorial_data})
 
-@app.route('/api/tutorial', methods=['POST'])
+@app.route('/api/tutorial/create', methods=['POST'])
 @token_required
 def create_tutorial(current_user):
     data = request.get_json()
@@ -396,7 +392,6 @@ def delete_tutorial(current_user, username, tutorial_id):
     sql_query = "SELECT * FROM team206.tutorials WHERE id=%s AND author_id=%s"
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (int(tutorial_id), username,))
-    # cur.execute("SEleCt * FROM team206.tutorials WHERE id=%s AND ")
     tutorial = cur.fetchone()
 
     if not tutorial:
@@ -414,8 +409,13 @@ def delete_tutorial(current_user, username, tutorial_id):
 ######################
 
 @app.route('/api/tutorial/<username>/<tutorial_id>/step', methods=['GET'])
-def get_all_steps(username, tutorial_id):
-    steps = Step.query.filter_by(tutorial=tutorial_id, user=username).all()
+def get_all_steps(tutorial_id, username):
+
+    sql_query = "SELECT * FROM team206.steps INNER JOIN team206.tutorials ON steps.tutorial_id = tutorials.id WHERE tutorials.id=%s AND tutorials.author_id=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (int(tutorial_id), username,))
+    steps = cur.fetchall()
+    cur.close()
 
     if not steps:
         return jsonify({'message' : 'No steps found for tutorial!'})
@@ -424,63 +424,71 @@ def get_all_steps(username, tutorial_id):
 
     for step in steps:
         step_data = {}
-        step_data['index'] = step.index
-        step_data['content'] = step.content
-        step_data['image'] = step.image
-        step_data['tutorial'] = step.tutorial
-        step_data['user'] = step.user
+        step_data['tutorial_id'] = step[0]
+        step_data['index'] = step[1]
+        step_data['content'] = step[2]
+        step_data['image'] = step[3]
         output.append(step_data)
 
     return jsonify({'steps' : output})
 
 @app.route('/api/tutorial/<username>/<tutorial_id>/step/<step_index>', methods=['GET'])
 def get_one_step(username, tutorial_id, step_index):
-    steps = Step.query.filter_by(tutorial=tutorial_id, user=username, index=step_index).first()
 
-    if not steps:
+    sql_query = "SELECT * FROM team206.steps INNER JOIN team206.tutorials ON steps.tutorial_id = tutorials.id WHERE tutorials.id=%s AND tutorials.author_id=%s AND steps.index=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (int(tutorial_id), username, step_index,))
+    step = cur.fetchone()
+    cur.close()
+
+    if not step:
         return jsonify({'message' : 'No steps found for tutorial!'})
 
     step_data = {}
-    step_data['index'] = step.index
-    step_data['content'] = step.content
-    step_data['image'] = step.image
-    step_data['tutorial'] = step.tutorial
-    step_data['user'] = step.user
+    step_data['tutorial_id'] = step[0]
+    step_data['index'] = step[1]
+    step_data['content'] = step[2]
+    step_data['image'] = step[3]
 
     return jsonify({'steps' : step_data})
 
-@app.route('/api/tutorial/<username>/<tutorial_id>/step', methods=['POST'])
+@app.route('/api/tutorial/<username>/<tutorial_id>/step/create', methods=['POST'])
 @token_required
 def create_tutorial_step(current_user, username, tutorial_id):
-    if username != current_user.username or current_user.is_admin == False:
+    if username != current_user[1] and current_user[3] == False:
         return jsonify({'message' : 'Cannot create tutorial for a different user!'}), 403
 
     data = request.get_json()
 
-    new_step = Step(content=data['content'], image=data['image'], tutorial=tutorial_id, user=username)
+    index = data['index']
+    content = data['content']
+    image = data['image']
 
-    db.session.add(new_step)
-    db.session.commit()
+    cur = mysql.connection.cursor()
+    # cur.execute("INSERT INTO team206.steps(tutorial_id, steps.index, content, image) VALUES(%s, %s, %s, %s)", (tutorial, int(index), content, image,))
+    cur.execute("INSERT INTO team206.steps(tutorial_id, steps.index, content, image) VALUES(%s, %s, %s, %s)", (11, int(index), content, image,))
+    mysql.connection.commit()
+    cur.close()
 
     return jsonify({'message' : 'Step has been created'})
 
 @app.route('/api/tutorial/<username>/<tutorial_id>/step/<step_index>', methods=['DELETE'])
 @token_required
 def delete_tutorial_step(current_user, username, tutorial_id, step_index):
-    if username != current_user.username or current_user.is_admin == False:
+    if username != current_user[1] and current_user[3] == False:
         return jsonify({'message' : 'Cannot delete tutorial step for a different user!'}), 403
 
-    step = Step.query.filter_by(user=username, tutorial=tutorial_id, index=step_index).first()
+    sql_query = "SELECT * FROM team206.steps INNER JOIN team206.tutorials ON steps.tutorial_id = tutorials.id WHERE tutorials.id=%s AND tutorials.author_id=%s AND steps.index=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (int(tutorial_id), username, step_index,))
+    step = cur.fetchone()
 
     if not step:
         return jsonify({'message' : 'No step found for tutorial!'})
 
-    db.session.delete(step)
-    db.session.commit()
+    sql_delete = "DELETE FROM team206.steps INNER JOIN team206.tutorials ON steps.tutorial_id = tutorials.id WHERE tutorials.id=%s AND tutorials.author_id=%s AND steps.index=%s"
+    cur.execute(sql_query, (int(tutorial_id), username, step_index,))
+    mysql.connection.commit()
+    cur.close()
 
     return jsonify({'message' : 'Step has been deleted'})
-
-# Test list
-@app.route('/api/test', methods=['GET'])
-def test_route():
-    return ''
