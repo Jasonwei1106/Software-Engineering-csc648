@@ -136,7 +136,7 @@ def create_user():
     hashed_password = generate_password_hash(password, method='sha256')
 
     cur = mysql.connection.cursor()
-    cur.execute("INSERT INTO team206.users(email_address, username, password, is_admin, avatar) VALUES(%s, %s, %s, %s, %s)", (email_address, username, password, is_admin, avatar))
+    cur.execute("INSERT INTO team206.users(email_address, username, password, is_admin, avatar) VALUES(%s, %s, %s, %s, %s)", (email_address, username, hashed_password, is_admin, avatar))
     mysql.connection.commit()
     cur.close()
 
@@ -226,15 +226,15 @@ def login():
         return make_response('Could not verify user', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
     # TO DO #
-    # if check_password_hash(user[2], auth.password):
-    #     token = jwt.encode({'email_address' : user[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
-    #     return jsonify({'token' : token.decode('UTF-8')})
+    if check_password_hash(user[2], auth.password):
+        token = jwt.encode({'email_address' : user[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
+        return jsonify({'token' : token.decode('UTF-8')})
 
-    # REMOVE AFTER #
-    token = jwt.encode({'email_address' : user[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
-    return jsonify({'token' : token.decode('UTF-8')})
+    # # REMOVE AFTER #
+    # token = jwt.encode({'email_address' : user[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
+    # return jsonify({'token' : token.decode('UTF-8')})
 
-    # return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+    return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
 ##########################
 ### TUTORIAL FUNCTIONS ###
@@ -243,105 +243,128 @@ def login():
 @app.route('/api/tutorial', methods=['GET'])
 @token_required
 def get_all_tutorials(current_user):
-    sql_query = "SELECT * FROM team206.tutorial"
+    sql_query = "SELECT * FROM team206.tutorials"
     cur = mysql.connection.cursor()
     cur.execute(sql_query)
-    user = cur.fetchone()
+    tutorials = cur.fetchall()
 
     output = []
 
     for tutorial in tutorials:
-        steps = Step.query.filter_by(tutorial=tutorial.id).all()
+        sql_query = "SELECT * FROM team206.steps WHERE tutorial_id=%s"
+        cur.execute(sql_query, (tutorial[0],))
+        steps = cur.fetchall()
+
         output_steps = []
 
         tutorial_data = {}
-        tutorial_data['id'] = tutorial.id
-        tutorial_data['title'] = tutorial.title
-        tutorial_data['image'] = tutorial.image
-        tutorial_data['description'] = tutorial.description
-        tutorial_data['author_difficulty'] = tutorial.author_difficulty
-        tutorial_data['viewer_difficulty'] = tutorial.viewer_difficulty
-        tutorial_data['rating'] = tutorial.rating
-        tutorial_data['username'] = tutorial.username
+        tutorial_data['id'] = tutorial[0]
+        tutorial_data['title'] = tutorial[1]
+        tutorial_data['image'] = tutorial[2]
+        tutorial_data['category'] = tutorial[3]
+        tutorial_data['description'] = tutorial[4]
+        tutorial_data['author_difficulty'] = str(tutorial[5])
+        tutorial_data['viewer_difficulty'] = str(tutorial[6])
+        tutorial_data['rating'] = str(tutorial[7])
+        tutorial_data['author_id'] = tutorial[8]
 
         for step in steps:
             step_data = {}
-            step_data['index'] = step.index
-            step_data['content'] = step.content
-            step_data['image'] = step.image
+            step_data['index'] = step[1]
+            step_data['content'] = step[2]
+            step_data['image'] = step[3]
             output_steps.append(step_data)
 
         tutorial_data['steps'] = output_steps
 
         output.append(tutorial_data)
+
+    cur.close()
 
     return jsonify({'tutorials' : output})
 
 @app.route('/api/tutorial/<username>', methods=['GET'])
 def get_all_tutorials_by_user(username):
-    tutorials = Tutorial.query.filter_by(username=username).all()
+    sql_query = "SELECT * FROM team206.tutorials WHERE author_id=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (username,))
+    tutorials = cur.fetchall()
 
     if not tutorials:
         return jsonify({'message' : 'No tutorial found!'})
 
     output = []
+    output_steps = []
 
     for tutorial in tutorials:
-        steps = Step.query.filter_by(tutorial=tutorial.id).all()
-        output_steps = []
+        sql_query = "SELECT * FROM team206.steps WHERE tutorial_id=%s"
+        cur.execute(sql_query, (tutorial[0],))
+        steps = cur.fetchall()
 
         tutorial_data = {}
-        tutorial_data['id'] = tutorial.id
-        tutorial_data['title'] = tutorial.title
-        tutorial_data['image'] = tutorial.image
-        tutorial_data['description'] = tutorial.description
-        tutorial_data['author_difficulty'] = tutorial.author_difficulty
-        tutorial_data['viewer_difficulty'] = tutorial.viewer_difficulty
-        tutorial_data['rating'] = tutorial.rating
-        tutorial_data['username'] = tutorial.username
+        tutorial_data['id'] = tutorial[0]
+        tutorial_data['title'] = tutorial[1]
+        tutorial_data['image'] = tutorial[2]
+        tutorial_data['category'] = tutorial[3]
+        tutorial_data['description'] = tutorial[4]
+        tutorial_data['author_difficulty'] = str(tutorial[5])
+        tutorial_data['viewer_difficulty'] = str(tutorial[6])
+        tutorial_data['rating'] = str(tutorial[7])
+        tutorial_data['author_id'] = tutorial[8]
 
         for step in steps:
             step_data = {}
-            step_data['index'] = step.index
-            step_data['content'] = step.content
-            step_data['image'] = step.image
+            step_data['index'] = step[1]
+            step_data['content'] = step[2]
+            step_data['image'] = step[3]
             output_steps.append(step_data)
 
         tutorial_data['steps'] = output_steps
 
         output.append(tutorial_data)
+
+    cur.close()
 
     return jsonify({'tutorials' : output})
 
 @app.route('/api/tutorial/<username>/<tutorial_id>', methods=['GET'])
 def get_one_tutorial(username, tutorial_id):
 
-    tutorial = Tutorial.query.filter_by(username=username, id=tutorial_id).first()
+    sql_query = "SELECT * FROM team206.tutorials WHERE author_id=%s AND id=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (username, int(tutorial_id)))
+    tutorial = cur.fetchone()
 
     if not tutorial:
         return jsonify({'message' : 'No tutorial found!'})
 
-    steps = Step.query.filter_by(tutorial=tutorial.id).all()
+    sql_query = "SELECT * FROM team206.steps WHERE tutorial_id=%s"
+    cur.execute(sql_query, (tutorial[0],))
+    steps = cur.fetchall()
+
     output_steps = []
 
     tutorial_data = {}
-    tutorial_data['id'] = tutorial.id
-    tutorial_data['title'] = tutorial.title
-    tutorial_data['image'] = tutorial.image
-    tutorial_data['description'] = tutorial.description
-    tutorial_data['author_difficulty'] = tutorial.author_difficulty
-    tutorial_data['viewer_difficulty'] = tutorial.viewer_difficulty
-    tutorial_data['rating'] = tutorial.rating
-    tutorial_data['username'] = tutorial.username
+    tutorial_data['id'] = tutorial[0]
+    tutorial_data['title'] = tutorial[1]
+    tutorial_data['image'] = tutorial[2]
+    tutorial_data['category'] = tutorial[3]
+    tutorial_data['description'] = tutorial[4]
+    tutorial_data['author_difficulty'] = str(tutorial[5])
+    tutorial_data['viewer_difficulty'] = str(tutorial[6])
+    tutorial_data['rating'] = str(tutorial[7])
+    tutorial_data['author_id'] = tutorial[8]
 
     for step in steps:
         step_data = {}
-        step_data['index'] = step.index
-        step_data['content'] = step.content
-        step_data['image'] = step.image
+        step_data['index'] = step[1]
+        step_data['content'] = step[2]
+        step_data['image'] = step[3]
         output_steps.append(step_data)
 
     tutorial_data['steps'] = output_steps
+
+    cur.close()
 
     return jsonify({'tutorial' : tutorial_data})
 
@@ -350,28 +373,39 @@ def get_one_tutorial(username, tutorial_id):
 def create_tutorial(current_user):
     data = request.get_json()
 
-    user = User.query.filter_by(username=current_user.username).first()
+    title = data['title']
+    image = data['image']
+    category = data['category']
+    description = data['description']
+    author_difficulty = data['author_difficulty']
+    author_id = current_user[1]
 
-    new_tutorial = Tutorial(title=data['title'], image=data['image'], category=data['category'], description=data['description'], author_difficulty=data['author_difficulty'], tutorial_owner=user)
-
-    db.session.add(new_tutorial)
-    db.session.commit()
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO team206.tutorials(title, image, category, description, author_difficulty, author_id) VALUES(%s, %s, %s, %s, %s, %s)", (title, image, category, description, float(author_difficulty), author_id))
+    mysql.connection.commit()
+    cur.close()
 
     return jsonify({'message' : 'New tutorial created!'})
 
 @app.route('/api/tutorial/<username>/<tutorial_id>', methods=['DELETE'])
 @token_required
 def delete_tutorial(current_user, username, tutorial_id):
-    if username != current_user.username or current_user.is_admin == False:
+    if username != current_user[1] and current_user[3] == False:
         return jsonify({'message' : 'Cannot delete tutorial of a different user!'}), 403
 
-    tutorial = Tutorial.query.filter_by(id=tutorial_id, username=username).first()
+    sql_query = "SELECT * FROM team206.tutorials WHERE id=%s AND author_id=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (int(tutorial_id), username,))
+    # cur.execute("SEleCt * FROM team206.tutorials WHERE id=%s AND ")
+    tutorial = cur.fetchone()
 
     if not tutorial:
         return jsonify({'message' : 'No tutorial found!'})
 
-    db.session.delete(tutorial)
-    db.session.commit()
+    sql_delete = "DELETE FROM team206.tutorials WHERE id=%s AND author_id=%s"
+    cur.execute(sql_delete, (int(tutorial_id), username,))
+    mysql.connection.commit()
+    cur.close()
 
     return jsonify({'message' : 'Tutorial been deleted'})
 
