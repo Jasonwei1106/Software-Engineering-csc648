@@ -18,10 +18,17 @@
                 <q-list
                   v-for="(keyword, index) in popkeywords"
                   :key="index"
-                  style="min-width: 100px"
+                  style="min-width: 100px;"
                 >
                   <q-item clickable v-close-popup dense>
-                    <q-item-section @click="option = keyword.value">
+                    <q-item-section
+                      v-if="option === keyword.value"
+                      class="text-primary"
+                      @click="option = keyword.value"
+                    >
+                      {{ keyword.label }}
+                    </q-item-section>
+                    <q-item-section v-else @click="option = keyword.value">
                       {{ keyword.label }}
                     </q-item-section>
                   </q-item>
@@ -36,7 +43,7 @@
               dense
               debounce="300"
               color="primary" placeholder="keyword search"
-              style="min-width: 250px;"
+              style="min-width: 20vw;"
               v-model="filter"
               @input="test"
             >
@@ -79,6 +86,7 @@ export default {
         { label: 'Electronics', value: 'electronics' },
         { label: 'Coding', value: 'coding' },
         { label: 'Robotics', value: 'robotics' },
+        { label: 'Testing', value: 'testing' },
         { label: 'All', value: '' }
       ],
       filter: '',
