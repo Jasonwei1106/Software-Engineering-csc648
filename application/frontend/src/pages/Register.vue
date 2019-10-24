@@ -53,7 +53,7 @@
       <div class="q-gutter-sm">
         <q-checkbox
         v-model="customModel"
-        color="secondary"
+        color="primary"
         label="Do you agree?"
         true-value="yes"
         false-value="no"
