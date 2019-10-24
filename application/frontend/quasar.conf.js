@@ -66,7 +66,8 @@ module.exports = function (ctx) {
         'QTh',
         'QTr',
         'QTd',
-        'QBadge'
+        'QBadge',
+        'QMenu'
       ],
 
       directives: [
