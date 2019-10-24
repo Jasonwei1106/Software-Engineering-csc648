@@ -237,8 +237,7 @@ def login():
 ##########################
 
 @app.route('/api/tutorial/get', methods=['GET'])
-@token_required
-def get_all_tutorials(current_user):
+def get_all_tutorials():
     sql_query = "SELECT * FROM team206.tutorials"
     cur = mysql.connection.cursor()
     cur.execute(sql_query)
@@ -290,12 +289,13 @@ def get_all_tutorials_by_user(username):
         return jsonify({'message' : 'No tutorial found!'})
 
     output = []
-    output_steps = []
 
     for tutorial in tutorials:
         sql_query = "SELECT * FROM team206.steps WHERE tutorial_id=%s"
         cur.execute(sql_query, (tutorial[0],))
         steps = cur.fetchall()
+
+        output_steps = []
 
         tutorial_data = {}
         tutorial_data['id'] = tutorial[0]
@@ -460,13 +460,17 @@ def create_tutorial_step(current_user, username, tutorial_id):
 
     data = request.get_json()
 
-    index = data['index']
+    cur = mysql.connection.cursor()
+
+    index = cur.execute("SELECT COUNT(*) FROM team206.steps WHERE team206.steps.tutorial_id=%s", (tutorial_id,))
+
+    if index != 0:
+        index += 1
+
     content = data['content']
     image = data['image']
 
-    cur = mysql.connection.cursor()
-    # cur.execute("INSERT INTO team206.steps(tutorial_id, steps.index, content, image) VALUES(%s, %s, %s, %s)", (tutorial, int(index), content, image,))
-    cur.execute("INSERT INTO team206.steps(tutorial_id, steps.index, content, image) VALUES(%s, %s, %s, %s)", (11, int(index), content, image,))
+    cur.execute("INSERT INTO team206.steps(tutorial_id, steps.index, content, image) VALUES(%s, %s, %s, %s)", (tutorial_id, int(index), content, image,))
     mysql.connection.commit()
     cur.close()
 
