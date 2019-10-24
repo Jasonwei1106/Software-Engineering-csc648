@@ -67,6 +67,9 @@
 import axios from 'axios'
 
 export default {
+  // props: {
+  //   filter: String
+  // },
   created () {
     this.fetchData()
   },

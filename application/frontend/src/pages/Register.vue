@@ -52,9 +52,12 @@
 
       <div class="q-gutter-sm">
         <q-checkbox
-          v-model="accept"
-          label="Do you agree?"
-        />
+        v-model="customModel"
+        color="primary"
+        label="Do you agree?"
+        true-value="yes"
+        false-value="no"
+      />
       </div>
 
       <div class="q-gutter-sm" align="center" >
@@ -68,13 +71,13 @@
 export default {
   data () {
     return {
-      accept: 'no',
+      customModel: 'no',
       logIn: {}
     }
   },
   methods: {
     onSubmit: function () {
-      if (this.accept !== true) {
+      if (this.customModel !== 'yes') {
         this.$q.notify({
           color: 'negative',
           message: 'You need to accept the license and terms first'
