@@ -2,13 +2,15 @@
   <q-layout view="hHh lpR fFf">
     <q-header reveal elevated class="bg-primary text-white">
       <q-toolbar>
-        <q-btn
-          :hidden="leftDrawerOpen"
-          flat dense round
-          aria-label="Menu"
-          @click="leftDrawerOpen = !leftDrawerOpen"
-          icon="arrow_right"
-        />
+        <div style="min-width: 40px;" >
+          <q-btn
+            :hidden="leftDrawerOpen"
+            flat dense round
+            aria-label="Menu"
+            @click="leftDrawerOpen = !leftDrawerOpen"
+            icon="arrow_right"
+          />
+        </div>
 
         <q-space />
 
