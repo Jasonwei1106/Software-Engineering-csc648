@@ -15,7 +15,7 @@ module.exports = function (ctx) {
     extras: [
       // 'ionicons-v4',
       // 'mdi-v4',
-      // 'fontawesome-v5',
+      'fontawesome-v5',
       // 'eva-icons',
       // 'themify',
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
@@ -31,6 +31,10 @@ module.exports = function (ctx) {
       // all: true, // --- includes everything; for dev only!
 
       components: [
+        'QStepper',
+        'QStep',
+        'QStepperNavigation',
+        'QCheckbox',
         'QLayout',
         'QHeader',
         'QDrawer',
@@ -52,7 +56,18 @@ module.exports = function (ctx) {
         'QSpace',
         'QDialog',
         'QForm',
-        'QInput'
+        'QInput',
+        'QTabs',
+        'QTab',
+        'QRouteTab',
+        'QTabPanels',
+        'QTabPanel',
+        'QTable',
+        'QTh',
+        'QTr',
+        'QTd',
+        'QBadge',
+        'QMenu'
       ],
 
       directives: [

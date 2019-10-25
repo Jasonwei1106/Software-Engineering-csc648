@@ -4,7 +4,27 @@ const routes = [
     path: '/',
     component: () => import('layouts/MyLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue') }
+      {
+        path: '',
+        name: 'rootHome',
+        component: () => import('pages/Index.vue')
+      },
+      { path: 'hot', component: () => import('pages/Index.vue') },
+      { path: 'new', component: () => import('pages/Index.vue') }
+    ]
+  },
+  {
+    path: '/register',
+    component: () => import('layouts/MyLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Register.vue') }
+    ]
+  },
+  {
+    path: '/forgot',
+    component: () => import('layouts/MyLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/ForgetPassword.vue') }
     ]
   },
   {
