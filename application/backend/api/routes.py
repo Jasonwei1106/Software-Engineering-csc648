@@ -132,7 +132,6 @@ def create_user():
     is_admin = '0'
     avatar = 'default.jpg'
 
-    # TO IMPLEMENT
     hashed_password = generate_password_hash(password, method='sha256')
 
     cur = mysql.connection.cursor()
@@ -276,7 +275,9 @@ def get_all_tutorials():
 
     cur.close()
 
-    return jsonify({'tutorials' : output})
+    response = jsonify({'tutorials' : output})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 @app.route('/api/tutorial/<username>', methods=['GET'])
 def get_all_tutorials_by_user(username):
@@ -377,6 +378,32 @@ def create_tutorial(current_user):
     author_id = current_user[1]
 
     cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO team206.tutorials(title, image, category, description, author_difficulty, author_id) VALUES(%s, %s, %s, %s, %s, %s)", (title, image, category, description, float(author_difficulty), author_id))
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify({'message' : 'New tutorial created!'})
+
+## TEST TUTORIAL create
+@app.route('/api/hidden/tutorial/<username>/create', methods=['POST'])
+def create_tutorial_user(username):
+    data = request.get_json()
+
+    title = data['title']
+    image = data['image']
+    category = data['category']
+    description = data['description']
+    author_difficulty = data['author_difficulty']
+    author_id = username
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT * FROM team206.users WHERE username=%s", (author_id,))
+    user = cur.fetchone()
+
+    if not user:
+        return jsonify({'message' : 'No user with that username exists.'})
+
     cur.execute("INSERT INTO team206.tutorials(title, image, category, description, author_difficulty, author_id) VALUES(%s, %s, %s, %s, %s, %s)", (title, image, category, description, float(author_difficulty), author_id))
     mysql.connection.commit()
     cur.close()
