@@ -52,12 +52,12 @@
 
       <div class="q-gutter-sm">
         <q-checkbox
-        v-model="customModel"
-        color="primary"
-        label="Do you agree?"
-        true-value="yes"
-        false-value="no"
-      />
+          v-model="customModel"
+          color="primary"
+          label="Do you agree? {Please note: Terms and conditions will come...}"
+          true-value="yes"
+          false-value="no"
+        />
       </div>
 
       <div class="q-gutter-sm" align="center" >
@@ -68,6 +68,9 @@
 </template>
 
 <script>
+import axios from 'axios'
+// import md5 from 'md5'
+
 export default {
   data () {
     return {
@@ -87,12 +90,28 @@ export default {
           message: 'Your confirm password doesn\'t match'
         })
       } else {
-        this.$q.notify({
-          icon: 'done',
-          color: 'positive',
-          message: 'Submitted'
+        axios.post('http://54.153.68.76:5000/api/user/create', {
+          email_address: this.logIn.name,
+          username: this.logIn.name,
+          password: this.logIn.password
         })
-        this.logIn = {}
+          .then(() => {
+            this.$q.notify({
+              icon: 'done',
+              color: 'positive',
+              message: 'Submitted'
+            })
+
+            this.customModel = 'no'
+            this.logIn = {}
+          })
+          .catch(() => {
+            this.$q.notify({
+              icon: 'warning',
+              color: 'negative',
+              message: 'Something went wrong!'
+            })
+          })
       }
     }
   }

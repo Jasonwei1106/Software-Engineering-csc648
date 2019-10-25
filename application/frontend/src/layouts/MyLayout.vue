@@ -23,13 +23,13 @@
         <q-space />
         <q-btn stretch flat no-caps label="Log In" @click="icon = true" /> |
         <q-btn stretch flat no-caps label="Sign Up" to="/register" />
-        <div>
+        <!-- <div>
         <q-input borderless dense debounce="300" color="primary" v-model="filter" placeholder = "search">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
-        </div>
+        </div> -->
       </q-toolbar>
     </q-header>
 
@@ -73,8 +73,34 @@
       <router-view />
     </q-page-container>
 
-    <div style="background-color: #027BE3; height: 100px;">
-      <!-- <q-img src="../statics/icons/96p.png" /> -->
+    <div
+      class="row"
+      style="background-color: #027BE3; height: 100px;"
+    >
+      <div class="q-pa-md">
+        <q-img src="../statics/icons/96p.png" style="width: 70px;" />
+      </div>
+      <q-space/>
+      <div class="q-pa-md" align="center">
+        <div class="text-white">
+          Follow Us On
+        </div>
+
+        <div>
+          <q-icon
+            class="cursor-pointer"
+            name="fab fa-facebook-square" size="2rem"
+          />
+          <q-icon
+            class="cursor-pointer"
+            name="fab fa-instagram" size="2rem"
+          />
+          <q-icon
+            class="cursor-pointer"
+            name="fab fa-twitter-square" size="2rem"
+          />
+        </div>
+      </div>
     </div>
 
     <q-dialog v-model="icon">

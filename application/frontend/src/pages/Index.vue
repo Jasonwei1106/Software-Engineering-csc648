@@ -1,12 +1,12 @@
 <template>
   <q-page class="q-pa-sm">
-    <div style ="margin-left: 1200px; padding:4px; border: 1px solid grey;">
+    <!-- <div style ="margin-left: 1200px; padding:4px; border: 1px solid grey;">
         <q-input borderless dense debounce="300" color="primary" v-model="filter" placeholder = "search">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
         </q-input>
-    </div>
+    </div> -->
     <div
       class="shadow-2 q-pa-md" align="center"
       style="
