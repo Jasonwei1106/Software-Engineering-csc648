@@ -10,7 +10,8 @@ const routes = [
         component: () => import('pages/Index.vue')
       },
       { path: 'hot', component: () => import('pages/Index.vue') },
-      { path: 'new', component: () => import('pages/Index.vue') }
+      { path: 'new', component: () => import('pages/Index.vue') },
+      { path: '?:query', component: () => import('pages/Index.vue') }
     ]
   },
   {

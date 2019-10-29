@@ -23,15 +23,28 @@
         </div>
 
         <q-space />
-        <q-btn stretch flat no-caps label="Log In" @click="icon = true" /> |
-        <q-btn stretch flat no-caps label="Sign Up" to="/register" />
-        <!-- <div>
-        <q-input borderless dense debounce="300" color="primary" v-model="filter" placeholder = "search">
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-        </div> -->
+
+        <div class="q-mb-sm" align="center">
+          <q-btn stretch flat no-caps label="Log In" @click="icon = true" /> |
+          <q-btn stretch flat no-caps label="Sign Up" to="/register" />
+
+          <q-input
+            borderless dense outlined
+            bg-color="white"
+            debounce="300" color="black"
+            v-model="filter" placeholder = "Search"
+            style="min-width: 20vw;"
+            @keyup.enter="test"
+          >
+            <template v-slot:append>
+              <q-icon v-if="filter === ''" name="search" />
+              <q-icon
+                v-else
+                name="clear" class="cursor-pointer" @click="filter = ''"
+              />
+            </template>
+          </q-input>
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -92,14 +105,17 @@
           <q-icon
             class="cursor-pointer"
             name="fab fa-facebook-square" size="2rem"
+            @click="goTo('https://www.facebook.com')"
           />
           <q-icon
             class="cursor-pointer"
             name="fab fa-instagram" size="2rem"
+            @click="goTo('https://www.instagram.com/')"
           />
           <q-icon
             class="cursor-pointer"
             name="fab fa-twitter-square" size="2rem"
+            @click="goTo('https://twitter.com/')"
           />
         </div>
       </div>
@@ -124,12 +140,20 @@ export default {
   data () {
     return {
       leftDrawerOpen: false,
-      icon: false
+      icon: false,
+      filter: ''
     }
   },
   methods: {
+    test: function () {
+      console.log(this.filter)
+      console.log(this.$route)
+    },
     goHome: function () {
       this.$router.push({ name: 'rootHome' }).catch(() => {})
+    },
+    goTo: function (entry) {
+      window.location.href = entry
     }
   }
 }

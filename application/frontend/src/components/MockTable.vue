@@ -8,7 +8,7 @@
       :filter="option"
       :pagination.sync="pagination"
     >
-      <template v-slot:top-right>
+      <!-- <template v-slot:top-right>
           <q-toolbar>
             <q-btn
               round dense flat
@@ -53,7 +53,7 @@
               </template>
             </q-input>
           </q-toolbar>
-        </template>
+        </template> -->
 
       <template v-slot:body-cell-title="props">
         <q-td :props="props">
