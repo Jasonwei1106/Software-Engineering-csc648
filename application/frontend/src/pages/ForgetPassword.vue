@@ -4,6 +4,7 @@
     <q-stepper
       v-model="step"
       ref="stepper"
+      vertical
       animated
       active-color="purple"
     >
@@ -19,6 +20,7 @@
             type="text"
             placeholder="Email..."
             v-model="logIn.name"
+            style ="max-width: 600px;"
           >
             <template v-slot:prepend>
               <q-icon name="mail" />
@@ -39,9 +41,10 @@
             type="text"
             placeholder="confirm code..."
             v-model="logIn.code"
+            style = "max-width: 200px;"
           >
             <template v-slot:prepend>
-              <q-icon name="mail" />
+              <q-icon name="confirmation_number" />
             </template>
           </q-input>
       </div>
@@ -59,6 +62,7 @@
           type="password"
           placeholder="Password..."
           v-model="logIn.password"
+          style ="max-width: 600px;"
         >
           <template v-slot:prepend>
               <q-icon name="vpn_key" />
@@ -79,6 +83,7 @@
             type ="password"
             placeholder="Password..."
             v-model="logIn.conpassword"
+            style ="max-width: 600px;"
           >
             <template v-slot:prepend>
               <q-icon name="vpn_key" />
@@ -89,7 +94,7 @@
 
       <template v-slot:navigation>
         <q-stepper-navigation>
-          <q-btn @click="onSubmit" color="deep-orange" :label="step === 3 ? 'Finish' : 'Continue'" />
+          <q-btn @click="onSubmit" color="deep-orange" :label="step === 4 ? 'Finish' : 'Continue'" />
           <q-btn v-if="step > 1" flat color="deep-orange" @click="$refs.stepper.previous()" label="Back" class="q-ml-sm" />
         </q-stepper-navigation>
       </template>
