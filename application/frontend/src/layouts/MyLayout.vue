@@ -17,33 +17,54 @@
         <div
           class="cursor-pointer"
           style="width: 80px;"
-          @click="goHome"
+          @click="routeTo('rootHome')"
         >
           <q-img src="../statics/icons/96p.png" />
         </div>
 
         <q-space />
 
-        <div class="q-mb-sm" align="center">
-          <q-btn stretch flat no-caps label="Log In" @click="icon = true" /> |
-          <q-btn stretch flat no-caps label="Sign Up" to="/register" />
-
-          <q-input
-            borderless dense outlined
-            bg-color="white"
-            debounce="300" color="black"
-            v-model="filter" placeholder = "Search"
-            style="min-width: 20vw;"
-            @keyup.enter="test"
-          >
-            <template v-slot:append>
-              <q-icon v-if="filter === ''" name="search" />
-              <q-icon
-                v-else
-                name="clear" class="cursor-pointer" @click="filter = ''"
+        <div
+          class="q-my-xs" align="center"
+          style="max-width: 51vw;"
+        >
+          <div class="row">
+            <div class="col">
+              <q-btn
+                flat no-caps
+                label="Log In" class="full-width"
+                @click="icon = true"
               />
-            </template>
-          </q-input>
+            </div>
+
+            <q-separator dark vertical />
+
+            <div class="col">
+              <q-btn
+                flat no-caps
+                label="Sign Up" class="full-width"
+                to="/register"
+              />
+            </div>
+          </div>
+
+          <div class="row q-mt-xs">
+            <q-input
+              borderless dense outlined
+              bg-color="white" color="black"
+              debounce="300" class="col"
+              v-model="filter" placeholder = "Search"
+              @keyup.enter="test"
+            >
+              <template v-slot:append>
+                <q-icon v-if="filter === ''" name="search" />
+                <q-icon
+                  v-else
+                  name="clear" class="cursor-pointer" @click="filter = ''"
+                />
+              </template>
+            </q-input>
+          </div>
         </div>
       </q-toolbar>
     </q-header>
@@ -73,14 +94,6 @@
             <q-item-label>Home</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item to="/about">
-          <q-item-section avatar>
-            <q-icon name="contacts" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>About</q-item-label>
-          </q-item-section>
-        </q-item>
       </q-list>
     </q-drawer>
 
@@ -95,7 +108,15 @@
       <div class="q-pa-md">
         <q-img src="../statics/icons/96p.png" style="width: 70px;" />
       </div>
+
       <q-space/>
+
+      <div class="q-pa-md" align="center">
+        <div class="text-white cursor-pointer" @click="routeTo('rootAbout')">
+          About Us
+        </div>
+      </div>
+
       <div class="q-pa-md" align="center">
         <div class="text-white">
           Follow Us On
@@ -145,15 +166,27 @@ export default {
     }
   },
   methods: {
-    test: function () {
-      console.log(this.filter)
-      console.log(this.$route)
-    },
-    goHome: function () {
-      this.$router.push({ name: 'rootHome' }).catch(() => {})
+    test: function (e) {
+      if (e.target.value) {
+        this.$router.push(`/?title=${e.target.value}`).catch(err => {
+          if (err) {
+            // error
+          }
+        })
+        this.filter = ''
+      } else {
+        this.$router.push('/').catch(err => {
+          if (err) {
+            // error
+          }
+        })
+      }
     },
     goTo: function (entry) {
       window.location.href = entry
+    },
+    routeTo: function (entry) {
+      this.$router.push({ name: entry }).catch(() => {})
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-sm">
     <div class="q-pa-md">
-      <q-card>
+      <!-- <q-card>
         <q-tabs
           inline-label
           align="justify"
@@ -26,7 +26,9 @@
             <MockTable />
           </q-tab-panel>
         </q-tab-panels>
-      </q-card>
+
+      </q-card> -->
+      <MockTable :filter = this.filter />
     </div>
   </q-page>
 </template>

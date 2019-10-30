@@ -1,61 +1,63 @@
 <template>
-  <div class="q-pa-md" style="width: 23vw; min-width: 270px;" >
-    <strong>Login</strong>
-    <hr>
-    <q-form @submit="onSubmit">
-      <div class="q-pa-md" >
+  <div
+    class="q-pa-md bg-grey-3"
+    style="width: 30vw; min-width: 270px;"
+  >
+    <div align="center">
+      <strong>LOGIN</strong>
+      <br><br>
+    </div>
 
-        <div>
-          <strong>Email:</strong>
+    <q-form @submit="onSubmit">
+      <div>
+        <div class="q-mb-sm">
           <q-input
-            dense filled
+            dense outlined
+            bg-color="white"
             type="text"
-            placeholder="Email..."
+            placeholder="USERNAME"
             v-model="logIn.name"
-          >
-            <template v-slot:prepend>
-              <q-icon name="mail" />
-            </template>
-          </q-input>
+          />
         </div>
 
-        <div>
-          <strong>Password:</strong>
+        <div class="q-mb-sm">
           <q-input
-            dense filled
+            dense outlined
+            bg-color="white"
             type="password"
-            placeholder="Password..."
+            placeholder="PASSWORD"
             v-model="logIn.password"
-          >
-            <template v-slot:prepend>
-              <q-icon name="vpn_key" />
-            </template>
-          </q-input>
+          />
         </div>
       </div>
 
-      <div class="q-pa-xs">
-        <div align="center" class="q-mb-md">
-          <q-btn no-caps class="full-width" type="submit" color="primary" label="Log In" />
+      <div align="center">
+        <div class="q-mb-md">
+          <q-btn
+            class="full-width"
+            type="submit"
+            color="primary"
+            label="LOG IN"
+          />
           <br>
         </div>
 
-        <hr>
-
         <router-link to="/forgot">
-          Forgot your email or password?
+          <span>FORGOT PASSWORD?</span>
         </router-link>
         <br>
 
-        <span>
-          Don't have an acoount? <router-link to="/register">Sign up here!</router-link>
-        </span>
+        <router-link to="/register">
+          <span @click="emitClose">SIGN UP HERE!</span>
+        </router-link>
       </div>
     </q-form>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   components: {
   },
@@ -66,7 +68,31 @@ export default {
   },
   methods: {
     onSubmit: function () {
-      this.logIn = {}
+      axios.post('http://54.153.68.76:5000/api/login', {
+        username: this.logIn.username,
+        password: this.logIn.password
+      })
+        .then(res => {
+          this.$q.notify({
+            icon: 'done',
+            color: 'positive',
+            message: 'Submitted'
+          })
+
+          // console.log(res)
+        })
+        .catch(() => {
+          this.$q.notify({
+            icon: 'warning',
+            color: 'negative',
+            message: 'Something went wrong!'
+          })
+
+          this.logIn = {}
+        })
+    },
+    emitClose: function () {
+      this.$emit('close')
     }
   }
 }
