@@ -1,5 +1,6 @@
 from flask import request, jsonify, make_response
 from api import app, db, mysql
+import yaml
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
@@ -227,6 +228,7 @@ def login():
 
     if check_password_hash(user[2], auth.password):
         token = jwt.encode({'email_address' : user[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
+        # token = jwt.encode({'email_address' : user[0], app.config['SECRET_KEY'])
         return jsonify({'token' : token.decode('UTF-8')})
 
     return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
@@ -234,9 +236,39 @@ def login():
 ##########################
 ### TUTORIAL FUNCTIONS ###
 ##########################
-
 @app.route('/api/tutorial/get', methods=['GET'])
 def get_all_tutorials():
+    sql_query = "SELECT * FROM team206.tutorials"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query)
+    tutorials = cur.fetchall()
+
+    output = []
+
+    for tutorial in tutorials:
+        sql_query = "SELECT * FROM team206.steps WHERE tutorial_id=%s"
+        cur.execute(sql_query, (tutorial[0],))
+        steps = cur.fetchall()
+
+        output_steps = []
+
+        tutorial_data = {}
+        tutorial_data['title'] = tutorial[1]
+        tutorial_data['category'] = tutorial[3]
+        tutorial_data['author_difficulty'] = str(tutorial[5])
+        tutorial_data['viewer_difficulty'] = str(tutorial[6])
+        tutorial_data['rating'] = str(tutorial[7])
+        tutorial_data['author_id'] = tutorial[8]
+
+        output.append(tutorial_data)
+
+    cur.close()
+
+    response = jsonify({'tutorials' : output})
+    return response
+
+@app.route('/api/tutorial/get_all', methods=['GET'])
+def get_all_tutorial_info():
     sql_query = "SELECT * FROM team206.tutorials"
     cur = mysql.connection.cursor()
     cur.execute(sql_query)
@@ -276,7 +308,6 @@ def get_all_tutorials():
     cur.close()
 
     response = jsonify({'tutorials' : output})
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 @app.route('/api/tutorial/<username>', methods=['GET'])
@@ -370,6 +401,28 @@ def get_one_tutorial(username, tutorial_id):
 def create_tutorial(current_user):
     data = request.get_json()
 
+    duplicate = True
+
+    # To create new_set of UUID as a set
+    # with open('api/uuid_set.yaml', 'w') as uuid_file:
+    #     new_set = set()
+    #     yaml.dump(new_set, uuid_file)
+
+    # Read the set of existing UUIDs
+    with open('api/uuid_set.yaml') as uuid_set_file:
+        uuid_set = yaml.load(uuid_set_file)
+        # Loop until a unique UUID is generated
+        while duplicate is True:
+            new_uuid = str(uuid.uuid4())
+            if new_uuid not in uuid_set:
+                duplicate = False
+
+    with open('api/uuid_set.yaml', 'w') as uuid_set_file:
+        # Add the new UUID to the set and dump it to the file
+        uuid_set.add(new_uuid)
+        yaml.dump(uuid_set, uuid_set_file)
+
+    tutorial_uuid = new_uuid
     title = data['title']
     image = data['image']
     category = data['category']
@@ -378,11 +431,15 @@ def create_tutorial(current_user):
     author_id = current_user[1]
 
     cur = mysql.connection.cursor()
+
+    # For new db schema
+    # cur.execute("INSERT INTO team206.tutorials(uuid, title, image, category, description, author_difficulty, author_id) VALUES(%s, %s, %s, %s, %s, %s, %s)", (tutorial_uuid, title, image, category, description, float(author_difficulty), author_id))
+
     cur.execute("INSERT INTO team206.tutorials(title, image, category, description, author_difficulty, author_id) VALUES(%s, %s, %s, %s, %s, %s)", (title, image, category, description, float(author_difficulty), author_id))
     mysql.connection.commit()
     cur.close()
 
-    return jsonify({'message' : 'New tutorial created!'})
+    return jsonify({'message' : 'New tutorial created!'}, {'token' : tutorial_uuid})
 
 ## TEST TUTORIAL create
 @app.route('/api/hidden/tutorial/<username>/create', methods=['POST'])
@@ -491,6 +548,7 @@ def create_tutorial_step(current_user, username, tutorial_id):
 
     index = cur.execute("SELECT COUNT(*) FROM team206.steps WHERE team206.steps.tutorial_id=%s", (tutorial_id,))
 
+    # May get rid of later
     if index != 0:
         index += 1
 
@@ -523,3 +581,15 @@ def delete_tutorial_step(current_user, username, tutorial_id, step_index):
     cur.close()
 
     return jsonify({'message' : 'Step has been deleted'})
+
+########################
+## COMMENTS FUNCTIONS ##
+########################
+
+
+######################
+## RATING FUNCTIONs ##
+######################
+@app.route('/api/tutorial/<username>/<tutorial_id>/rate', methods=['POST'])
+def user_rating(current_user, username, tutorial_id):
+    return ''
