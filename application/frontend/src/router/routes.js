@@ -21,6 +21,13 @@ const routes = [
     ]
   },
   {
+    path: '/tutorial',
+    component: () => import('layouts/MyLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Tutorial.vue') }
+    ]
+  },
+  {
     path: '/forgot',
     component: () => import('layouts/MyLayout.vue'),
     children: [
