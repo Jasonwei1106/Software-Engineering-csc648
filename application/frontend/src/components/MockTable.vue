@@ -1,57 +1,24 @@
 <template>
-  <div class="q-pa-md">
+  <div class="">
+      <!-- title="DIYup Tutorials" -->
     <q-table
-      title="DIYup Tutorials"
+      flat
       row-key="title"
       :data="curData"
       :columns="columns"
-      :filter="option"
+      :filter="option.value"
       :pagination.sync="pagination"
     >
       <template v-slot:top-right>
           <q-toolbar>
-            <q-btn
-              round dense flat
-              class="q-mr-xs" icon="menu"
-            >
-              <q-menu dense>
-                <q-list
-                  v-for="(keyword, index) in popkeywords"
-                  :key="index"
-                  style="min-width: 100px;"
-                >
-                  <q-item clickable v-close-popup dense>
-                    <q-item-section
-                      v-if="option === keyword.value"
-                      class="text-primary"
-                      @click="option = keyword.value"
-                    >
-                      {{ keyword.label }}
-                    </q-item-section>
-                    <q-item-section v-else @click="option = keyword.value">
-                      {{ keyword.label }}
-                    </q-item-section>
-                  </q-item>
-                  <q-separator />
-                </q-list>
-              </q-menu>
-            </q-btn>
-
-            <q-space />
-
-            <q-input
-              dense
-              debounce="300"
-              color="primary" placeholder="keyword search"
-              style="min-width: 20vw;"
-              v-model="filter"
-              @input="test"
-            >
-              <template v-slot:append>
-                <q-icon v-if="filter === ''" name="search" />
-                <q-icon v-else name="clear" class="cursor-pointer" @click="filter = ''; test()" />
-              </template>
-            </q-input>
+            <q-select
+              outlined dense
+              class="q-mr-xs col-4" label="Filter"
+              bg-color="white" color="black"
+              v-model="option"
+              style="width: 150px;"
+              :options="categories"
+            />
           </q-toolbar>
         </template>
 
@@ -77,19 +44,26 @@ export default {
   // props: {
   //   filter: String
   // },
+  watch: {
+    $route: 'titleQueryFilter'
+  },
   created () {
     this.fetchData()
+    this.filter = this.$route.query.title || ''
   },
   data () {
     return {
-      popkeywords: [
+      filter: '',
+      categories: [
         { label: 'Electronics', value: 'electronics' },
         { label: 'Coding', value: 'coding' },
         { label: 'Robotics', value: 'robotics' },
+        { label: 'Cooking', value: 'cooking' },
+        { label: 'Crafts', value: 'crafts' },
+        { label: 'Home & Decor', value: 'homeDecor' },
         { label: 'Testing', value: 'testing' },
         { label: 'All', value: '' }
       ],
-      filter: '',
       option: '',
       columns: [
         {
@@ -130,7 +104,8 @@ export default {
     }
   },
   methods: {
-    test: function () {
+    titleQueryFilter: function () {
+      this.filter = this.$route.query.title
       if (this.filter) {
         this.curData = this.data.filter(v => v.title.toLowerCase().includes(this.filter.toLowerCase()))
       } else {

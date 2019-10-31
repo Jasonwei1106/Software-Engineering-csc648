@@ -95,12 +95,14 @@ export default {
           username: this.logIn.name,
           password: this.logIn.password
         })
-          .then(() => {
+          .then(res => {
             this.$q.notify({
               icon: 'done',
               color: 'positive',
               message: 'Submitted'
             })
+
+            // console.log(res)
 
             this.customModel = 'no'
             this.logIn = {}

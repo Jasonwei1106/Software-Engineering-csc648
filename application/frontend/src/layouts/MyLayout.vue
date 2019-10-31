@@ -2,34 +2,70 @@
   <q-layout view="hHh lpR fFf">
     <q-header reveal elevated class="bg-primary text-white">
       <q-toolbar>
-        <q-btn
-          :hidden="leftDrawerOpen"
-          flat dense round
-          aria-label="Menu"
-          @click="leftDrawerOpen = !leftDrawerOpen"
-          icon="arrow_right"
-        />
+        <div style="min-width: 40px;" >
+          <q-btn
+            :hidden="leftDrawerOpen"
+            flat dense round
+            aria-label="Menu"
+            @click="leftDrawerOpen = !leftDrawerOpen"
+            icon="arrow_right"
+          />
+        </div>
 
         <q-space />
 
         <div
           class="cursor-pointer"
           style="width: 80px;"
-          @click="goHome"
+          @click="routeTo('rootHome')"
         >
           <q-img src="../statics/icons/96p.png" />
         </div>
 
         <q-space />
-        <q-btn stretch flat no-caps label="Log In" @click="icon = true" /> |
-        <q-btn stretch flat no-caps label="Sign Up" to="/register" />
-        <!-- <div>
-        <q-input borderless dense debounce="300" color="primary" v-model="filter" placeholder = "search">
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-        </div> -->
+
+        <div
+          class="q-my-xs" align="center"
+          style="max-width: 51vw;"
+        >
+          <div class="row">
+            <div class="col">
+              <q-btn
+                flat no-caps
+                label="Log In" class="full-width"
+                @click="icon = true"
+              />
+            </div>
+
+            <q-separator dark vertical />
+
+            <div class="col">
+              <q-btn
+                flat no-caps
+                label="Sign Up" class="full-width"
+                to="/register"
+              />
+            </div>
+          </div>
+
+          <div class="row q-mt-xs">
+            <q-input
+              borderless dense outlined
+              bg-color="white" color="black"
+              debounce="300" class="col"
+              v-model="filter" placeholder = "Search"
+              @keyup.enter="test"
+            >
+              <template v-slot:append>
+                <q-icon v-if="filter === ''" name="search" />
+                <q-icon
+                  v-else
+                  name="clear" class="cursor-pointer" @click="filter = ''"
+                />
+              </template>
+            </q-input>
+          </div>
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -58,14 +94,6 @@
             <q-item-label>Home</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item to="/about">
-          <q-item-section avatar>
-            <q-icon name="contacts" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>About</q-item-label>
-          </q-item-section>
-        </q-item>
       </q-list>
     </q-drawer>
 
@@ -80,7 +108,15 @@
       <div class="q-pa-md">
         <q-img src="../statics/icons/96p.png" style="width: 70px;" />
       </div>
+
       <q-space/>
+
+      <div class="q-pa-md" align="center">
+        <div class="text-white cursor-pointer" @click="routeTo('rootAbout')">
+          About Us
+        </div>
+      </div>
+
       <div class="q-pa-md" align="center">
         <div class="text-white">
           Follow Us On
@@ -90,14 +126,17 @@
           <q-icon
             class="cursor-pointer"
             name="fab fa-facebook-square" size="2rem"
+            @click="goTo('https://www.facebook.com')"
           />
           <q-icon
             class="cursor-pointer"
             name="fab fa-instagram" size="2rem"
+            @click="goTo('https://www.instagram.com/')"
           />
           <q-icon
             class="cursor-pointer"
             name="fab fa-twitter-square" size="2rem"
+            @click="goTo('https://twitter.com/')"
           />
         </div>
       </div>
@@ -122,12 +161,32 @@ export default {
   data () {
     return {
       leftDrawerOpen: false,
-      icon: false
+      icon: false,
+      filter: ''
     }
   },
   methods: {
-    goHome: function () {
-      this.$router.push({ name: 'rootHome' }).catch(() => {})
+    test: function (e) {
+      if (e.target.value) {
+        this.$router.push(`/?title=${e.target.value}`).catch(err => {
+          if (err) {
+            // error
+          }
+        })
+        this.filter = ''
+      } else {
+        this.$router.push('/').catch(err => {
+          if (err) {
+            // error
+          }
+        })
+      }
+    },
+    goTo: function (entry) {
+      window.location.href = entry
+    },
+    routeTo: function (entry) {
+      this.$router.push({ name: entry }).catch(() => {})
     }
   }
 }

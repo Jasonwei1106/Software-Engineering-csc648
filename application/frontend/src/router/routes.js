@@ -10,7 +10,8 @@ const routes = [
         component: () => import('pages/Index.vue')
       },
       { path: 'hot', component: () => import('pages/Index.vue') },
-      { path: 'new', component: () => import('pages/Index.vue') }
+      { path: 'new', component: () => import('pages/Index.vue') },
+      { path: '?title:query', component: () => import('pages/Index.vue') }
     ]
   },
   {
@@ -38,7 +39,11 @@ const routes = [
     path: '/about',
     component: () => import('layouts/MyLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/About.vue') },
+      {
+        path: '',
+        name: 'rootAbout',
+        component: () => import('pages/About.vue')
+      },
       { path: ':name', component: () => import('pages/Intro.vue') }
     ]
   },
