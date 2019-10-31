@@ -210,23 +210,51 @@ def delete_user(current_user, email_address):
 
     return jsonify({'message' : 'User has been deleted!'})
 
-@app.route('/api/login')
-def login():
-    auth = request.authorization
+### OLD LOGIN ROUTE
+# @app.route('/api/login')
+# def login():
+#     auth = request.authorization
+#
+#     if not auth or not auth.username or not auth.password:
+#         return make_response('Could not verify auth', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+#
+#     sql_query = "SELECT * FROM team206.users WHERE email_address=%s"
+#     cur = mysql.connection.cursor()
+#     cur.execute(sql_query, (auth.username,))
+#     user = cur.fetchone()
+#     cur.close()
+#
+#     if not user:
+#         return make_response('Could not verify user', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+#
+#     if check_password_hash(user[2], auth.password):
+#         token = jwt.encode({'email_address' : user[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
+#         # token = jwt.encode({'email_address' : user[0], app.config['SECRET_KEY'])
+#         return jsonify({'token' : token.decode('UTF-8')})
+#
+#     return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
-    if not auth or not auth.username or not auth.password:
+@app.route('/api/login', methods=['POST'])
+def login():
+
+    data = request.get_json()
+
+    username = data['username']
+    password = data['password']
+
+    if not username:
         return make_response('Could not verify auth', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
-    sql_query = "SELECT * FROM team206.users WHERE email_address=%s"
+    sql_query = "SELECT * FROM team206.users WHERE username=%s"
     cur = mysql.connection.cursor()
-    cur.execute(sql_query, (auth.username,))
+    cur.execute(sql_query, (username,))
     user = cur.fetchone()
     cur.close()
 
     if not user:
         return make_response('Could not verify user', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
-    if check_password_hash(user[2], auth.password):
+    if check_password_hash(user[2], password):
         token = jwt.encode({'email_address' : user[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
         # token = jwt.encode({'email_address' : user[0], app.config['SECRET_KEY'])
         return jsonify({'token' : token.decode('UTF-8')})
