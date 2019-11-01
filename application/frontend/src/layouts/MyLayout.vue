@@ -28,23 +28,43 @@
           class="q-my-xs" align="center"
           style="max-width: 51vw;"
         >
-          <div class="row">
-            <div class="col">
-              <q-btn
-                flat no-caps
-                label="Log In" class="full-width"
-                @click="icon = true"
-              />
+          <div v-if="!$q.localStorage.has('__diyup__signedIn')">
+            <div class="row">
+              <div class="col">
+                <q-btn
+                  flat no-caps
+                  label="Log In" class="full-width"
+                  @click="icon = true"
+                />
+              </div>
+
+              <q-separator dark vertical />
+
+              <div class="col">
+                <q-btn
+                  flat no-caps
+                  label="Sign Up" class="full-width"
+                  to="/register"
+                />
+              </div>
             </div>
+          </div>
 
-            <q-separator dark vertical />
+          <div v-else>
+            <div class="row">
+              <div class="col">
+                <q-avatar color="red" text-color="white" icon="directions" />
+              </div>
 
-            <div class="col">
-              <q-btn
-                flat no-caps
-                label="Sign Up" class="full-width"
-                to="/register"
-              />
+              <!-- <q-separator dark vertical /> -->
+
+              <div class="col">
+                <q-btn
+                  flat no-caps
+                  label="Log Out" class="full-width"
+                  @click="logout"
+                />
+              </div>
             </div>
           </div>
 
@@ -153,10 +173,23 @@
 <script>
 import LogIn from '../components/Login'
 
+// window.addEventListener('beforeunload', function (e) {
+//   // Cancel the event
+//   e.preventDefault()
+//   // Chrome requires returnValue to be set
+//   e.returnValue = ''
+// })
+
+// window.onbeforeunload = function () {
+//   return 'Are you sure you want to close the window?'
+// }
+
 export default {
   name: 'MyLayout',
   components: {
     LogIn
+  },
+  created () {
   },
   data () {
     return {
@@ -187,6 +220,10 @@ export default {
     },
     routeTo: function (entry) {
       this.$router.push({ name: entry }).catch(() => {})
+    },
+    logout: function () {
+      this.$q.localStorage.remove('__diyup__signedIn')
+      this.$router.go()
     }
   }
 }

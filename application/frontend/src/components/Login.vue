@@ -16,7 +16,7 @@
             bg-color="white"
             type="text"
             placeholder="USERNAME"
-            v-model="logIn.name"
+            v-model="logIn.username"
           />
         </div>
 
@@ -79,7 +79,9 @@ export default {
             message: 'Submitted'
           })
 
-          // console.log(res)
+          this.$q.localStorage.set('__diyup__signedIn', res.data.token)
+
+          this.emitClose()
         })
         .catch(() => {
           this.$q.notify({
