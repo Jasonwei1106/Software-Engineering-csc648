@@ -614,8 +614,12 @@ def delete_tutorial_step(current_user, username, tutorial_id, step_index):
 ## COMMENTS FUNCTIONS ##
 ########################
 @app.route('/api/tutorial/<username>/<tutorial_id>/comments/get_all', methods=['GET'])
+def get_all_comments(username, tutorial_id):
+    return ''
 
 @app.route('/api/tutorial/<username>/<tutorial_id>/comments/get', methods=['GET'])
+def get_comments(username, tutorial_id):
+    return ''
 
 
 ######################
