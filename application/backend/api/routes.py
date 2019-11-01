@@ -587,7 +587,7 @@ def create_tutorial_step(current_user, username, tutorial_id):
     mysql.connection.commit()
     cur.close()
 
-    return jsonify({'message' : 'Step has been created'})
+    return jsonify({'message' : 'Step has been created'}, {'step id' : index})
 
 @app.route('/api/tutorial/<username>/<tutorial_id>/step/<step_index>', methods=['DELETE'])
 @token_required
@@ -613,6 +613,9 @@ def delete_tutorial_step(current_user, username, tutorial_id, step_index):
 ########################
 ## COMMENTS FUNCTIONS ##
 ########################
+@app.route('/api/tutorial/<username>/<tutorial_id>/comments/get_all', methods=['GET'])
+
+@app.route('/api/tutorial/<username>/<tutorial_id>/comments/get', methods=['GET'])
 
 
 ######################
