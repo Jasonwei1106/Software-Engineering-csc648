@@ -255,11 +255,16 @@ def login():
         return make_response('Could not verify user', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
     if check_password_hash(user[2], password):
-        token = jwt.encode({'email_address' : user[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
-        # token = jwt.encode({'email_address' : user[0], app.config['SECRET_KEY'])
+        # token = jwt.encode({'email_address' : user[0], 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60)}, app.config['SECRET_KEY'])
+        token = jwt.encode({'email_address' : user[0]}, app.config['SECRET_KEY'])
         return jsonify({'token' : token.decode('UTF-8')})
 
     return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+
+@app.route('/api/logout', methods=['POST'])
+@token_required
+def logout(current_user):
+    return ''
 
 ##########################
 ### TUTORIAL FUNCTIONS ###
@@ -613,13 +618,35 @@ def delete_tutorial_step(current_user, username, tutorial_id, step_index):
 ########################
 ## COMMENTS FUNCTIONS ##
 ########################
+
+# Return all comments
 @app.route('/api/tutorial/<username>/<tutorial_id>/comments/get_all', methods=['GET'])
 def get_all_comments(username, tutorial_id):
     return ''
 
+#
 @app.route('/api/tutorial/<username>/<tutorial_id>/comments/get', methods=['GET'])
 def get_comments(username, tutorial_id):
     return ''
+
+@app.route('/api/tutorial/<username>/<tutorial_id>/comments/create', methods=['POST'])
+@token_required
+def create_tutorial_comment(current_user, username, tutorial_id):
+    data = request.get_json()
+
+    cur = mysql.connection.cursor()
+
+    index = cur.execute("SELECT COUNT(*) FROM diyup.comments WHERE diyup.comments.tutorial_uuid=%s", (tutorial_uuid,))
+
+    # May get rid of later
+    if index != 0:
+        index += 1
+
+    return jsonify({'message' : 'Comment created!'}, {'comment id' : id})
+
+#####################
+## ITEMS FUNCTIONs ##
+#####################
 
 
 ######################
