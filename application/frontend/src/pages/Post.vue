@@ -58,52 +58,74 @@
               </template>
             </q-input>
           </div>
-
           <div>
             <strong>Material list:</strong>
-            <div>
-                <q-btn
-                  icon="add"
-                  @click="data.push({ material: '' })"
-                />
-
-                <div v-for="(val, ind) in data" :key="ind" >
-                  <q-input
-                    type = "text"
-                    v-model="val.material"
-                    style = "max-width: 500px;"
-                  >
-                  </q-input>
-                <q-btn
+            <div class ="flex">
+              <q-input
+                dense filled
+                type="text"
+                placeholder="Put your tools Here"
+                v-model="materialinput"
+                required
+                style ="max-width: 500px;"
+              >
+              </q-input>
+              <q-btn
+                label ="Add"
+                @click="addlist"
+              />
+            </div>
+            <q-item
+              clickable
+              style ="max-width: 400px;"
+              v-for="(material, ind) in materials"
+              :key="ind"
+            >
+              <q-item-section>
+              {{material}}
+              </q-item-section>
+              <q-btn
                   icon="delete"
-                  @click="data.splice(ind, 1)"
+                  @click="materials.splice(ind, 1)"
                 />
-              </div>
+            </q-item>
+          </div>
+          <div>
+            <div>
             </div>
           </div>
 
           <div>
             <strong> Add Your Steps Here:</strong>
               <div>
+                <q-input
+                dense filled
+                type="textarea"
+                placeholder="Put your description Here"
+                v-model="stepinput"
+                required
+                style ="max-width: 500px;"
+                >
+                </q-input>
                 <q-btn
-                  icon="add"
-                  @click="data.push({ step: '' })"
-                />
-
-                <div v-for="(val, ind) in data" :key="ind" >
-                  <q-input
-                    type = "textarea"
-                    v-model="val.step"
-                    style = "max-width: 500px;"
-                  >
-                  </q-input>
-                <q-btn
-                  icon="delete"
-                  @click="data.splice(ind, 1)"
+                  label="add"
+                  @click="addstep"
                 />
               </div>
-            </div>
-
+              <q-item
+              clickable
+              style ="max-width: 400px; overflow-wrap: break-word;"
+              v-for="(step, ind) in steps"
+              :key="ind"
+            >
+              <q-item-section>
+                {{step}}
+              </q-item-section>
+              <q-btn
+                  icon="delete"
+                  @click="steps.splice(ind, 1)"
+                />
+            </q-item>
           </div>
         </div>
       </div>
@@ -121,21 +143,29 @@
 export default {
   data () {
     return {
+      materialinput: '',
+      stepinput: '',
       poster: {},
       options: [
         'Craft', 'Cooking', 'Tech', 'Workshop', 'Home&Decor'
       ],
-      data: [
-        {
-          material: '',
-          step: ''
-        }
+      materials: [
+      ],
+      steps: [
       ]
     }
   },
   methods: {
     getUrl (files) {
       return `http://localhost:4444/upload?count=${files.length}`
+    },
+    addlist () {
+      this.materials.push(this.materialinput)
+      this.materialinput = ''
+    },
+    addstep () {
+      this.steps.push(this.stepinput)
+      this.stepinput = ''
     }
   }
 }
