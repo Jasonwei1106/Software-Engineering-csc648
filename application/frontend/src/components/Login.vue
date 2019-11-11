@@ -82,7 +82,15 @@ export default {
           this.$q.localStorage.set('__diyup__signedIn', res.data.token)
           this.$q.localStorage.set('__diyup__username', this.logIn.username)
 
-          this.$router.push({ name: 'rootHome' })
+          if (this.$route.name === 'rootHome') {
+            this.$router.go()
+          } else {
+            this.$router.push({ name: 'rootHome' }).catch(err => {
+              if (err) {
+                this.$router.go()
+              }
+            })
+          }
 
           this.emitClose()
         })

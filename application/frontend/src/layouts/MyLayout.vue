@@ -222,10 +222,18 @@ export default {
       this.$router.push({ name: entry }).catch(() => {})
     },
     logout: function () {
-      console.log('__diyup__signedIn')
       this.$q.localStorage.remove('__diyup__signedIn')
       this.$q.localStorage.remove('__diyup__username')
-      this.$router.push({ name: 'rootHome' })
+
+      if (this.$route.name === 'rootHome') {
+        this.$router.go()
+      } else {
+        this.$router.push({ name: 'rootHome' }).catch(err => {
+          if (err) {
+            // error
+          }
+        })
+      }
     }
   }
 }

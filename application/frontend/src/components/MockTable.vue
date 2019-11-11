@@ -9,31 +9,36 @@
       :filter="option.value"
       :pagination.sync="pagination"
     >
+      <template v-slot:top-left>
+        <q-btn
+          outline
+          label="Create a new project"
+          @click="goToPost"
+          v-if="$q.localStorage.has('__diyup__username')"
+        />
+      </template>
+
       <template v-slot:top-right>
-          <q-toolbar>
-            <q-select
-              outlined dense
-              class="q-mr-xs col-4" label="Filter"
-              bg-color="white" color="black"
-              v-model="option"
-              style="width: 150px;"
-              :options="categories"
-            />
-          </q-toolbar>
-        </template>
+        <q-toolbar>
+          <q-select
+            outlined dense
+            class="q-mr-xs col-4" label="Filter"
+            bg-color="white" color="black"
+            v-model="option"
+            style="width: 150px;"
+            :options="categories"
+          />
+        </q-toolbar>
+      </template>
 
       <template v-slot:body-cell-title="props">
         <q-td :props="props">
           <div>
             <q-badge color="purple" :label="props.value" />
           </div>
-          <!-- <div class="my-table-details">
-            {{ props.row.details }}
-          </div> -->
         </q-td>
       </template>
     </q-table>
-    <!-- {{ data }} -->
   </div>
 </template>
 
@@ -120,6 +125,15 @@ export default {
             this.curData.push(element)
           })
         })
+    },
+    goToPost: function () {
+      if (this.$q.localStorage.has('__diyup__signedIn')) {
+        this.$router.push({ path: '/post' }).catch(err => {
+          if (err) {
+            // error
+          }
+        })
+      }
     }
   }
 }
