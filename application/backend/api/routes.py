@@ -136,6 +136,16 @@ def create_user():
     hashed_password = generate_password_hash(password, method='sha256')
 
     cur = mysql.connection.cursor()
+
+    cur.execute("SELECT * FROM team206.users WHERE email_address=%s OR username=%s", (email_address, username,))
+    user = cur.fetchone()
+
+    if user:
+        if user[0] == email_address:
+            return jsonify({'message' : 'Email already exists!'}), 400
+        elif user[1] == username:
+            return jsonify({'message' : 'Username already exists!'}), 400
+
     cur.execute("INSERT INTO team206.users(email_address, username, password, is_admin, avatar) VALUES(%s, %s, %s, %s, %s)", (email_address, username, hashed_password, is_admin, avatar))
     mysql.connection.commit()
     cur.close()
@@ -261,11 +271,6 @@ def login():
 
     return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
-@app.route('/api/logout', methods=['POST'])
-@token_required
-def logout(current_user):
-    return ''
-
 ##########################
 ### TUTORIAL FUNCTIONS ###
 ##########################
@@ -297,8 +302,7 @@ def get_all_tutorials():
 
     cur.close()
 
-    response = jsonify({'tutorials' : output})
-    return response
+    return jsonify({'tutorials' : output})
 
 @app.route('/api/tutorial/get_all', methods=['GET'])
 def get_all_tutorial_info():
@@ -465,40 +469,11 @@ def create_tutorial(current_user):
 
     cur = mysql.connection.cursor()
 
-    # For new db schema
-    # cur.execute("INSERT INTO team206.tutorials(uuid, title, image, category, description, author_difficulty, author_id) VALUES(%s, %s, %s, %s, %s, %s, %s)", (tutorial_uuid, title, image, category, description, float(author_difficulty), author_id))
-
     cur.execute("INSERT INTO team206.tutorials(title, image, category, description, author_difficulty, author_id) VALUES(%s, %s, %s, %s, %s, %s)", (title, image, category, description, float(author_difficulty), author_id))
     mysql.connection.commit()
     cur.close()
 
     return jsonify({'message' : 'New tutorial created!'}, {'token' : tutorial_uuid})
-
-## TEST TUTORIAL create
-@app.route('/api/hidden/tutorial/<username>/create', methods=['POST'])
-def create_tutorial_user(username):
-    data = request.get_json()
-
-    title = data['title']
-    image = data['image']
-    category = data['category']
-    description = data['description']
-    author_difficulty = data['author_difficulty']
-    author_id = username
-
-    cur = mysql.connection.cursor()
-
-    cur.execute("SELECT * FROM team206.users WHERE username=%s", (author_id,))
-    user = cur.fetchone()
-
-    if not user:
-        return jsonify({'message' : 'No user with that username exists.'})
-
-    cur.execute("INSERT INTO team206.tutorials(title, image, category, description, author_difficulty, author_id) VALUES(%s, %s, %s, %s, %s, %s)", (title, image, category, description, float(author_difficulty), author_id))
-    mysql.connection.commit()
-    cur.close()
-
-    return jsonify({'message' : 'New tutorial created!'})
 
 @app.route('/api/tutorial/<username>/<tutorial_id>', methods=['DELETE'])
 @token_required
@@ -581,7 +556,6 @@ def create_tutorial_step(current_user, username, tutorial_id):
 
     index = cur.execute("SELECT COUNT(*) FROM team206.steps WHERE team206.steps.tutorial_id=%s", (tutorial_id,))
 
-    # May get rid of later
     if index != 0:
         index += 1
 
@@ -618,40 +592,277 @@ def delete_tutorial_step(current_user, username, tutorial_id, step_index):
 ########################
 ## COMMENTS FUNCTIONS ##
 ########################
+# Get all comments
+@app.route('/api/comments/get_all_comments', methods=['GET'])
+def get_comments():
 
-# Return all comments
-@app.route('/api/tutorial/<username>/<tutorial_id>/comments/get_all', methods=['GET'])
-def get_all_comments(username, tutorial_id):
-    return ''
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM diyup.comments")
+    comments = cur.fetchall()
+    cur.close()
 
-#
-@app.route('/api/tutorial/<username>/<tutorial_id>/comments/get', methods=['GET'])
-def get_comments(username, tutorial_id):
-    return ''
+    if not comments:
+        return jsonify({'message' : 'No comments found.'})
 
-@app.route('/api/tutorial/<username>/<tutorial_id>/comments/create', methods=['POST'])
+    output = []
+
+    for comment in comments:
+        comment_data = {}
+        comment_data['id'] = comment[0]
+        comment_data['tutorial_uuid'] = comment[1]
+        comment_data['username'] = comment[2]
+        comment_data['content'] = comment[3]
+        comment_data['created'] = comment[4]
+        comment_data['timestamp'] = comment[5]
+        comment_data['edited'] = comment[6]
+        comment_data['image'] = comment[7]
+        comment_data['reply_to'] = comment[8]
+        output.append(comment_data)
+
+    return jsonify({'comments' : output})
+
+# Return comments + 2 children
+@app.route('/api/comments/<tutorial_uuid>/get_all', methods=['GET'])
+def get_all_comments(tutorial_uuid):
+
+    sql_query = "SELECT * FROM diyup.comments WHERE tutorial_uuid=%s AND reply_to IS null"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (tutorial_uuid,))
+    comments = cur.fetchall()
+
+    output = []
+
+    for comment in comments:
+        sql_query = "SELECT * FROM diyup.comments WHERE reply_to=%s"
+        cur.execute(sql_query, (comment[0],))
+        replys = cur.fetchall()
+
+        output_reply = []
+
+        comment_data = {}
+        comment_data['id'] = comment[0]
+        comment_data['tutorial_uuid'] = comment[1]
+        comment_data['username'] = comment[2]
+        comment_data['content'] = comment[3]
+        comment_data['created'] = comment[4]
+        comment_data['timestamp'] = comment[5]
+        comment_data['edited'] = comment[6]
+        comment_data['image'] = comment[7]
+        comment_data['reply_to'] = comment[8]
+
+        for reply in replys:
+            reply_data = {}
+            reply_data['id'] = reply[0]
+            reply_data['username'] = reply[2]
+            reply_data['content'] = reply[3]
+            reply_data['image'] = reply[4]
+            reply_data['reply_to'] = reply[5]
+            reply_data['edited'] = reply[6]
+
+            sql_query = "SELECT * FROM diyup.comments WHERE reply_to=%s"
+            cur.execute(sql_query, (reply[0],))
+            replies_to = cur.fetchall()
+
+            output_reply_reply = []
+
+            for r in replies_to:
+                r_data = {}
+                r_data['id'] = r[0]
+                r_data['username'] = r[2]
+                r_data['content'] = r[3]
+                r_data['image'] = r[4]
+                r_data['reply_to'] = r[5]
+                r_data['edited'] = r[6]
+                output_reply_reply.append(r_data)
+
+            reply_data['child reply'] = output_reply_reply
+            output_reply.append(reply_data)
+
+        comment_data['replies'] = output_reply
+
+        output.append(comment_data)
+
+    cur.close()
+
+    return jsonify({'comments' : output})
+
+# Get reply of a comment based off comment id
+@app.route('/api/comments/<tutorial_uuid>/<reply_to>', methods=['GET'])
+def get_one_reply(tutorial_uuid, reply_to):
+
+    sql_query = "SELECT * FROM diyup.comments WHERE tutorial_uuid=%s AND reply_to=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (tutorial_uuid, reply_to,))
+    replies = cur.fetchall()
+    cur.close()
+
+    if not replies:
+        return jsonify({'message' : 'No replies found!'})
+
+    output = []
+
+    for reply in replies:
+        reply_data = {}
+        reply_data['id'] = reply[0]
+        reply_data['tutorial_uuid'] = reply[1]
+        reply_data['username'] = reply[2]
+        reply_data['content'] = reply[3]
+        reply_data['image'] = reply[4]
+        reply_data['reply_to'] = reply[5]
+        reply_data['edited'] = reply[6]
+        output.append(reply_data)
+
+    return jsonify({'replies' : output})
+
+@app.route('/api/comments/<tutorial_uuid>/create', methods=['POST'])
 @token_required
-def create_tutorial_comment(current_user, username, tutorial_id):
+def create_tutorial_comment(current_user, tutorial_uuid):
     data = request.get_json()
 
     cur = mysql.connection.cursor()
 
-    index = cur.execute("SELECT COUNT(*) FROM diyup.comments WHERE diyup.comments.tutorial_uuid=%s", (tutorial_uuid,))
+    uuid = cur.execute("SELECT * FROM diyup.comments WHERE tutorial_uuid=%s", (tutorial_uuid,))
 
-    # May get rid of later
+    if not uuid:
+        return jsonify({'message' : 'No tutorial ID found!'})
+
+    cur.execute("SELECT * FROM diyup.comments ORDER BY id DESC LIMIT 1")
+    index = cur.fetchone()
+
+    content = data['content']
+    image = data['image']
+    edited = 0
+
+    cur.execute("INSERT INTO diyup.comments(comments.tutorial_uuid, username, content, image, edited)", (tutorial_uuid, current_user[1], content, image, edited,))
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify({'message' : 'Comment created!'}, {'comment id' : index[0]})
+
+@app.route('/api/comments/<tutorial_uuid>/create/<reply_comment_id>', methods=['POST'])
+@token_required
+def reply_to_tutorial_comment(current_user, tutorial_uuid, comment_id):
+    data = request.get_json()
+
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT * FROM diyup.comments WHERE tutorial_uuid=%s", (tutorial_uuid,))
+    uuid = cur.fetchall()
+
+    if not uuid:
+        return jsonify({'message' : 'No tutorial ID found!'})
+
+    cur.execute("SELECT * FROM diyup.comments ORDER BY id DESC LIMIT 1")
+    index = cur.fetchone()
+
+    content = data['content']
+    image = data['image']
+    reply_to = comment_id
+    edited = 0
+
+    cur.execute("INSERT INTO diyup.comments(comments.tutorial_uuid, username, content, image, reply_to, edited)", (tutorial_uuid, current_user[1], content, image, reply_to, edited,))
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify({'message' : 'Reply created!'}, {'comment id' : index[0]})
+
+@app.route('/api/comments/delete/<comment_id>', methods=['DELETE'])
+@token_required
+def delete_comment(comment_id):
+    # if username != current_user[1] and current_user[3] == False:
+    #     return jsonify({'message' : 'Cannot delete comment for a different user!'}), 403
+
+    sql_query = "SELECT * FROM diyup.comments WHERE comments.id=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (comment_id,))
+    comment = cur.fetchone()
+
+    if not comment:
+        return jsonify({'message' : 'No comment found!'})
+
+    sql_delete = "DELETE FROM diyup.comments WHERE comments.id=%s"
+    cur.execute(sql_delete, (comment_id,))
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify({'message' : 'Comment deleted'})
+
+#####################
+## ITEMS FUNCTIONS ##
+#####################
+@app.route('/api/items/<tutorial_uuid>/get', methods=['GET'])
+def get_items(tutorial_uuid):
+
+    sql_query = "SELECT * FROM diyup.items WHERE tutorial_uuid=%s"
+    cur = mysl.connection.cursor()
+    cur.execute(sql_query, (tutorial_uuid,))
+    items = cur.fetchall()
+    cur.close()
+
+    if not items:
+        return jsonify({'message' : 'No items found!'})
+
+    output = []
+
+    for item in items:
+        item_data = {}
+        item_data['tutorial_uuid'] = item[0]
+        item_data['index'] = item[1]
+        item_data['name'] = item[2]
+        item_data['category'] = item[3]
+        item_data['link'] = item[4]
+        output.append(item_data)
+
+    return jsonify({'items' : output})
+
+@app.route('/api/items/<tutorial_uuid>/create', methods=['POST'])
+def create_items(tutorial_uuid):
+
+    data = request.get_json()
+
+
+    index = cur.execute("SELECT COUNT(*) FROM diyup.items WHERE tutorial_uuid=%s", (tutorial_uuid,))
+
     if index != 0:
         index += 1
 
-    return jsonify({'message' : 'Comment created!'}, {'comment id' : id})
+    name = data['name']
+    category = data['category']
 
-#####################
-## ITEMS FUNCTIONs ##
-#####################
+    if data['link']:
+        link = data['link']
 
+    cur = mysql.connection.cursor()
+
+    cur.execute("INSERT INTO diyup.items(tutorial_uuid, items.index, name, category, link) VALUES(%s, %s, %s, %s, %s)", (tutorial_uuid, int(index), name, category, link))
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify({'message' : 'Item created!'}, {'item id' : index})
+
+@app.route('/api/items/<tutorial_uuid>/<item_index>/delete', methods=['DELETE'])
+def delete_items(tutorial_uuid, item_index):
+    # if username != current_user[1] and current_user[3] == False:
+    #     return jsonify({'message' : 'Cannot delete tutorial step for a different user!'}), 403
+
+    sql_query = "SELECT * FROM diyup.items WHERE tutorial_uuid=%s AND items.index=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (tutorial_uuid, item_index,))
+    item = cur.fetchone()
+
+    if not item:
+        return jsonify({'message' : 'No item found!'})
+
+    sql_delete = "DELETE FROM diyup.items WHERE itesm.index=%s"
+    cur.execute(sql_delete, (item_index,))
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify({'message' : 'Item has been deleted!'})
 
 ######################
-## RATING FUNCTIONs ##
+## RATING FUNCTIONS ##
 ######################
-@app.route('/api/tutorial/<username>/<tutorial_id>/rate', methods=['POST'])
-def user_rating(current_user, username, tutorial_id):
+@app.route('/api/rate/<tutorial_uuid>', methods=['POST'])
+def user_rating(username, tutorial_uuid):
     return ''
