@@ -76,10 +76,13 @@ export default {
           this.$q.notify({
             icon: 'done',
             color: 'positive',
-            message: 'Submitted'
+            message: 'Welcome back!'
           })
 
           this.$q.localStorage.set('__diyup__signedIn', res.data.token)
+          this.$q.localStorage.set('__diyup__username', this.logIn.username)
+
+          this.$router.push({ name: 'rootHome' })
 
           this.emitClose()
         })

@@ -223,7 +223,8 @@ export default {
     },
     logout: function () {
       this.$q.localStorage.remove('__diyup__signedIn')
-      this.$router.go()
+      this.$q.localStorage.remove('__diyup__username')
+      this.$router.push({ name: 'rootHome' })
     }
   }
 }
