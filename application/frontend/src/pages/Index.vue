@@ -1,6 +1,12 @@
 <template>
   <q-page class="q-pa-sm">
     <div class="q-pa-md">
+      <q-btn
+        outline
+        label="Create a new project"
+        @click="gotopost"
+        v-if="isHidden"
+      />
       <!-- <q-card>
         <q-tabs
           inline-label
@@ -50,13 +56,21 @@ export default {
   data () {
     return {
       filter: '',
-      pageTab: ''
+      pageTab: '',
+      isHidden: false
     }
   },
   methods: {
     setPageTab: function () {
       if (this.$route.path === '/') {
         this.pageTab = 'hot'
+      }
+    },
+    gotopost: function () {
+      let item = this.$q.localStorage.has('__diyup__signedIn')
+      console.log(item)
+      if (item) {
+        this.$router.push({ path: '/post' })
       }
     }
   }
