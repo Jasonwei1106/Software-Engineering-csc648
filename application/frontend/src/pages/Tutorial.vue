@@ -3,10 +3,10 @@
   <Strong style="font-size: 200%;"> tutorial.title </Strong>
   <div>
     <q-expansion-item
-          expand-separator
-          icon="list"
-          label="Material list"
-          style="max-width: 500px; padding: 10px;"
+      expand-separator
+      icon="list"
+      label="Material list"
+      style="max-width: 500px; padding: 10px;"
     >
       <q-list dense bordered padding class="rounded-borders">
         <q-item
@@ -37,7 +37,9 @@
       </q-list>
   </div>
    <div>
-    <Comment />
+     <div>
+      <Comment style="margin-top:25px"/>
+    </div>
   </div>
   </div>
 </template>

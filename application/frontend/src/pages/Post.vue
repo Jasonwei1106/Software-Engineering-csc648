@@ -8,7 +8,7 @@
           <div>
             <strong>Title:</strong>
             <q-input
-              dense filled
+              filled
               type="text"
               placeholder="What do you want to name your idea"
               v-model="poster.title"
@@ -25,8 +25,6 @@
               <q-select outlined
                 v-model="poster.category"
                 :options="options"
-                :dense="dense"
-                :options-dense="denseOpts"
                 style="max-width: 300px;"
                 >
                 <template v-slot:prepend>
@@ -40,6 +38,7 @@
               label="Upload"
               auto-upload
               :url="getUrl"
+              v-model="poster.img"
               multiple
             />
           </div>
@@ -138,7 +137,7 @@
 </template>
 
 <script>
-// import md5 from 'md5'
+import axios from 'axios'
 
 export default {
   data () {
@@ -156,6 +155,14 @@ export default {
     }
   },
   methods: {
+    onSubmit: function () {
+      axios.post('http://54.153.68.76:5000/api/tutorial/create', {
+        title: this.poster.title,
+        image: this.poster.img,
+        category: this.poster.category,
+        description: this.poster.description
+      })
+    },
     getUrl (files) {
       return `http://localhost:4444/upload?count=${files.length}`
     },
