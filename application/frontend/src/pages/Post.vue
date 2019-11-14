@@ -49,7 +49,7 @@
               dense filled
               type="textarea"
               placeholder="The discription of your project"
-              v-model="poster.discprtion"
+              v-model="poster.description"
               required
               style ="max-width: 500px;"
             >
@@ -65,7 +65,6 @@
                 type="text"
                 placeholder="Put your tools Here"
                 v-model="materialinput"
-                required
                 style ="max-width: 500px;"
               >
               </q-input>
@@ -102,7 +101,6 @@
                 type="textarea"
                 placeholder="Put your description Here"
                 v-model="stepinput"
-                required
                 style ="max-width: 500px;"
                 >
                 </q-input>
@@ -137,7 +135,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 
 export default {
   data () {
@@ -156,11 +153,13 @@ export default {
   },
   methods: {
     onSubmit: function () {
-      axios.post('http://54.153.68.76:5000/api/tutorial/create', {
-        title: this.poster.title,
-        image: this.poster.img,
-        category: this.poster.category,
-        description: this.poster.description
+      this.$q.localStorage.set('__diyup__poster', this.poster)
+      this.$q.localStorage.set('__diyup__material', this.materials)
+      this.$q.localStorage.set('__diyup__step', this.steps)
+      this.$router.push({ path: '/preview' }).catch(err => {
+        if (err) {
+          this.$router.go()
+        }
       })
     },
     getUrl (files) {
