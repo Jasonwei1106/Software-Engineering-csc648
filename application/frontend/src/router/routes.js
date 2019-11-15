@@ -53,6 +53,13 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/Post.vue') }
     ]
+  },
+  {
+    path: '/test',
+    component: () => import('layouts/MyLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Test.vue') }
+    ]
   }
 ]
 
