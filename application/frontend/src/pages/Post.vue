@@ -137,6 +137,13 @@
 <script>
 
 export default {
+  created () {
+    if (this.$q.localStorage.has('__diyup__edittutorial')) {
+      this.poster = this.$q.localStorage.getItem('__diyup__edittutorial')
+      this.materials = this.$q.localStorage.getItem('__diyup__editmaterial')
+      this.steps = this.$q.localStorage.getItem('__diyup__editstep')
+    }
+  },
   data () {
     return {
       materialinput: '',

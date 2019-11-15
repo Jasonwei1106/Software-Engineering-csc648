@@ -55,9 +55,11 @@
       <q-btn
         label="EDIT"
         style="margin-right: 400px"
+        @click="gotopost"
       />
       <q-btn
         label="Done"
+        @click="gototutorial"
       />
     </div>
   </div>
@@ -69,7 +71,6 @@ export default {
     this.tutorial = this.$q.localStorage.getItem('__diyup__poster')
     this.materials = this.$q.localStorage.getItem('__diyup__material')
     this.steps = this.$q.localStorage.getItem('__diyup__step')
-    console.log(this.poster)
   },
   // name: 'Tutorial page',
   data () {
@@ -77,6 +78,31 @@ export default {
       tutorial: null,
       materials: null,
       steps: null
+    }
+  },
+  methods: {
+    gototutorial: function () {
+      this.$q.localStorage.set('__diyup__donetutorial', this.tutorial)
+      this.$q.localStorage.set('__diyup__donematerial', this.materials)
+      this.$q.localStorage.set('__diyup__donestep', this.steps)
+      this.$q.localStorage.remove('__diyup__edittutorial')
+      this.$q.localStorage.remove('__diyup__editmaterial')
+      this.$q.localStorage.remove('__diyup__editstep')
+      this.$router.push({ path: '/tutorial' }).catch(err => {
+        if (err) {
+          this.$router.go()
+        }
+      })
+    },
+    gotopost: function () {
+      this.$q.localStorage.set('__diyup__edittutorial', this.tutorial)
+      this.$q.localStorage.set('__diyup__editmaterial', this.materials)
+      this.$q.localStorage.set('__diyup__editstep', this.steps)
+      this.$router.push({ path: '/post' }).catch(err => {
+        if (err) {
+          this.$router.go()
+        }
+      })
     }
   }
 }

@@ -24,7 +24,7 @@
       >
         <q-list dense bordered padding class="rounded-borders">
           <q-item
-            v-for="(list, ind) in tutorial.lists"
+            v-for="(list, ind) in lists"
             :key="ind"
           >
             <q-item-section>
@@ -38,7 +38,7 @@
       <strong>Steps</strong>
       <q-list>
           <q-item
-            v-for="(step, ind) in tutorial.steps"
+            v-for="(step, ind) in steps"
             :key="ind"
           >
             <q-item-section style="max-width:20px"> {{ind+1}}.  </q-item-section>
@@ -46,7 +46,7 @@
               <img src="https://cdn.quasar.dev/img/mountains.jpg">
             </q-item-section>
             <q-item-section>
-              <q-item-label style="padding:10px;">{{step.content}}</q-item-label>
+              <q-item-label style="padding:10px;">{{step}}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -60,30 +60,11 @@
 <script>
 import Comment from '../pages/Comments'
 export default {
-  name: 'Tutorial page',
-  data () {
-    return {
-      lorem: 'Lorem ipsum dolor sit amet, consectetur',
-      tutorial: {
-        title: 'First DIY',
-        description: '~~~~~~~~',
-        url: 'https://placeimg.com/500/300/nature',
-        lists: [
-          'first tool',
-          'second tool'
-        ],
-        steps: [
-          {
-            name: 'S1',
-            content: 'what to do'
-          },
-          {
-            name: 'S2',
-            content: 'what to do next'
-          }
-        ]
-      }
-    }
+  created () {
+    this.tutorial = this.$q.localStorage.getItem('__diyup__donetutorial')
+    this.lists = this.$q.localStorage.getItem('__diyup__donematerial')
+    this.steps = this.$q.localStorage.getItem('__diyup__donestep')
+    console.log(this.steps)
   },
   components: {
     Comment
