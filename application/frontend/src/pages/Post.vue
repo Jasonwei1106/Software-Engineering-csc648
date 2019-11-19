@@ -1,6 +1,7 @@
 <template>
+<div style="width:800px; margin:0 auto">
   <q-card class="q-pa-md" style="width: 98%; margin: 1em auto;">
-    <strong>Post your DIY idea</strong>
+    <strong><font size="10">Post your DIY idea</font></strong>
     <hr>
     <q-form @submit.prevent.stop="onSubmit">
       <div class="q-pa-md">
@@ -111,11 +112,10 @@
               </div>
               <q-item
               clickable
-              style ="max-width: 400px; overflow-wrap: break-word;"
               v-for="(step, ind) in steps"
               :key="ind"
             >
-              <q-item-section>
+              <q-item-section style="max-width: 400px; overflow-wrap: break-word;">
                 {{step}}
               </q-item-section>
               <q-btn
@@ -132,6 +132,7 @@
       </div>
     </q-form>
   </q-card>
+</div>
 </template>
 
 <script>

@@ -107,9 +107,6 @@ export default {
               color: 'positive',
               message: 'Submitted'
             })
-
-            // console.log(res)
-
             this.customModel = 'no'
             this.logIn = {}
           })

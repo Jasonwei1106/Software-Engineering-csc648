@@ -64,7 +64,6 @@ export default {
     this.tutorial = this.$q.localStorage.getItem('__diyup__donetutorial')
     this.lists = this.$q.localStorage.getItem('__diyup__donematerial')
     this.steps = this.$q.localStorage.getItem('__diyup__donestep')
-    console.log(this.steps)
   },
   components: {
     Comment
