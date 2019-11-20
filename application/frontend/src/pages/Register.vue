@@ -44,10 +44,10 @@
 
         <div
           class="q-my-md row"
-          align="left"
-          style="width: 35vw; min-width: 270px;"
+          align="center"
+          style="width: 30vw; min-width: 270px;"
         >
-          <q-checkbox
+          <!-- <q-checkbox
             v-model="customModel"
             color="primary"
             true-value="yes"
@@ -56,7 +56,8 @@
             <span>
               Do you agree? {Please note: Terms and conditions will come...}
             </span>
-          </q-checkbox>
+          </q-checkbox> -->
+          By clicking "Sign Up" you agree to our Terms and to our Privacy Statment.
         </div>
 
         <div align="center" >

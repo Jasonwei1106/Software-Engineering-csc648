@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-  <Strong style="font-size: 200%;"> {{tutorial.title}} </Strong>
+  <Strong style="font-size: 200%;"> {{ tutorial.title }} </Strong>
     <div
       class= "row justify-start"
       style="margin:20px;"
@@ -11,7 +11,7 @@
       />
       <div class="column">
       <strong class="col-2" style="margin-left:10px;">Description</strong>
-      <span class="col" style="padding-left: 30px;"> {{tutorial.description}}</span>
+      <span class="col" style="padding-left: 30px;"> {{ tutorial.description }}</span>
       </div>
     </div >
     <div>
@@ -28,7 +28,7 @@
             :key="ind"
           >
             <q-item-section>
-              {{ind+1}}.  {{list}}
+              {{ ind + 1 }}.  {{ list }}
             </q-item-section>
           </q-item>
         </q-list>
@@ -41,12 +41,12 @@
             v-for="(step, ind) in steps"
             :key="ind"
           >
-            <q-item-section style="max-width:20px"> {{ind+1}}.  </q-item-section>
+            <q-item-section style="max-width:20px"> {{ ind + 1 }}.  </q-item-section>
             <q-item-section top thumbnail class="q-ml-none">
               <img src="https://cdn.quasar.dev/img/mountains.jpg">
             </q-item-section>
             <q-item-section>
-              <q-item-label style="padding:10px;">{{step}}</q-item-label>
+              <q-item-label style="padding:10px;">{{ step }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>

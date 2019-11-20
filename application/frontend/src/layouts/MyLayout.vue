@@ -53,10 +53,12 @@
           <div v-else>
             <div class="row">
               <div class="col">
-                <q-avatar color="red" text-color="white" icon="directions" />
+                <q-btn dense round size="md">
+                  <q-avatar size="md" text-color="white" icon="person" />
+                </q-btn>
               </div>
 
-              <!-- <q-separator dark vertical /> -->
+              <q-separator dark vertical />
 
               <div class="col">
                 <q-btn

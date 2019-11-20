@@ -2,7 +2,8 @@
   <div class="">
       <!-- title="DIYup Tutorials" -->
     <q-table
-      flat
+      flat hide-header wrap-cells
+      separator="none"
       row-key="title"
       :data="curData"
       :columns="columns"
@@ -14,7 +15,7 @@
           outline
           label="Create a new project"
           @click="goToPost"
-          v-if="$q.localStorage.has('__diyup__username')"
+          v-if="$q.localStorage.has('__diyup__signedIn')"
         />
       </template>
 
@@ -31,12 +32,50 @@
         </q-toolbar>
       </template>
 
-      <template v-slot:body-cell-title="props">
+      <!-- <template v-slot:body-cell-title="props">
         <q-td :props="props">
           <div>
             <q-badge color="purple" :label="props.value" />
           </div>
         </q-td>
+      </template> -->
+
+      <template v-slot:body="props">
+        <q-tr :props="props">
+          <q-td colspan="100%" key="title" :props="props">
+            <q-card class="q-pa-md" style="min-height: 15vh;">
+              <div class="row cursor-pointer" @click="routeToTutorial(props.row.__index)">
+                <div class="col-4" align="center">
+                  <q-img
+                    :src="'https://placeimg.com/500/300/nature?t=' + Math.random()"
+                    spinner-color="primary"
+                    style="height: 140px; max-width: 150px"
+                  />
+                </div>
+                <div class="col">
+                  <b>Title:</b>
+                  {{ props.row.title }} by {{ props.row.author_id }}<br>
+
+                  <b>Author's Difficulty Rating:</b>
+                  {{ props.row.author_difficulty }}<br>
+
+                  <b>Users' Difficulty Rating:</b>
+                  {{ props.viewer_difficulty }}<br>
+
+                  <b>Users' Rating:</b>
+                  {{ props.row.rating }}<br>
+
+                  <b>Category:</b>
+                  {{ props.row.category }}<br>
+                </div>
+
+                <div class="col-5 q-pr-xl" align="left">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </div>
+              </div>
+            </q-card>
+          </q-td>
+        </q-tr>
       </template>
     </q-table>
   </div>
@@ -109,6 +148,12 @@ export default {
     }
   },
   methods: {
+    routeToTutorial: function (entry) {
+      // console.log(entry)
+      // let routeData = this.$router.resolve(`challenge/${entry}`, '/')
+      // window.open(routeData.href, '_self')
+      this.$router.push('/tutorial/' + entry)
+    },
     titleQueryFilter: function () {
       this.filter = this.$route.query.title
       if (this.filter) {
@@ -124,6 +169,8 @@ export default {
           this.data.forEach(element => {
             this.curData.push(element)
           })
+
+          // console.log(this.data)
         })
     },
     goToPost: function () {

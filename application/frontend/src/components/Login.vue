@@ -1,7 +1,7 @@
 <template>
   <div
     class="q-pa-md bg-grey-3"
-    style="width: 30vw; min-width: 270px;"
+    style="width: 30vw; max-width: 500px; min-width: 270px;"
   >
     <div align="center">
       <strong>LOGIN</strong>

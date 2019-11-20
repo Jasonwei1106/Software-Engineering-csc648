@@ -22,20 +22,6 @@ const routes = [
     ]
   },
   {
-    path: '/preview',
-    component: () => import('layouts/MyLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/preview.vue') }
-    ]
-  },
-  {
-    path: '/tutorial',
-    component: () => import('layouts/MyLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/Tutorial.vue') }
-    ]
-  },
-  {
     path: '/forgot',
     component: () => import('layouts/MyLayout.vue'),
     children: [
@@ -61,13 +47,28 @@ const routes = [
       { path: '', component: () => import('pages/Post.vue') }
     ]
   },
+  // {
+  //   path: '/preview',
+  //   component: () => import('layouts/MyLayout.vue'),
+  //   children: [
+  //     { path: '', component: () => import('pages/preview.vue') }
+  //   ]
+  // },
   {
-    path: '/test',
+    path: '/tutorial',
     component: () => import('layouts/MyLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Test.vue') }
+      { path: '', component: () => import('pages/Tutorial.vue') },
+      { path: ':uuid', component: () => import('pages/Tutorial.vue') }
     ]
   }
+  // {
+  //   path: '/test',
+  //   component: () => import('layouts/MyLayout.vue'),
+  //   children: [
+  //     { path: '', component: () => import('pages/Test.vue') }
+  //   ]
+  // }
 ]
 
 // Always leave this as last one
