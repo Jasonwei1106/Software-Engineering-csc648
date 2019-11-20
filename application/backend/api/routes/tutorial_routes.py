@@ -18,11 +18,12 @@ def get_all_tutorials():
         tutorial_data['uuid'] = tutorial[0]
         tutorial_data['author_username'] = tutorial[1]
         tutorial_data['title'] = tutorial[2]
+        tutorial_data['image'] = tutorial[3]
         tutorial_data['category'] = tutorial[4]
+        tutorial_data['description'] = tutorial[5]
         tutorial_data['author_difficulty'] = str(tutorial[6])
         tutorial_data['viewer_difficulty'] = str(average_rating_type_for_tutorial('difficulty', tutorial[0]))
         tutorial_data['rating'] = str(average_rating_type_for_tutorial('score', tutorial[0]))
-
         output.append(tutorial_data)
 
     cur.close()
