@@ -44,7 +44,7 @@
         <q-tr :props="props">
           <q-td colspan="100%" key="title" :props="props">
             <q-card class="q-pa-md" style="min-height: 15vh;">
-              <div class="row cursor-pointer" @click="routeToTutorial(props.row.__index)">
+              <div class="row cursor-pointer" @click="routeToTutorial(props.row)">
                 <div class="col-4" align="center">
                   <q-img
                     :src="'https://placeimg.com/500/300/nature?t=' + Math.random()"
@@ -150,9 +150,10 @@ export default {
   methods: {
     routeToTutorial: function (entry) {
       // console.log(entry)
+      this.$q.localStorage.set('__diyup  __entry', entry)
       // let routeData = this.$router.resolve(`challenge/${entry}`, '/')
       // window.open(routeData.href, '_self')
-      this.$router.push('/tutorial/' + entry)
+      this.$router.push('/tutorial/' + entry.__index)
     },
     titleQueryFilter: function () {
       this.filter = this.$route.query.title

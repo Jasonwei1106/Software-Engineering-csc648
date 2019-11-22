@@ -87,12 +87,7 @@ export default {
   },
   methods: {
     onSubmit: function () {
-      if (this.customModel !== 'yes') {
-        this.$q.notify({
-          color: 'negative',
-          message: 'You need to accept the license and terms first'
-        })
-      } else if (this.logIn.conpassword !== this.logIn.password) {
+      if (this.logIn.conpassword !== this.logIn.password) {
         this.$q.notify({
           message: 'Your confirm password doesn\'t match'
         })
