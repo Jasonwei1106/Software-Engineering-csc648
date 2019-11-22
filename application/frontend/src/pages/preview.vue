@@ -6,7 +6,7 @@
       style="margin:20px;"
     >
       <q-img
-        :src="tutorial.url"
+        :src="tutorial.img"
         style="max-width: 200px; height: 150px; align: left; vertical-align: top; border: solid black 1px;"
       />
       <div class="column">
@@ -66,6 +66,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   created () {
     this.tutorial = this.$q.localStorage.getItem('__diyup__poster')
@@ -82,17 +84,41 @@ export default {
   },
   methods: {
     gototutorial: function () {
-      this.$q.localStorage.set('__diyup__donetutorial', this.tutorial)
-      this.$q.localStorage.set('__diyup__donematerial', this.materials)
-      this.$q.localStorage.set('__diyup__donestep', this.steps)
-      this.$q.localStorage.remove('__diyup__edittutorial')
-      this.$q.localStorage.remove('__diyup__editmaterial')
-      this.$q.localStorage.remove('__diyup__editstep')
-      this.$router.push({ path: '/tutorial' }).catch(err => {
-        if (err) {
-          this.$router.go()
-        }
-      })
+      let headers = {
+        'x-access-token': this.$q.localStorage.getItem('__diyup__signedIn')
+      }
+
+      axios.post('http://54.153.68.76:5000/api/tutorial/create', {
+        title: this.tutorial.title,
+        image: 'test.png',
+        category: this.tutorial.category,
+        description: this.tutorial.description,
+        author_difficulty: this.tutorial.difficulty
+      }, { headers })
+        .then(res => {
+          // console(this.title)
+          // this.$q.localStorage.set('__diyup__donetutorial', this.tutorial)
+          // this.$q.localStorage.set('__diyup__donematerial', this.materials)
+          // this.$q.localStorage.set('__diyup__donestep', this.steps)
+          // this.$q.localStorage.remove('__diyup__edittutorial')
+          // this.$q.localStorage.remove('__diyup__editmaterial')
+          // this.$q.localStorage.remove('__diyup__editstep')
+          // this.$router.push({ path: '/tutorial' }).catch(err => {
+          //   if (err) {
+          //     this.$router.go()
+          //   }
+          // })
+          console.log(res)
+        })
+        .catch(err => {
+          if (err) {
+            this.$q.notify({
+              icon: 'warning',
+              color: 'negative',
+              message: 'Something went wrong!'
+            })
+          }
+        })
     },
     gotopost: function () {
       this.$q.localStorage.set('__diyup__edittutorial', this.tutorial)

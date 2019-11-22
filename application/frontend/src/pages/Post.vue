@@ -114,8 +114,9 @@
               clickable
               v-for="(step, ind) in steps"
               :key="ind"
+              style="max-width: 400px; overflow-wrap: break-word;"
             >
-              <q-item-section style="max-width: 400px; overflow-wrap: break-word;">
+              <q-item-section>
                 {{step}}
               </q-item-section>
               <q-btn
@@ -149,7 +150,10 @@ export default {
     return {
       materialinput: '',
       stepinput: '',
-      poster: {},
+      poster: {
+        img: 'testimg',
+        difficulty: '1'
+      },
       options: [
         'Craft', 'Cooking', 'Tech', 'Workshop', 'Home&Decor'
       ],

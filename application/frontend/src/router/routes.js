@@ -47,13 +47,13 @@ const routes = [
       { path: '', component: () => import('pages/Post.vue') }
     ]
   },
-  // {
-  //   path: '/preview',
-  //   component: () => import('layouts/MyLayout.vue'),
-  //   children: [
-  //     { path: '', component: () => import('pages/preview.vue') }
-  //   ]
-  // },
+  {
+    path: '/preview',
+    component: () => import('layouts/MyLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/preview.vue') }
+    ]
+  },
   {
     path: '/tutorial',
     component: () => import('layouts/MyLayout.vue'),
