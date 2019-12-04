@@ -15,8 +15,7 @@
         <q-space />
 
         <div
-          class="cursor-pointer"
-          style="width: 80px;"
+          class="cursor-pointer" style="width: 80px;"
           @click="routeTo('rootHome')"
         >
           <q-img src="../statics/icons/96p.png" />
@@ -75,7 +74,7 @@
               borderless dense outlined
               bg-color="white" color="black"
               debounce="300" class="col"
-              v-model="filter" placeholder = "Search"
+              v-model="filter" placeholder = "Tutorial Title"
               @keyup.enter="test"
             >
               <template v-slot:append>
@@ -88,6 +87,34 @@
             </q-input>
           </div>
         </div>
+      </q-toolbar>
+
+      <q-toolbar
+        v-if="$route.name && $route.name === 'rootHome'"
+        class="bg-white text-black"
+        style="border: black solid 1px;"
+      >
+        <q-toolbar-title class="row q-pa-md">
+          <div class="col" align="center">
+            <strong class="gt-sm" style="font-size: 1.5em;">
+              STEP-BY-STEP PROJECTS BY USERS FOR USERS
+            </strong>
+
+            <strong class="sm" style="font-size: 1em;">
+              STEP-BY-STEP PROJECTS BY USERS FOR USERS
+            </strong>
+
+            <strong class="lt-sm" style="font-size: .6em;">
+              STEP-BY-STEP PROJECTS BY USERS FOR USERS
+            </strong>
+          </div>
+
+          <img
+            class="col-2 q-mr-md gt-xs"
+            src="../statics/icons/DIY_Artwork.png"
+            style="width: 10%; max-width: 100px; max-height: 70px;"
+          />
+        </q-toolbar-title>
       </q-toolbar>
     </q-header>
 
@@ -108,10 +135,12 @@
             />
           </div>
         </q-item-label>
+
         <q-item to="/">
           <q-item-section avatar>
             <q-icon name="list" />
           </q-item-section>
+
           <q-item-section>
             <q-item-label>Home</q-item-label>
           </q-item-section>
@@ -192,6 +221,8 @@ export default {
     LogIn
   },
   created () {
+  },
+  updated () {
   },
   data () {
     return {

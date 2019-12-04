@@ -1,139 +1,131 @@
 <template>
-<div style="width:800px; margin:0 auto">
-  <q-card class="q-pa-md" style="width: 98%; margin: 1em auto;">
-    <strong><font size="10">Post your DIY idea</font></strong>
-    <hr>
-    <q-form @submit.prevent.stop="onSubmit">
-      <div class="q-pa-md">
+  <div style="max-width:800px; margin:0 auto">
+    <div style="width: 98%; margin: 1em auto;">
+
+      <q-form @submit.prevent.stop="onSubmit">
+        <div class="q-pa-md">
           <div class="q-gutter-md">
-          <div>
-            <strong>Title:</strong>
-            <q-input
-              filled
-              type="text"
-              placeholder="What do you want to name your idea"
-              v-model="poster.title"
-              required
-              style ="max-width: 300px;"
-            >
-              <template v-slot:prepend>
-              </template>
-            </q-input>
-          </div>
 
-          <div>
-            <strong>Category:</strong>
-              <q-select outlined
-                v-model="poster.category"
-                :options="options"
-                style="max-width: 300px;"
-                >
-                <template v-slot:prepend>
-                </template>
-              </q-select>
-          </div>
-
-          <div>
-            <strong>Upload Your Picture</strong>
-            <q-uploader
-              label="Upload"
-              auto-upload
-              :url="getUrl"
-              v-model="poster.img"
-              multiple
-            />
-          </div>
-
-          <div>
-            <strong>Discription</strong>
-            <q-input
-              dense filled
-              type="textarea"
-              placeholder="The discription of your project"
-              v-model="poster.description"
-              required
-              style ="max-width: 500px;"
-            >
-              <template v-slot:prepend>
-              </template>
-            </q-input>
-          </div>
-          <div>
-            <strong>Material list:</strong>
-            <div class ="flex">
+            <div>
               <q-input
-                dense filled
-                type="text"
-                placeholder="Put your tools Here"
-                v-model="materialinput"
-                style ="max-width: 500px;"
-              >
-              </q-input>
-              <q-btn
-                label ="Add"
-                @click="addlist"
+                required outlined
+                type="text" label="Title"
+                placeholder="What do you want to name your idea"
+                v-model="poster.title"
               />
             </div>
-            <q-item
-              clickable
-              style ="max-width: 400px;"
-              v-for="(material, ind) in materials"
-              :key="ind"
-            >
-              <q-item-section>
-              {{material}}
-              </q-item-section>
-              <q-btn
+
+            <div>
+              <q-select
+                outlined required
+                label="Category"
+                v-model="poster.category"
+                :options="options"
+              />
+            </div>
+
+            <div>
+              <q-uploader
+                auto-upload
+                color="dark" class="full-width"
+                label="Upload Main Image"
+                v-model="poster.img"
+                :url="getUrl"
+              />
+            </div>
+
+            <div>
+              <q-input
+                dense outlined required
+                type="textarea"
+                Label="Description"
+                placeholder="Tutorial description goes here..."
+                v-model="poster.description"
+              />
+            </div>
+
+            <div>
+              <strong>Material List:</strong>
+
+              <div class="row q-gutter-sm">
+                <q-input
+                  dense outlined
+                  class="col"
+                  type="text" placeholder="Put your tools Here"
+                  v-model="materialInput"
+                />
+
+                <q-btn
+                  class="col-2"
+                  label ="Add" color="darkd"
+                  @click="addList"
+                />
+              </div>
+
+              <q-item
+                v-for="(material, ind) in materials"
+                :key="ind"
+                clickable
+              >
+                <q-item-section>
+                  {{ material }}
+                </q-item-section>
+
+                <q-btn
                   icon="delete"
                   @click="materials.splice(ind, 1)"
                 />
-            </q-item>
-          </div>
-          <div>
-            <div>
+              </q-item>
             </div>
-          </div>
 
-          <div>
-            <strong> Add Your Steps Here:</strong>
-              <div>
+            <div>
+              <strong>Step List:</strong>
+
+              <div class="row q-gutter-sm">
                 <q-input
-                dense filled
-                type="textarea"
-                placeholder="Put your description Here"
-                v-model="stepinput"
-                style ="max-width: 500px;"
-                >
-                </q-input>
+                  class="col"
+                  dense outlined
+                  type="textarea"
+                  placeholder="Put your description Here"
+                  v-model="stepInput"
+                />
+
                 <q-btn
-                  label="add"
-                  @click="addstep"
+                  class="col-2"
+                  label="add" color="dark"
+                  @click="addStep"
                 />
               </div>
+
               <q-item
-              clickable
-              v-for="(step, ind) in steps"
-              :key="ind"
-              style="max-width: 400px; overflow-wrap: break-word;"
-            >
-              <q-item-section>
-                {{step}}
-              </q-item-section>
-              <q-btn
+                v-for="(step, ind) in steps"
+                :key="ind"
+                clickable
+                style="overflow-wrap: break-word;"
+              >
+                <q-item-section>
+                  {{ step }}
+                </q-item-section>
+
+                <q-btn
                   icon="delete"
                   @click="steps.splice(ind, 1)"
                 />
-            </q-item>
+              </q-item>
+            </div>
+          </div>
+
+          <div class="q-mt-sm">
+            <q-btn
+              no-caps
+              class="full-width" type="submit"
+              color="primary" label="Confirm"
+            />
           </div>
         </div>
-      </div>
-
-      <div class="q-gutter-sm" align="center" >
-        <q-btn no-caps type="submit" color="primary" label="Confirm" />
-      </div>
-    </q-form>
-  </q-card>
-</div>
+      </q-form>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -148,8 +140,8 @@ export default {
   },
   data () {
     return {
-      materialinput: '',
-      stepinput: '',
+      materialInput: '',
+      stepInput: '',
       poster: {
         img: 'testimg',
         difficulty: '1'
@@ -157,10 +149,8 @@ export default {
       options: [
         'Craft', 'Cooking', 'Tech', 'Workshop', 'Home&Decor'
       ],
-      materials: [
-      ],
-      steps: [
-      ]
+      materials: [],
+      steps: []
     }
   },
   methods: {
@@ -177,13 +167,13 @@ export default {
     getUrl (files) {
       return `http://localhost:4444/upload?count=${files.length}`
     },
-    addlist () {
-      this.materials.push(this.materialinput)
-      this.materialinput = ''
+    addList () {
+      this.materials.push(this.materialInput)
+      this.materialInput = ''
     },
-    addstep () {
-      this.steps.push(this.stepinput)
-      this.stepinput = ''
+    addStep () {
+      this.steps.push(this.stepInput)
+      this.stepInput = ''
     }
   }
 }

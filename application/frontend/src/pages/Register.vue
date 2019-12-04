@@ -7,65 +7,45 @@
       <div align="center">
         <div class="q-gutter-md" style="width: 35vw; min-width: 270px;">
           <q-input
-            dense outlined
-            bg-color="white"
-            type="text"
+            dense outlined required
+            bg-color="white" type="text"
             placeholder="Username"
             v-model="logIn.username"
-            required
           />
 
           <q-input
-            dense outlined
-            bg-color="white"
-            type="text"
+            dense outlined required
+            bg-color="white" type="email"
             placeholder="Email"
             v-model="logIn.email"
-            required
           />
 
           <q-input
-            dense outlined
-            bg-color="white"
-            type="password"
+            dense outlined required
+            bg-color="white" type="password"
             placeholder="Password"
             v-model="logIn.password"
-            required
           />
 
           <q-input
             dense outlined
-            bg-color="white"
-            type ="password"
+            bg-color="white" type ="password"
             placeholder="Confirm Password"
             v-model="logIn.conpassword"
           />
         </div>
 
         <div
-          class="q-my-md row"
-          align="center"
+          class="q-my-md row" align="center"
           style="width: 30vw; min-width: 270px;"
         >
-          <!-- <q-checkbox
-            v-model="customModel"
-            color="primary"
-            true-value="yes"
-            false-value="no"
-          >
-            <span>
-              Do you agree? {Please note: Terms and conditions will come...}
-            </span>
-          </q-checkbox> -->
           By clicking "Sign Up" you agree to our Terms and to our Privacy Statment.
         </div>
 
         <div align="center" >
           <q-btn
             no-caps
-            type="submit"
-            color="primary"
-            label="Sign Up"
+            type="submit" color="primary" label="Sign Up"
             style="width: 15%; min-width: 150px;"
           />
         </div>
@@ -81,7 +61,6 @@ import axios from 'axios'
 export default {
   data () {
     return {
-      customModel: 'no',
       logIn: {}
     }
   },
@@ -103,7 +82,6 @@ export default {
               color: 'positive',
               message: 'Submitted'
             })
-            this.customModel = 'no'
             this.logIn = {}
           })
           .catch(() => {

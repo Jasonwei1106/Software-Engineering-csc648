@@ -51,7 +51,7 @@ const routes = [
     path: '/preview',
     component: () => import('layouts/MyLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/preview.vue') }
+      { path: '', component: () => import('pages/Preview.vue') }
     ]
   },
   {

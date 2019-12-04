@@ -82,9 +82,9 @@
 
 <script>
 // import Comment from '../pages/Comments'
+
 export default {
   created () {
-    console.log(this.$q.localStorage.has('__diyup__entry'))
     if (this.$q.localStorage.has('__diyup__donetutorial')) {
       this.tutorial = this.$q.localStorage.getItem('__diyup__donetutorial')
       this.lists = this.$q.localStorage.getItem('__diyup__donematerial')
@@ -95,7 +95,6 @@ export default {
     } else if (this.$q.localStorage.has('__diyup__entry')) {
       this.tutorial = this.$q.localStorage.getItem('__diyup__entry')
       this.tutorial.description = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-      console.log(this.tutorial)
     }
   },
   data () {
