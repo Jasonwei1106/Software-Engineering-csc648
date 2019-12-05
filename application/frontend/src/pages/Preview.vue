@@ -111,8 +111,6 @@ export default {
         author_difficulty: this.tutorial.difficulty
       }, { headers })
         .then(res => {
-          console.log(res)
-
           this.$router.push({ name: 'rootHome' }).catch(err => {
             if (err) {
               this.$router.go()
