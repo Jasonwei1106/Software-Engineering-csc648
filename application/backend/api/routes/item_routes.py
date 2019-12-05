@@ -5,7 +5,18 @@ from . import *
 #####################
 @app.route('/api/items/<tutorial_uuid>/get', methods=['GET'])
 def get_items(tutorial_uuid):
+    """
+    Item route to get item information
 
+    Parameters
+    ----------
+    tutorial_uuid
+
+    Returns
+    -------
+    Items
+
+    """
     sql_query = "SELECT * FROM diyup.items WHERE tutorial_uuid=%s"
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (tutorial_uuid,))
@@ -31,7 +42,18 @@ def get_items(tutorial_uuid):
 @app.route('/api/items/<tutorial_uuid>/create', methods=['POST'])
 @token_required
 def create_items(current_user, tutorial_uuid):
+    """
+    Item route to create item
 
+    Parameters
+    ----------
+    Registered/Admin access, tutorial_uuid
+
+    Returns
+    -------
+    Item index
+
+    """
     data = request.get_json()
 
     cur = mysql.connection.cursor()
@@ -52,7 +74,18 @@ def create_items(current_user, tutorial_uuid):
 @app.route('/api/items/<tutorial_uuid>/<item_index>/delete', methods=['DELETE'])
 @token_required
 def delete_items(create_user, tutorial_uuid, item_index):
+    """
+    Item route to create item
 
+    Parameters
+    ----------
+    Registered/Admin access, tutorial_uuid, item_index
+
+    Returns
+    -------
+    None
+
+    """
     sql_query = "SELECT * FROM diyup.items WHERE tutorial_uuid=%s AND items.index=%s"
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (tutorial_uuid, item_index,))

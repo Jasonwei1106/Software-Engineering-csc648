@@ -6,7 +6,18 @@ from . import *
 
 @app.route('/api/step/<tutorial_uuid>', methods=['GET'])
 def get_all_steps(tutorial_uuid):
+    """
+    Step route to get all steps of a tutorial
 
+    Parameters
+    ----------
+    tutorial_uuid
+
+    Returns
+    -------
+    Steps
+
+    """
     sql_query = "SELECT * FROM diyup.steps INNER JOIN diyup.tutorials ON steps.tutorial_uuid = tutorials.uuid WHERE tutorials.uuid=%s"
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (tutorial_uuid,))
@@ -30,7 +41,18 @@ def get_all_steps(tutorial_uuid):
 
 @app.route('/api/step/<tutorial_uuid>/<step_index>', methods=['GET'])
 def get_one_step(tutorial_uuid, step_index):
+    """
+    Step route to get one step
 
+    Parameters
+    ----------
+    tutorial_uuid, step_index
+
+    Returns
+    -------
+    Step
+
+    """
     sql_query = "SELECT * FROM diyup.steps WHERE tutorial_uuid=%s AND steps.index=%s"
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (tutorial_uuid, step_index,))
@@ -51,7 +73,18 @@ def get_one_step(tutorial_uuid, step_index):
 @app.route('/api/step/<tutorial_uuid>/create', methods=['POST'])
 @token_required
 def create_tutorial_step(current_user, tutorial_uuid):
+    """
+    Step route to create step
 
+    Parameters
+    ----------
+    Registered/Admin access, tutorial_uuid
+
+    Returns
+    -------
+    Step ID
+
+    """
     data = request.get_json()
 
     cur = mysql.connection.cursor()
@@ -72,7 +105,18 @@ def create_tutorial_step(current_user, tutorial_uuid):
 @app.route('/api/step/<tutorial_uuid>/<step_index>', methods=['DELETE'])
 @token_required
 def delete_tutorial_step(current_user, tutorial_uuid, step_index):
+    """
+    Step route to delete step
 
+    Parameters
+    ----------
+    Registered/Admin access, tutorial_uuid, step_index
+
+    Returns
+    -------
+    None
+
+    """
     cur = mysql.connection.cursor()
 
     sql_query = "SELECT * FROM diyup.tutorials WHERE uuid=%s AND author_username=%s"

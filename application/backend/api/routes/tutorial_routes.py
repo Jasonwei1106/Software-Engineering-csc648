@@ -5,6 +5,18 @@ from . import *
 ##########################
 @app.route('/api/tutorial/get', methods=['GET'])
 def get_all_tutorials():
+    """
+    Tutorial route to get all tutorials
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    Tutorials
+
+    """
     sql_query = "SELECT * FROM diyup.tutorials"
     cur = mysql.connection.cursor()
     cur.execute(sql_query)
@@ -33,6 +45,18 @@ def get_all_tutorials():
 # Get tutorials with steps
 @app.route('/api/tutorial/get_all', methods=['GET'])
 def get_all_tutorial_info():
+    """
+    Tutorial route to get tutorials with steps
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    Tutorials with steps
+
+    """
     sql_query = "SELECT * FROM diyup.tutorials"
     cur = mysql.connection.cursor()
     cur.execute(sql_query)
@@ -72,11 +96,22 @@ def get_all_tutorial_info():
 
     cur.close()
 
-    response = jsonify({'tutorials' : output}), 200
-    return response
+    return jsonify({'tutorials' : output}), 200
 
 @app.route('/api/tutorial/<username>', methods=['GET'])
 def get_all_tutorials_by_user(username):
+    """
+    Tutorial route to get all tutorials of a user
+
+    Parameters
+    ----------
+    username
+
+    Returns
+    -------
+    Tutorials
+
+    """
     sql_query = "SELECT * FROM diyup.tutorials WHERE author_username=%s"
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (username,))
@@ -122,7 +157,18 @@ def get_all_tutorials_by_user(username):
 
 @app.route('/api/tutorial/<username>/<tutorial_uuid>', methods=['GET'])
 def get_one_tutorial(username, tutorial_uuid):
+    """
+    Tutorial route to get one tutorial of a user
 
+    Parameters
+    ----------
+    username, tutorial_uuid
+
+    Returns
+    -------
+    Tutorial
+
+    """
     sql_query = "SELECT * FROM diyup.tutorials WHERE author_username=%s AND uuid=%s"
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (username, tutorial_uuid))
@@ -164,6 +210,18 @@ def get_one_tutorial(username, tutorial_uuid):
 @app.route('/api/tutorial/create', methods=['POST'])
 @token_required
 def create_tutorial(current_user):
+    """
+    Tutorial route to create tutorial
+
+    Parameters
+    ----------
+    Registered/Admin access
+
+    Returns
+    -------
+    Tutorial UUID
+
+    """
     data = request.get_json()
 
     duplicate = True
@@ -205,7 +263,18 @@ def create_tutorial(current_user):
 @app.route('/api/tutorial/<tutorial_uuid>', methods=['DELETE'])
 @token_required
 def delete_tutorial(current_user, tutorial_uuid):
+    """
+    Tutorial route to delete tutorial
 
+    Parameters
+    ----------
+    Registered/Admin access, tutorial_uuid
+
+    Returns
+    -------
+    None
+
+    """
     cur = mysql.connection.cursor()
 
     sql_query = "SELECT * FROM diyup.tutorials WHERE uuid=%s AND author_username=%s"
