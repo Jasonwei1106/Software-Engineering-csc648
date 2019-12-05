@@ -5,7 +5,18 @@ from . import *
 ######################
 @app.route('/api/rate/<tutorial_uuid>/get_all', methods=['GET'])
 def get_all_rating(tutorial_uuid):
+    """
+    Rating route to get all ratings
 
+    Parameters
+    ----------
+    tutorial_uuid
+
+    Returns
+    -------
+    Ratings
+
+    """
     sql_query = "SELECT * FROM diyup.ratings WHERE tutorial_uuid=%s"
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (tutorial_uuid,))
@@ -29,7 +40,18 @@ def get_all_rating(tutorial_uuid):
 
 @app.route('/api/rate/<tutorial_uuid>/<rating_type>/get', methods=['GET'])
 def get_rating(tutorial_uuid, rating_type,):
+    """
+    Rating route to get rating of specific type
 
+    Parameters
+    ----------
+    tutorial_uuid, rating_type
+
+    Returns
+    -------
+    Rating
+
+    """
     sql_query = "SELECT * FROM diyup.ratings WHERE tutorial_uuid=%s AND rating_type=%s"
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (tutorial_uuid, rating_type,))
@@ -54,7 +76,18 @@ def get_rating(tutorial_uuid, rating_type,):
 @app.route('/api/rate/<tutorial_uuid>/<rating_type>/create', methods=['POST'])
 @token_required
 def create_rating(current_user, tutorial_uuid, rating_type):
+    """
+    Rating route to create rating
 
+    Parameters
+    ----------
+    Registered/Admin access, tutorial_uuid, rating_type
+
+    Returns
+    -------
+    None
+
+    """
     data = request.get_json()
 
     rating = data['rating']
@@ -69,7 +102,18 @@ def create_rating(current_user, tutorial_uuid, rating_type):
 @app.route('/api/rate/<tutorial_uuid>/<rating_type>/<username>/delete', methods=['DELETE'])
 @token_required
 def delete_rating(current_user, tutorial_uuid, rating_type, username,):
+    """
+    Rating route to delete rating
 
+    Parameters
+    ----------
+    Registered/Admin access, tutorial_uuid, rating_type, username
+
+    Returns
+    -------
+    None
+
+    """
     if current_user[3] == False:
         return jsonify({'message' : 'Cannot create tutorial for a different user!'}), 403
 

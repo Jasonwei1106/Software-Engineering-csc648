@@ -10,6 +10,19 @@ from functools import wraps
 
 # Token used to authenticate user
 def token_required(f):
+    """
+    Home route to test frontend is connected to backend code.
+
+    Attributes
+    ----------
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
@@ -42,6 +55,19 @@ def token_required(f):
 
 # Helper method to get a tutorial's average ratings
 def average_rating_type_for_tutorial(rating_type, tutorial_uuid):
+    """
+    Home route to test frontend is connected to backend code.
+
+    Attributes
+    ----------
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
     sql_query = "SELECT AVG(rating) FROM diyup.ratings WHERE rating_type=%s AND tutorial_uuid=%s"
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (rating_type, tutorial_uuid,))
