@@ -75,13 +75,13 @@
       </q-list>
     </div>
      <div>
-      <!-- <Comment style="margin-top:25px"/> -->
+      <Comment style="margin-top:25px"/>
     </div>
   </div>
 </template>
 
 <script>
-// import Comment from '../pages/Comments'
+import Comment from '../components/Comments'
 
 export default {
   created () {
@@ -104,12 +104,14 @@ export default {
         url: 'img',
         description: 'some description'
       },
-      lists: null,
+      lists: [
+        'None'
+      ],
       steps: null
     }
+  },
+  components: {
+    Comment
   }
-  // components: {
-  //   Comment
-  // }
 }
 </script>

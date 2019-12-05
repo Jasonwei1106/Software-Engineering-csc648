@@ -129,6 +129,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 
 export default {
   created () {
@@ -165,7 +166,11 @@ export default {
       })
     },
     getUrl (files) {
-      return `http://localhost:4444/upload?count=${files.length}`
+      axios.post('https://api.imgur.com/3/image/', {
+        image: files
+      }).then(res => {
+        console.log(res)
+      })
     },
     addList () {
       this.materials.push(this.materialInput)
