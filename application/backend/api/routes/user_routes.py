@@ -296,7 +296,7 @@ def forgot_password():
 
     email_address = data["email_address"]
 
-    temporary_password = "(PLACEHOLDER)"
+    temporary_password = str(uuid.uuid4())
 
     if __name__ == '__main__':
         with app.app_context():
