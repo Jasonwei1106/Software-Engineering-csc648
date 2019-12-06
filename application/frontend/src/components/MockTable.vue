@@ -23,7 +23,7 @@
         <q-toolbar>
           <q-select
             outlined dense
-            class="q-mr-xs col-4" label="Filter"
+            class="q-mr-xs col-4" label="Category Filter"
             bg-color="white" color="black"
             v-model="option"
             style="width: 150px;"
