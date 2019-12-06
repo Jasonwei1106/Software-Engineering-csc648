@@ -126,6 +126,28 @@ def create_user():
     """
     data = request.get_json()
 
+    duplicate = True
+
+    # To create new_set of UUID as a set
+    # with open('api/user_uuid_set.yaml', 'w') as uuid_file:
+    #     new_set = set()
+    #     yaml.dump(new_set, uuid_file)
+
+    # Read the set of existing UUIDs
+    with open('api/user_uuid_set.yaml') as uuid_set_file:
+        uuid_set = yaml.load(uuid_set_file)
+        # Loop until a unique UUID is generated
+        while duplicate is True:
+            new_uuid = str(uuid.uuid4())
+            if new_uuid not in uuid_set:
+                duplicate = False
+
+    with open('api/user_uuid_set.yaml', 'w') as uuid_set_file:
+        # Add the new UUID to the set and dump it to the file
+        uuid_set.add(new_uuid)
+        yaml.dump(uuid_set, uuid_set_file)
+
+    uuid = new_uuid
     email_address = data['email_address']
     username = data['username']
     password = data['password']
@@ -144,7 +166,7 @@ def create_user():
         elif user[1] == username:
             return jsonify({'message' : 'Username already exists!'}), 400
 
-    cur.execute("INSERT INTO diyup.users(email_address, username, password, is_admin, avatar) VALUES(%s, %s, %s, %s, %s)", (email_address, username, hashed_password, is_admin, avatar,))
+    cur.execute("INSERT INTO diyup.users(uuid, email_address, username, password, is_admin, avatar) VALUES(%s, %s, %s, %s, %s)", (uuid, email_address, username, hashed_password, is_admin, avatar,))
     mysql.connection.commit()
     cur.close()
 
