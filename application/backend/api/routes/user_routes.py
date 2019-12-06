@@ -147,7 +147,7 @@ def create_user():
         uuid_set.add(new_uuid)
         yaml.dump(uuid_set, uuid_set_file)
 
-    uuid = new_uuid
+    user_uuid = new_uuid
     email_address = data['email_address']
     username = data['username']
     password = data['password']
@@ -166,11 +166,11 @@ def create_user():
         elif user[1] == username:
             return jsonify({'message' : 'Username already exists!'}), 400
 
-    cur.execute("INSERT INTO diyup.users(uuid, email_address, username, password, is_admin, avatar) VALUES(%s, %s, %s, %s, %s)", (uuid, email_address, username, hashed_password, is_admin, avatar,))
+    cur.execute("INSERT INTO diyup.users(email_address, username, password, is_admin, avatar, uuid) VALUES(%s, %s, %s, %s, %s, %s)", (email_address, username, hashed_password, is_admin, avatar, user_uuid,))
     mysql.connection.commit()
     cur.close()
 
-    verification_link = "(PLACEHOLDER)"
+    verification_url = "http://54.153.68.76:5000/api/user/%s/verify/%s" % (email_address, uuid)
 
     if __name__ == '__main__':
         with app.app_context():
@@ -178,7 +178,7 @@ def create_user():
                 subject="DIYup: Email Address Verification",
                 sender=app.config.get("MAIL_USERNAME"),
                 recipients=[email_address],
-                body="Hello %s, welcome to DIYup! Please click on this link to verify your email, address: %s" % (username, verification_link)
+                body="Hello %s, welcome to DIYup! Please click on this link to verify your email, address: %s" % (username, verification_url)
             )
             mail.send(msg)
 
@@ -322,6 +322,26 @@ def login():
 
     return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'}
             )
+
+@app.route('/api/user/verify/<email_address>/<user_uuid>', methods=['POST'])
+def verify_user(email_address, user_uuid):
+
+    sql_query = "SELECT uuid FROM diyup.users WHERE email_address=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (email_address,))
+    real_user_uuid = cur.fetchall()[0][0]
+    print(real_user_uuid)
+    print(user_uuid)
+    
+    if user_uuid == real_user_uuid:
+        sql_update = "UPDATE diyup.users SET is_verified=1 WHERE email_address=%s"
+        cur.execute(sql_update, (email_address,))
+        cur.close()
+        return jsonify({'message' : 'User successfully verified!'})
+    else:
+        cur.close()
+        return jsonify({'message' : 'User verification link does not exist.'})
+
 
 @app.route('/api/user/forgot', methods=['POST'])
 def forgot_password():
