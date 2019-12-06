@@ -198,4 +198,46 @@ def login():
         token = jwt.encode({'email_address' : user[0]}, app.config['SECRET_KEY'])
         return jsonify({'token' : token.decode('UTF-8')})
 
-    return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+    return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'}
+            )
+
+@app.route('/api/user/forgot', methods=['POST'])
+def forgot_password():
+
+    data = request.get_json()
+
+    email_address = data["email_address"]
+
+    temporary_password = "(PLACEHOLDER)"
+
+    if __name__ == '__main__':
+        with app.app_context():
+            msg = Message(
+                subject="DIYup: Temporary Password",
+                sender=app.config.get("MAIL_USERNAME"),
+                recipients=[email_address],
+                body="A request to reset a password for this user's DIYup account was made. Please use the temporary password \"%s\""
+            )
+            mail.send(msg)
+
+    return jsonify({'message' : 'Temporary password has been sent!'})
+
+
+
+@app.route('/api/user/<email_address>/reset', methods=['POST'])
+@token_required
+def reset_password(email_address):
+
+    data = request.get_json()
+
+    password = data['password']
+
+    hashed_password = generate_password_hash(password, method='sha256')
+
+    cur = mysql.connection.cursor()
+    sql_update = "UPDATE diyup.users SET password=%s WHERE email_address=%s"
+    cur.execute(sql_update, (hashed_password, email_address))
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify({'message' : 'Password has been reset!'})
