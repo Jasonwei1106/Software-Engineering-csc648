@@ -148,6 +148,18 @@ def create_user():
     mysql.connection.commit()
     cur.close()
 
+    verification_link = "(PLACEHOLDER)"
+
+    if __name__ == '__main__':
+        with app.app_context():
+            msg = Message(
+                subject="DIYup: Email Address Verification",
+                sender=app.config.get("MAIL_USERNAME"),
+                recipients=[email_address],
+                body="Hello %s, welcome to DIYup! Please click on this link to verify your email, address: %s" % (username, verification_link)
+            )
+            mail.send(msg)
+
     return jsonify({'message' : 'New user created!'}), 201
 
 @app.route('/api/user/<email_address>/promote', methods=['PUT'])
@@ -304,7 +316,7 @@ def forgot_password():
                 subject="DIYup: Temporary Password",
                 sender=app.config.get("MAIL_USERNAME"),
                 recipients=[email_address],
-                body="A request to reset a password for this user's DIYup account was made. Please use the temporary password \"%s\""
+                body="A request to reset a password for this user's DIYup account was made. Please use the temporary password \"%s\"" % temporary_password
             )
             mail.send(msg)
 
