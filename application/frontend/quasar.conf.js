@@ -31,6 +31,9 @@ module.exports = function (ctx) {
       // all: true, // --- includes everything; for dev only!
 
       components: [
+        'QExpansionItem',
+        'QUploader',
+        'QSelect',
         'QStepper',
         'QStep',
         'QStepperNavigation',
@@ -77,7 +80,11 @@ module.exports = function (ctx) {
 
       // Quasar plugins
       plugins: [
-        'Notify'
+        'Notify',
+        'LocalStorage',
+        'SessionStorage',
+        'Dialog',
+        'Cookies'
       ]
     },
 

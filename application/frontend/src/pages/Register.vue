@@ -1,70 +1,57 @@
 <template>
-  <q-card class="q-pa-md" style="width: 98%; margin: 1em auto;">
-    <strong>Register</strong>
-    <hr>
+  <div
+    class="q-pa-md"
+    style="margin: 1em auto;"
+  >
     <q-form @submit.prevent.stop="onSubmit">
-      <div class="q-pa-md">
-
-        <div>
-          <strong>Email:</strong>
+      <div align="center">
+        <div class="q-gutter-md" style="width: 35vw; min-width: 270px;">
           <q-input
-            dense filled
-            type="text"
-            placeholder="Email..."
-            v-model="logIn.name"
-            required
-          >
-            <template v-slot:prepend>
-              <q-icon name="mail" />
-            </template>
-          </q-input>
-        </div>
+            dense outlined required
+            bg-color="white" type="text"
+            placeholder="Username"
+            v-model="logIn.username"
+          />
 
-        <div>
-          <strong>Password:</strong>
           <q-input
-            dense filled
-            type="password"
-            placeholder="Password..."
+            dense outlined required
+            bg-color="white" type="email"
+            placeholder="Email"
+            v-model="logIn.email"
+          />
+
+          <q-input
+            dense outlined required
+            bg-color="white" type="password"
+            placeholder="Password"
             v-model="logIn.password"
-            required
-          >
-            <template v-slot:prepend>
-              <q-icon name="vpn_key" />
-            </template>
-          </q-input>
-        </div>
+          />
 
-        <div>
-          <strong>Confirm Password:</strong>
           <q-input
-            dense filled
-            type ="password"
-            placeholder="Password..."
+            dense outlined
+            bg-color="white" type ="password"
+            placeholder="Confirm Password"
             v-model="logIn.conpassword"
-          >
-            <template v-slot:prepend>
-              <q-icon name="vpn_key" />
-            </template>
-          </q-input>
+          />
         </div>
-      </div>
 
-      <div class="q-gutter-sm">
-        <q-checkbox
-          v-model="customModel"
-          color="primary"
-          label="Do you agree? {Please note: Terms and conditions will come...}"
-          true-value="yes"
-          false-value="no"
-        />
-      </div>
+        <div
+          class="q-my-md row" align="center"
+          style="width: 30vw; min-width: 270px;"
+        >
+          By clicking "Sign Up" you agree to our Terms and to our Privacy Statment.
+        </div>
 
-      <div class="q-gutter-sm" align="center" >
-        <q-btn no-caps type="submit" color="primary" label="Confirm" />
+        <div align="center" >
+          <q-btn
+            no-caps
+            type="submit" color="primary" label="Sign Up"
+            style="width: 15%; min-width: 150px;"
+          />
+        </div>
       </div>
     </q-form>
-  </q-card>
+  </div>
 </template>
 
 <script>
@@ -74,35 +61,27 @@ import axios from 'axios'
 export default {
   data () {
     return {
-      customModel: 'no',
       logIn: {}
     }
   },
   methods: {
     onSubmit: function () {
-      if (this.customModel !== 'yes') {
-        this.$q.notify({
-          color: 'negative',
-          message: 'You need to accept the license and terms first'
-        })
-      } else if (this.logIn.conpassword !== this.logIn.password) {
+      if (this.logIn.conpassword !== this.logIn.password) {
         this.$q.notify({
           message: 'Your confirm password doesn\'t match'
         })
       } else {
         axios.post('http://54.153.68.76:5000/api/user/create', {
-          email_address: this.logIn.name,
-          username: this.logIn.name,
+          email_address: this.logIn.email,
+          username: this.logIn.username,
           password: this.logIn.password
         })
-          .then(() => {
+          .then(res => {
             this.$q.notify({
               icon: 'done',
               color: 'positive',
               message: 'Submitted'
             })
-
-            this.customModel = 'no'
             this.logIn = {}
           })
           .catch(() => {

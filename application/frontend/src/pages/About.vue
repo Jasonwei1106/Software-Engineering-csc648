@@ -25,10 +25,7 @@
                 <q-img
                   class="avatar"
                   :src="group.avatar"
-                  style="
-                    width: 50px;
-                    height: 50px;
-                  "
+                  style="width: 50px; height: 50px;"
                 />
               </q-avatar>
             </q-item-section>
