@@ -337,49 +337,70 @@ def verify_user(email_address, user_uuid):
         sql_update = "UPDATE diyup.users SET is_verified=1 WHERE email_address=%s"
         cur.execute(sql_update, (email_address,))
         cur.close()
-        return jsonify({'message' : 'User successfully verified!'})
+        return jsonify({'message' : 'User successfully verified!'}), 200
     else:
         cur.close()
-        return jsonify({'message' : 'User verification link does not exist.'})
+        return jsonify({'message' : 'User verification link does not exist.'}), 404
 
 
-@app.route('/api/user/forgot', methods=['POST'])
-def forgot_password():
+@app.route('/api/user/forgot/send', methods=['POST'])
+def send_password_reset_code():
 
     data = request.get_json()
 
     email_address = data["email_address"]
 
-    temporary_password = str(uuid.uuid4())
+    password_reset_code = str(uuid.uuid4())
 
     if __name__ == '__main__':
         with app.app_context():
             msg = Message(
-                subject="DIYup: Temporary Password",
+                subject="DIYup: Password Reset",
                 sender=app.config.get("MAIL_USERNAME"),
                 recipients=[email_address],
-                body="A request to reset a password for this user's DIYup account was made. Please use the temporary password \"%s\"" % temporary_password
+                body="A request to reset a password for this user's DIYup account was made. Please use the password reset code \"%s\"" % password_reset_code
             )
             mail.send(msg)
 
-    return jsonify({'message' : 'Temporary password has been sent!'})
+    return jsonify({'message' : 'Temporary password has been sent!'}), 200
 
-
-
-@app.route('/api/user/<email_address>/reset', methods=['POST'])
-@token_required
-def reset_password(email_address):
+@app.route('/api/user/forgot/verify', methods=['POST'])
+def verify_password_reset_code():
 
     data = request.get_json()
 
-    password = data['password']
+    email_address = data["email_address"]
+    password_reset_code = data["password_reset_code"]
 
-    hashed_password = generate_password_hash(password, method='sha256')
-
+    sql_query = "SELECT * FROM diyup.users WHERE email_address=%s"
     cur = mysql.connection.cursor()
-    sql_update = "UPDATE diyup.users SET password=%s WHERE email_address=%s"
-    cur.execute(sql_update, (hashed_password, email_address))
-    mysql.connection.commit()
+    cur.execute(sql_query, (email_address,))
+    user = cur.fetchone()
     cur.close()
 
-    return jsonify({'message' : 'Password has been reset!'})
+    if user[7] == password_reset_code:
+        return jsonify({'message' : 'Password reset code is valid!'}), 200
+    else:
+        return jsonify({'message' : 'Password reset code is not valid.'}), 400
+    
+
+
+@app.route('/api/user/forgot/reset', methods=['POST'])
+def reset_password():
+
+    data = request.get_json()
+
+    email_address = data['email_address']
+    new_password = data['password']
+
+    cur = mysql.connection.cursor()
+
+    sql_update = "UPDATE diyup.users SET password=%s WHERE email_address=%s"
+    cur.execute(sql_update, (new_password, email_address,))
+    mysql.connection.commit()
+    
+    sql_update = "UPDATE diyup.users SET password_reset_code=null WHERE email_address=%s"
+    cur.execute(sql_update, (email_address,))
+    cur.close()
+
+    return jsonify({'message' : 'Password has been reset!'}), 200
