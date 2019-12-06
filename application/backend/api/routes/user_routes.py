@@ -126,6 +126,28 @@ def create_user():
     """
     data = request.get_json()
 
+    duplicate = True
+
+    # To create new_set of UUID as a set
+    # with open('api/user_uuid_set.yaml', 'w') as uuid_file:
+    #     new_set = set()
+    #     yaml.dump(new_set, uuid_file)
+
+    # Read the set of existing UUIDs
+    with open('api/user_uuid_set.yaml') as uuid_set_file:
+        uuid_set = yaml.load(uuid_set_file)
+        # Loop until a unique UUID is generated
+        while duplicate is True:
+            new_uuid = str(uuid.uuid4())
+            if new_uuid not in uuid_set:
+                duplicate = False
+
+    with open('api/user_uuid_set.yaml', 'w') as uuid_set_file:
+        # Add the new UUID to the set and dump it to the file
+        uuid_set.add(new_uuid)
+        yaml.dump(uuid_set, uuid_set_file)
+
+    user_uuid = new_uuid
     email_address = data['email_address']
     username = data['username']
     password = data['password']
@@ -144,9 +166,21 @@ def create_user():
         elif user[1] == username:
             return jsonify({'message' : 'Username already exists!'}), 400
 
-    cur.execute("INSERT INTO diyup.users(email_address, username, password, is_admin, avatar) VALUES(%s, %s, %s, %s, %s)", (email_address, username, hashed_password, is_admin, avatar,))
+    cur.execute("INSERT INTO diyup.users(email_address, username, password, is_admin, avatar, uuid) VALUES(%s, %s, %s, %s, %s, %s)", (email_address, username, hashed_password, is_admin, avatar, user_uuid,))
     mysql.connection.commit()
     cur.close()
+
+    verification_url = "http://54.153.68.76:5000/api/user/%s/verify/%s" % (email_address, uuid)
+
+    if __name__ == '__main__':
+        with app.app_context():
+            msg = Message(
+                subject="DIYup: Email Address Verification",
+                sender=app.config.get("MAIL_USERNAME"),
+                recipients=[email_address],
+                body="Hello %s, welcome to DIYup! Please click on this link to verify your email, address: %s" % (username, verification_url)
+            )
+            mail.send(msg)
 
     return jsonify({'message' : 'New user created!'}), 201
 
@@ -286,4 +320,95 @@ def login():
         token = jwt.encode({'email_address' : user[0]}, app.config['SECRET_KEY'])
         return jsonify({'token' : token.decode('UTF-8')})
 
-    return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+    return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'}
+            )
+
+@app.route('/api/user/verify/<email_address>/<user_uuid>', methods=['POST'])
+def verify_user(email_address, user_uuid):
+
+    sql_query = "SELECT uuid FROM diyup.users WHERE email_address=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (email_address,))
+    real_user_uuid = cur.fetchall()[0][0]
+    print(real_user_uuid)
+    print(user_uuid)
+    
+    if user_uuid == real_user_uuid:
+        sql_update = "UPDATE diyup.users SET is_verified=1 WHERE email_address=%s"
+        cur.execute(sql_update, (email_address,))
+        cur.close()
+        return jsonify({'message' : 'User successfully verified!'}), 200
+    else:
+        cur.close()
+        return jsonify({'message' : 'User verification link does not exist.'}), 404
+
+
+@app.route('/api/user/forgot/send', methods=['POST'])
+def send_password_reset_code():
+
+    data = request.get_json()
+
+    email_address = data["email_address"]
+
+    password_reset_code = str(uuid.uuid4())
+
+    cur = mysql.connection.cursor()
+    sql_update = "UPDATE diyup.users SET password_reset_code=%s WHERE email_address=%s"
+    cur.execute(sql_update, (password_reset_code, email_address,))
+    mysql.connection.commit()
+    cur.close()
+
+    if __name__ == '__main__':
+        with app.app_context():
+            msg = Message(
+                subject="DIYup: Password Reset",
+                sender=app.config.get("MAIL_USERNAME"),
+                recipients=[email_address],
+                body="A request to reset a password for this user's DIYup account was made. Please use the password reset code \"%s\"" % password_reset_code
+            )
+            mail.send(msg)
+
+
+    return jsonify({'message' : 'Password reset code has been sent!'}), 200
+
+@app.route('/api/user/forgot/verify', methods=['POST'])
+def verify_password_reset_code():
+
+    data = request.get_json()
+
+    email_address = data["email_address"]
+    password_reset_code = data["password_reset_code"]
+
+    sql_query = "SELECT * FROM diyup.users WHERE email_address=%s"
+    cur = mysql.connection.cursor()
+    cur.execute(sql_query, (email_address,))
+    user = cur.fetchone()
+    cur.close()
+
+    if user[7] == password_reset_code:
+        return jsonify({'message' : 'Password reset code is valid!'}), 200
+    else:
+        return jsonify({'message' : 'Password reset code is not valid.'}), 400
+    
+
+
+@app.route('/api/user/forgot/reset', methods=['POST'])
+def reset_password():
+
+    data = request.get_json()
+
+    email_address = data['email_address']
+    new_password = data['password']
+
+    cur = mysql.connection.cursor()
+
+    sql_update = "UPDATE diyup.users SET password=%s WHERE email_address=%s"
+    cur.execute(sql_update, (new_password, email_address,))
+    mysql.connection.commit()
+    
+    sql_update = "UPDATE diyup.users SET password_reset_code=null WHERE email_address=%s"
+    cur.execute(sql_update, (email_address,))
+    mysql.connection.commit()
+    cur.close()
+
+    return jsonify({'message' : 'Password has been reset!'}), 200
