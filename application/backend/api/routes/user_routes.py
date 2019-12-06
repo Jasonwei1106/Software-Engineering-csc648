@@ -352,6 +352,12 @@ def send_password_reset_code():
 
     password_reset_code = str(uuid.uuid4())
 
+    cur = mysql.connection.cursor()
+    sql_update = "UPDATE diyup.users SET password_reset_code=%s WHERE email_address=%s"
+    cur.execute(sql_update, (password_reset_code, email_address,))
+    mysql.connection.commit()
+    cur.close()
+
     if __name__ == '__main__':
         with app.app_context():
             msg = Message(
@@ -361,6 +367,7 @@ def send_password_reset_code():
                 body="A request to reset a password for this user's DIYup account was made. Please use the password reset code \"%s\"" % password_reset_code
             )
             mail.send(msg)
+
 
     return jsonify({'message' : 'Password reset code has been sent!'}), 200
 
@@ -401,6 +408,7 @@ def reset_password():
     
     sql_update = "UPDATE diyup.users SET password_reset_code=null WHERE email_address=%s"
     cur.execute(sql_update, (email_address,))
+    mysql.connection.commit()
     cur.close()
 
     return jsonify({'message' : 'Password has been reset!'}), 200
