@@ -362,7 +362,7 @@ def send_password_reset_code():
             )
             mail.send(msg)
 
-    return jsonify({'message' : 'Temporary password has been sent!'}), 200
+    return jsonify({'message' : 'Password reset code has been sent!'}), 200
 
 @app.route('/api/user/forgot/verify', methods=['POST'])
 def verify_password_reset_code():
