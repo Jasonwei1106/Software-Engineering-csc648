@@ -1,3 +1,16 @@
+""" Comment Routes
+
+This file contains the comment routes.
+
+This file is imported as a module and contains the following functions:
+    * get_comments
+    * get_all_comments
+    * get_one_reply
+    * create_tutorial_comment
+    * reply_to_tutorial_comment
+    * delete_comment
+
+"""
 from . import *
 
 ########################
@@ -6,7 +19,18 @@ from . import *
 # Get all comments
 @app.route('/api/comments/get_all_comments', methods=['GET'])
 def get_comments():
+    """
+    Comment route to get comment information
 
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    Comments
+
+    """
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM diyup.comments")
     comments = cur.fetchall()
@@ -32,10 +56,20 @@ def get_comments():
 
     return jsonify({'comments' : output}), 200
 
-# Return comments + 2 children
 @app.route('/api/comments/<tutorial_uuid>/get_all', methods=['GET'])
 def get_all_comments(tutorial_uuid):
+    """
+    Comment route to get comment information with 2 replies
 
+    Parameters
+    ----------
+    tutorial_uuid
+
+    Returns
+    -------
+    Comments with replies
+
+    """
     sql_query = "SELECT * FROM diyup.comments WHERE tutorial_uuid=%s AND reply_to IS null"
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (tutorial_uuid,))
@@ -97,10 +131,20 @@ def get_all_comments(tutorial_uuid):
 
     return jsonify({'comments' : output}), 200
 
-# Get reply of a comment based off comment id
 @app.route('/api/comments/<tutorial_uuid>/<reply_to>', methods=['GET'])
 def get_one_reply(tutorial_uuid, reply_to):
+    """
+    Comment route to get comment reply
 
+    Parameters
+    ----------
+    tutorial_uuid, reply_to
+
+    Returns
+    -------
+    Comment replies
+
+    """
     sql_query = "SELECT * FROM diyup.comments WHERE tutorial_uuid=%s AND reply_to=%s"
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (tutorial_uuid, reply_to,))
@@ -128,7 +172,18 @@ def get_one_reply(tutorial_uuid, reply_to):
 @app.route('/api/comments/<tutorial_uuid>/create', methods=['POST'])
 @token_required
 def create_tutorial_comment(current_user, tutorial_uuid):
+    """
+    Comment route to create comment
 
+    Parameters
+    ----------
+    Registered/Admin User access, tutorial_uuid
+
+    Returns
+    -------
+    Comment ID
+
+    """
     data = request.get_json()
 
     cur = mysql.connection.cursor()
@@ -154,7 +209,18 @@ def create_tutorial_comment(current_user, tutorial_uuid):
 @app.route('/api/comments/<tutorial_uuid>/create/<reply_comment_id>', methods=['POST'])
 @token_required
 def reply_to_tutorial_comment(current_user, tutorial_uuid, reply_comment_id):
+    """
+    Comment route to create comment reply
 
+    Parameters
+    ----------
+    Registered/Admin User access, tutorial_uuid, reply_comment_id
+
+    Returns
+    -------
+    Comment ID
+
+    """
     data = request.get_json()
 
     cur = mysql.connection.cursor()
@@ -187,7 +253,18 @@ def reply_to_tutorial_comment(current_user, tutorial_uuid, reply_comment_id):
 @app.route('/api/comments/delete/<comment_id>', methods=['DELETE'])
 @token_required
 def delete_comment(current_user, comment_id):
+    """
+    Comment route to delete comment information
 
+    Parameters
+    ----------
+    Registered/Admin User access, comment_id
+
+    Returns
+    -------
+    None
+
+    """
     sql_query = "SELECT * FROM diyup.comments WHERE comments.id=%s"
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (comment_id,))

@@ -4,15 +4,71 @@ const routes = [
     path: '/',
     component: () => import('layouts/MyLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue') },
-      { path: '/about', component: () => import('pages/About.vue') },
-      { path: '/phyo', component: () => import('pages/Phyo.vue') },
-      { path: '/jason', component: () => import('pages/Jason.vue') },
-      { path: '/antonio', component: () => import('pages/Antonio.vue') },
-      { path: '/myles', component: () => import('pages/Myles.vue') },
-      { path: '/eduardo', component: () => import('pages/Eduardo.vue') }
+      {
+        path: '',
+        name: 'rootHome',
+        component: () => import('pages/Index.vue')
+      },
+      { path: 'hot', component: () => import('pages/Index.vue') },
+      { path: 'new', component: () => import('pages/Index.vue') },
+      { path: '?title:query', component: () => import('pages/Index.vue') }
+    ]
+  },
+  {
+    path: '/register',
+    component: () => import('layouts/MyLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Register.vue') }
+    ]
+  },
+  {
+    path: '/forgot',
+    component: () => import('layouts/MyLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/ForgetPassword.vue') }
+    ]
+  },
+  {
+    path: '/about',
+    component: () => import('layouts/MyLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'rootAbout',
+        component: () => import('pages/About.vue')
+      },
+      { path: ':name', component: () => import('pages/Intro.vue') }
+    ]
+  },
+  {
+    path: '/post',
+    component: () => import('layouts/MyLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Post.vue') }
+    ]
+  },
+  {
+    path: '/preview',
+    component: () => import('layouts/MyLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Preview.vue') }
+    ]
+  },
+  {
+    path: '/tutorial',
+    component: () => import('layouts/MyLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/Tutorial.vue') },
+      { path: ':uuid', component: () => import('pages/Tutorial.vue') }
     ]
   }
+  // {
+  //   path: '/test',
+  //   component: () => import('layouts/MyLayout.vue'),
+  //   children: [
+  //     { path: '', component: () => import('pages/Test.vue') }
+  //   ]
+  // }
 ]
 
 // Always leave this as last one

@@ -7,7 +7,18 @@ from . import *
 @app.route('/api/user/get', methods=['GET'])
 @token_required
 def get_all_users(current_user):
+    """
+    User route to get all user
 
+    Parameters
+    ----------
+    Admin access
+
+    Returns
+    -------
+    User Data
+
+    """
     if current_user[3] != True:
         return jsonify({'message' : 'Not an admin. Cannot perform that function!'}), 403
 
@@ -33,7 +44,18 @@ def get_all_users(current_user):
 @app.route('/api/user/<email_address>', methods=['GET'])
 @token_required
 def get_one_user(current_user, email_address):
+    """
+    User route to get one user
 
+    Parameters
+    ----------
+    Registered/Admin access, email_address
+
+    Returns
+    -------
+    User Data
+
+    """
     if current_user[3] != True:
         return jsonify({'message' : 'Not an admin. Cannot perform that function!'}), 403
 
@@ -58,7 +80,18 @@ def get_one_user(current_user, email_address):
 @app.route('/api/user/current_user', methods=['GET'])
 @token_required
 def get_current_user(current_user):
+    """
+    User route to get current user
 
+    Parameters
+    ----------
+    Registered/Admin access
+
+    Returns
+    -------
+    User Data
+
+    """
     sql_query = "SELECT * FROM diyup.users WHERE email_address=%s"
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (current_user[0],))
@@ -79,7 +112,18 @@ def get_current_user(current_user):
 
 @app.route('/api/user/create', methods=['POST'])
 def create_user():
+    """
+    User route to create user
 
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    """
     data = request.get_json()
 
     email_address = data['email_address']
@@ -109,7 +153,18 @@ def create_user():
 @app.route('/api/user/<email_address>/promote', methods=['PUT'])
 @token_required
 def promote_user(current_user, email_address):
+    """
+    User route to promote user
 
+    Parameters
+    ----------
+    Admin access, email_address
+
+    Returns
+    -------
+    None
+
+    """
     if current_user[3] != True:
         return jsonify({'message' : 'Not an admin. Cannot perform that function!'}), 403
 
@@ -132,7 +187,18 @@ def promote_user(current_user, email_address):
 @app.route('/api/user/<email_address>/demote', methods=['PUT'])
 @token_required
 def demote_user(current_user, email_address):
+    """
+    User route to demote user
 
+    Parameters
+    ----------
+    Admin access, email_address
+
+    Returns
+    -------
+    None
+
+    """
     if current_user[3] != True:
         return jsonify({'message' : 'Not an admin. Cannot perform that function!'}), 403
 
@@ -155,7 +221,18 @@ def demote_user(current_user, email_address):
 @app.route('/api/user/<email_address>', methods=['DELETE'])
 @token_required
 def delete_user(current_user, email_address):
+    """
+    User route to delete user
 
+    Parameters
+    ----------
+    Admin access, email_address
+
+    Returns
+    -------
+    None
+
+    """
     if current_user[3] != True:
         return jsonify({'message' : 'Not an admin. Cannot perform that function!'}), 403
 
@@ -176,7 +253,18 @@ def delete_user(current_user, email_address):
 
 @app.route('/api/login', methods=['POST'])
 def login():
+    """
+    User route to login
 
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    Token
+
+    """
     data = request.get_json()
 
     username = data['username']
