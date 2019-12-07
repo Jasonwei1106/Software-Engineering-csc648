@@ -1,40 +1,44 @@
 <template>
   <q-page padding>
-<div>
-        <div class="q-pa-md"
-        style="max-width: 350px margin : 0 auto;
-        padding-left: 300px;
-        padding-right: 300px;"
-        >
-        <q-list bordered>
+    <div>
+      <div
+        class="q-pa-md"
+        style="
+          margin: auto;
+          max-width: 70%;
+          min-width: 30px;
+        "
+      >
+        <q-list separator bordered>
           <q-item
-            clickable
-            v-ripple
-            v-for="group in groups"
-            :key="group.id"
+            clickable v-ripple
+            v-for="(group, ind) in groups"
+            :key="ind"
             class="q-my-sm"
-            @click="openNewPage(group.name)"
+            @click="openNewPage(group.path)"
           >
             <q-item-section>
               <q-avatar
                 color="primary"
                 text-color="white"
               >
-                {{ group.letter }}
+                <q-img
+                  class="avatar"
+                  :src="group.avatar"
+                  style="width: 50px; height: 50px;"
+                />
               </q-avatar>
             </q-item-section>
-            <q-item-section>
-              <q-item-label>
-                {{ group.name }}
-              </q-item-label>
+            <q-item-section align="center">
+              <strong>{{ group.name }}</strong>
             </q-item-section>
-            <q-item-section side>
-              <q-icon name="chat_bubble" color="green" ></q-icon>
+            <q-item-section align="right">
+              <em>{{ group.role }}</em>
             </q-item-section>
           </q-item>
-          </q-list>
-        </div>
-        </div>
+        </q-list>
+      </div>
+    </div>
   </q-page>
 </template>
 
@@ -44,41 +48,46 @@ export default {
     return {
       groups: [
         {
-          id: 1,
-          letter: 'P',
-          name: 'Phyo'
-
+          avatar: '../statics/square_phyo.jpg',
+          name: 'Phyo Htut',
+          path: '/about/phyo',
+          role: 'Team Lead'
         },
         {
-          id: 2,
-          letter: 'A',
-          name: 'Antonio'
+          avatar: '../statics/antonio.jpg',
+          name: 'Antonio Carmona',
+          path: '/about/antonio',
+          role: 'Git Master'
         },
         {
-          id: 3,
-          letter: 'M',
-          name: 'Myles'
+          avatar: '../statics/myles.jpg',
+          name: 'Myles Padronan',
+          path: '/about/myles',
+          role: 'Backend Lead'
         },
         {
-          id: 4,
-          letter: 'E',
-          name: 'Eduardo'
+          avatar: '../statics/IMG_8454.jpg',
+          name: 'Eduardo Ramos',
+          path: '/about/eduardo',
+          role: 'UI/UX'
         },
         {
-          id: 5,
-          letter: 'J',
-          name: 'Jason'
+          avatar: '../statics/json.jpeg',
+          name: 'Jason Wei',
+          path: '/about/jason',
+          role: 'Frontend Lead'
         }
       ]
     }
   },
   methods: {
     openNewPage (entry) {
-      let route = entry.toLowerCase()
-      console.log(route)
-      this.$router.push(`/${route}`)
-      // window.open(entry, '_blank')
+      this.$router.push(entry)
     }
   }
 }
 </script>
+
+<style lang="stylus">
+
+</style>

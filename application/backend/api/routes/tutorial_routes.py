@@ -237,12 +237,12 @@ def create_tutorial(current_user):
     duplicate = True
 
     # To create new_set of UUID as a set
-    # with open('api/uuid_set.yaml', 'w') as uuid_file:
+    # with open('api/tutorial_uuid_set.yaml', 'w') as uuid_file:
     #     new_set = set()
     #     yaml.dump(new_set, uuid_file)
 
     # Read the set of existing UUIDs
-    with open('api/uuid_set.yaml') as uuid_set_file:
+    with open('api/tutorial_uuid_set.yaml') as uuid_set_file:
         uuid_set = yaml.load(uuid_set_file)
         # Loop until a unique UUID is generated
         while duplicate is True:
@@ -250,7 +250,7 @@ def create_tutorial(current_user):
             if new_uuid not in uuid_set:
                 duplicate = False
 
-    with open('api/uuid_set.yaml', 'w') as uuid_set_file:
+    with open('api/tutorial_uuid_set.yaml', 'w') as uuid_set_file:
         # Add the new UUID to the set and dump it to the file
         uuid_set.add(new_uuid)
         yaml.dump(uuid_set, uuid_set_file)
