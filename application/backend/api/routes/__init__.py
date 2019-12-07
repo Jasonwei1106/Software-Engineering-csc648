@@ -1,7 +1,8 @@
 """ Init File for Routes
 
-This file is to connect all the routes. The init file imports the methods token_required decorator,
-average_rating_type_for_tutorial helper function, and all imports needed for the route files.
+This file is to connect all the routes. The init file imports the methods
+token_required decorator, average_rating_type_for_tutorial helper function,
+and all imports needed for the route files.
 
 """
 
