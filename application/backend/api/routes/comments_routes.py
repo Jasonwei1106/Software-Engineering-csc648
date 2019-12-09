@@ -291,6 +291,8 @@ def delete_comment(current_user, comment_id):
 
     if not comment:
         return jsonify({'message' : 'No comment found!'}), 400
+    elif current_user[3] == False:
+        return jsonify({'message' : 'Not an admin!'}), 400
 
     sql_delete = "DELETE FROM diyup.comments WHERE comments.id=%s"
     cur.execute(sql_delete, (comment_id,))

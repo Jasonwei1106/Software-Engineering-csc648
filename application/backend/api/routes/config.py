@@ -1,5 +1,6 @@
 from flask import request, jsonify, make_response
-from api.config import app, db, mysql
+from flask_mail import Message
+from api.config import app, db, mysql, mail
 import yaml
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash

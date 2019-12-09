@@ -185,17 +185,16 @@ def create_user():
     verification_url = "http://54.153.68.76:5000/api/user/%s/verify/%s" % \
         (email_address, uuid)
 
-    if __name__ == '__main__':
-        with app.app_context():
-            msg = Message(
-                subject="DIYup: Email Address Verification",
-                sender=app.config.get("MAIL_USERNAME"),
-                recipients=[email_address],
-                body="Hello %s, welcome to DIYup! Please click on this link to \
-                    verify your email, address: %s" % \
-                    (username, verification_url)
-            )
-            mail.send(msg)
+    with app.app_context():
+        msg = Message(
+            subject="DIYup: Email Address Verification",
+            sender=app.config.get("MAIL_USERNAME"),
+            recipients=[email_address],
+            body="Hello %s, welcome to DIYup! Please click on this link to \
+                verify your email, address: %s" % \
+                (username, verification_url)
+        )
+        mail.send(msg)
 
     return jsonify({'message' : 'New user created!'}), 201
 
@@ -390,19 +389,19 @@ def send_password_reset_code():
     cur.execute(sql_update, (password_reset_code, email_address,))
     mysql.connection.commit()
     cur.close()
+    
+    
 
-    if __name__ == '__main__':
-        with app.app_context():
-            msg = Message(
-                subject="DIYup: Password Reset",
-                sender=app.config.get("MAIL_USERNAME"),
-                recipients=[email_address],
-                body="A request to reset a password for this user's \
-                    DIYup account was made. Please use the password reset code \
-                    \"%s\"" % password_reset_code
-            )
-            mail.send(msg)
-
+    with app.app_context():
+        msg = Message(
+            subject="DIYup: Password Reset",
+            sender=app.config.get("MAIL_USERNAME"),
+            recipients=[email_address],
+            body="A request to reset a password for this user's \
+                DIYup account was made. Please use the password reset code \
+                \"%s\"" % password_reset_code
+        )
+        mail.send(msg)
 
     return jsonify({'message' : 'Password reset code has been sent!'}), 200
 
