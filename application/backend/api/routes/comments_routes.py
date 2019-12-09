@@ -16,11 +16,10 @@ from . import *
 ########################
 ## COMMENTS FUNCTIONS ##
 ########################
-# Get all comments
 @app.route('/api/comments/get_all_comments', methods=['GET'])
 def get_comments():
     """
-    Comment route to get comment information
+    Comment route to get all comment information
 
     Parameters
     ----------
@@ -180,7 +179,7 @@ def create_tutorial_comment(current_user, tutorial_uuid):
 
     Parameters
     ----------
-    Registered/Admin User access, tutorial_uuid
+    Registered User access, tutorial_uuid
 
     Returns
     -------
@@ -288,10 +287,12 @@ def delete_comment(current_user, comment_id):
 
     if not comment:
         return jsonify({'message' : 'No comment found!'}), 400
+    elif current_user[3] == False:
+        retrun jsonify({'message' : 'Not an admin!'}), 400
 
     sql_delete = "DELETE FROM diyup.comments WHERE comments.id=%s"
     cur.execute(sql_delete, (comment_id,))
     mysql.connection.commit()
     cur.close()
 
-    return jsonify({'message' : 'Comment deleted'})
+    return jsonify({'message' : 'Comment deleted'}), 200
