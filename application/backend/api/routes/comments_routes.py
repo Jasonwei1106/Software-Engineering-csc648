@@ -191,8 +191,9 @@ def create_tutorial_comment(current_user, tutorial_uuid):
 
     cur = mysql.connection.cursor()
 
-    uuid = cur.execute("SELECT * FROM diyup.comments WHERE tutorial_uuid=%s", \
+    cur.execute("SELECT * FROM diyup.tutorials WHERE uuid=%s", \
         (tutorial_uuid,))
+    uuid = cur.fetchall()[0][0]
 
     if not uuid:
         return jsonify({'message' : 'No tutorial ID found!'}), 400
@@ -203,10 +204,12 @@ def create_tutorial_comment(current_user, tutorial_uuid):
     content = data['content']
     image = data['image']
     edited = 0
+    date = time.ctime()
+    timestamp = date
 
-    cur.execute("INSERT INTO diyup.comments(comments.tutorial_uuid, username, \
-        content, image, edited)", \
-        (tutorial_uuid, current_user[1], content, image, edited,)
+    cur.execute("INSERT INTO diyup.comments(tutorial_uuid, username, \
+        content, created, timestamp, edited, image) VALUES (%s, %s, %s, %s, %s, %s, %s)", \
+        (tutorial_uuid, current_user[1], content, timestamp, timestamp, edited, image,)
     )
 
     mysql.connection.commit()
