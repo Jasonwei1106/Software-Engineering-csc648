@@ -81,7 +81,7 @@ export default {
             { ...element }
           )
         })
-        console.log(this.comments)
+        // console.log(this.comments)
       })
   },
   props: {
@@ -97,7 +97,7 @@ export default {
   },
   methods: {
     sendMes () {
-      console.log(this.obj_uuid, this.$q.localStorage.getItem('__diyup__signedIn'))
+      // console.log(this.obj_uuid, this.$q.localStorage.getItem('__diyup__signedIn'))
       let headers = {
         'x-access-token': this.$q.localStorage.getItem('__diyup__signedIn')
       }
@@ -151,7 +151,7 @@ export default {
         })
         // TODO: send axios to backend
       }).onCancel(() => {
-        console.log('nothing happens')
+        // console.log('nothing happens')
       })
     },
     sendReply (index) {
