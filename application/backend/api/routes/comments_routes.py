@@ -101,9 +101,11 @@ def get_all_comments(tutorial_uuid):
             reply_data['id'] = reply[0]
             reply_data['username'] = reply[2]
             reply_data['content'] = reply[3]
-            reply_data['image'] = reply[4]
-            reply_data['reply_to'] = reply[5]
+            reply_data['created'] = reply[4]
+            reply_data['timestamp'] = reply[5]
             reply_data['edited'] = reply[6]
+            reply_data['image'] = reply[7]
+            reply_data['reply_to'] = reply[8]
 
             sql_query = "SELECT * FROM diyup.comments WHERE reply_to=%s"
             cur.execute(sql_query, (reply[0],))
@@ -237,10 +239,10 @@ def reply_to_tutorial_comment(current_user, tutorial_uuid, reply_id):
     cur = mysql.connection.cursor()
 
     cur.execute("SELECT * FROM diyup.comments WHERE tutorial_uuid=%s AND \
-        reply_to=%s", (tutorial_uuid, reply_id,)
+        comments.id=%s", (tutorial_uuid, reply_id,)
     )
 
-    uuid = cur.fetchall()
+    uuid = cur.fetchone()
 
     if not uuid:
         return jsonify({'message' : 'No tutorial ID found!'}), 400
@@ -291,7 +293,7 @@ def delete_comment(current_user, comment_id):
     if not comment:
         return jsonify({'message' : 'No comment found!'}), 400
     elif current_user[3] == False:
-        retrun jsonify({'message' : 'Not an admin!'}), 400
+        return jsonify({'message' : 'Not an admin!'}), 400
 
     sql_delete = "DELETE FROM diyup.comments WHERE comments.id=%s"
     cur.execute(sql_delete, (comment_id,))

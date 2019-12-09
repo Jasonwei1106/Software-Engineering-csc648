@@ -319,7 +319,7 @@ def delete_tutorial(current_user, tutorial_uuid):
 
     sql_delete = "DELETE FROM diyup.tutorials WHERE uuid=%s AND \
         author_username=%s"
-        
+
     cur.execute(sql_delete, (tutorial_uuid, username,))
     mysql.connection.commit()
     cur.close()
