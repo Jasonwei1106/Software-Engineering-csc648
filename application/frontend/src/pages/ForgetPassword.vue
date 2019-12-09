@@ -154,7 +154,7 @@ export default {
                 this.$q.notify({
                   icon: 'warning',
                   color: 'negative',
-                  message: 'Something went wrong!'
+                  message: 'Your account does not exsist!'
                 })
               }
             })
@@ -177,7 +177,7 @@ export default {
                 this.$q.notify({
                   icon: 'warning',
                   color: 'negative',
-                  message: 'Your account does not exsist!'
+                  message: 'Verfied code is wrong'
                 })
               }
             })
@@ -186,7 +186,7 @@ export default {
           axios.post('http://54.153.68.76:5000/api/user/forgot/reset',
             {
               email_address: this.logIn.name,
-              new_password: this.logIn.conpassword
+              password: this.logIn.conpassword
             })
             .then(res => {
               this.$q.notify({
@@ -194,6 +194,7 @@ export default {
                 color: 'positive',
                 message: 'reset your password'
               })
+              this.$router.push({ name: 'rootHome' })
             })
             .catch(err => {
               if (err) {
