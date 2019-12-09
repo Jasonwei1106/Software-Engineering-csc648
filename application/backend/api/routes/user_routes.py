@@ -434,15 +434,17 @@ def reset_password():
     email_address = data['email_address']
     new_password = data['password']
 
+    hashed_password = generate_password_hash(new_password, method='sha256')
+
     cur = mysql.connection.cursor()
 
     sql_update = "UPDATE diyup.users SET password=%s WHERE email_address=%s"
-    cur.execute(sql_update, (new_password, email_address,))
+    cur.execute(sql_update, (hashed_password, email_address,))
     mysql.connection.commit()
 
-    sql_update = "UPDATE diyup.users SET password_reset_code=null WHERE \
+    sql_update = "UPDATE diyup.users SET password_reset_code=%s WHERE \
         email_address=%s"
-    cur.execute(sql_update, (email_address,))
+    cur.execute(sql_update, (None, email_address,))
     mysql.connection.commit()
     cur.close()
 
