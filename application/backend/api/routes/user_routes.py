@@ -399,7 +399,7 @@ def send_password_reset_code():
                 recipients=[email_address],
                 body="A request to reset a password for this user's \
                     DIYup account was made. Please use the password reset code \
-                    "%s\"" % password_reset_code
+                    \"%s\"" % password_reset_code
             )
             mail.send(msg)
 
