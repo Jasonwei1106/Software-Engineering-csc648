@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-  <Strong style="font-size: 200%;"> {{ tutorial.title }} </Strong>
+  <Strong style="font-size: 200%;"> {{ data.title }} </Strong>
 
     <!-- ---------- IMAGE CODEBLOCK ---------- -->
     <div
@@ -26,7 +26,7 @@
         </strong>
         <br>
         <div class="q-px-lg q-my-sm">
-          {{ tutorial.description }}
+          {{ data.description }}
         </div>
       </div>
     </div >
@@ -46,7 +46,7 @@
             :key="ind"
           >
             <q-item-section>
-              {{ ind + 1 }}.  {{ list }}
+              {{ ind + 1 }}.  {{ list.name }}
             </q-item-section>
           </q-item>
         </q-list>
@@ -58,7 +58,7 @@
       <strong>Steps</strong>
       <q-list>
         <q-item
-          v-for="(step, ind) in steps"
+          v-for="(step, ind) in data.steps"
           :key="ind"
         >
           <q-item-section style="max-width:20px">
@@ -69,7 +69,7 @@
             <img src="https://cdn.quasar.dev/img/mountains.jpg">
           </q-item-section>
           <q-item-section>
-            <q-item-label style="padding:10px;">{{ step }}</q-item-label>
+            <q-item-label style="padding:10px;">{{ step.content }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -87,25 +87,21 @@ import axios from 'axios'
 export default {
   created () {
     this.updateObjUuid()
-    axios.get(`http://54.153.68.76:5000/api/tutorial/${this.$q.localStorage.getItem('__diyup__username')}/${this.obj_uuid}`)
-      .then(res => {
-        this.data = res.data.tutorial
-        console.log(this.data)
+    axios.all([
+      axios.get(`http://54.153.68.76:5000/api/tutorial/${this.obj_uuid}/get`),
+      axios.get(`http://54.153.68.76:5000/api/items/${this.obj_uuid}/get`)])
+      .then(([res1, res2]) => {
+        this.data = res1.data.tutorial
+        this.lists = res2.data.items
       })
   },
   data () {
     return {
       obj_uuid: null,
       data: [],
-      tutorial: {
-        title: 'Title',
-        url: 'img',
-        description: 'some description'
-      },
       lists: [
         'None'
-      ],
-      steps: null
+      ]
     }
   },
   components: {
