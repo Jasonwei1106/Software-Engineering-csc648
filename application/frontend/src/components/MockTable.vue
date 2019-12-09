@@ -149,11 +149,7 @@ export default {
   },
   methods: {
     routeToTutorial: function (entry) {
-      // console.log(entry)
-      this.$q.localStorage.set('__diyup  __entry', entry)
-      // let routeData = this.$router.resolve(`challenge/${entry}`, '/')
-      // window.open(routeData.href, '_self')
-      this.$router.push('/tutorial/' + entry.__index)
+      this.$router.push(`/tutorial/${entry.uuid}`)
     },
     titleQueryFilter: function () {
       this.filter = this.$route.query.title
