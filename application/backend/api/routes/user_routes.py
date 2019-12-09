@@ -193,7 +193,8 @@ def create_user():
             body="Hello %s, welcome to DIYup! Please click on this link to\n"
                 "verify your email address: %s\n\n" 
                 "If you did not sign up for an account, feel free to\n"
-                "ignore this email." % (username, verification_url)
+                "ignore this email.\n\n"
+                "- DIYup Administration" % (username, verification_url)
         )
         mail.send(msg)
 
@@ -424,7 +425,8 @@ def send_password_reset_code():
             recipients=[email_address],
             body="A request to reset a password for this user's DIYup\n"
                 " account was made. Please use the password reset code \n"
-                "\"%s\" " % password_reset_code
+                "\"%s\"\n\n" 
+                "- DIYup Administration"% password_reset_code
         )
         mail.send(msg)
 
