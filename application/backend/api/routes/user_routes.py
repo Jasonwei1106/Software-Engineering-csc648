@@ -183,7 +183,7 @@ def create_user():
     cur.close()
 
     verification_url = "http://54.153.68.76:5000/api/user/%s/verify/%s" % \
-        (email_address, uuid)
+        (email_address, user_uuid)
 
     with app.app_context():
         msg = Message(
