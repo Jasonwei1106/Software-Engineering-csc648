@@ -389,8 +389,8 @@ def send_password_reset_code():
     cur.execute(sql_update, (password_reset_code, email_address,))
     mysql.connection.commit()
     cur.close()
-    
-    
+
+
 
     with app.app_context():
         msg = Message(

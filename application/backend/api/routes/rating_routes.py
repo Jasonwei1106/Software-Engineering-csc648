@@ -106,7 +106,8 @@ def create_rating(current_user, tutorial_uuid, rating_type):
 
     return jsonify({'message' : 'Rating has been created!'}), 201
 
-@app.route('/api/rate/<tutorial_uuid>/<rating_type>/<username>/delete', methods=['DELETE'])
+@app.route('/api/rate/<tutorial_uuid>/<rating_type>/<username>/delete', \
+    methods=['DELETE'])
 @token_required
 def delete_rating(current_user, tutorial_uuid, rating_type, username,):
     """
@@ -138,7 +139,7 @@ def delete_rating(current_user, tutorial_uuid, rating_type, username,):
 
     sql_delete = "DELETE FROM diyup.ratings WHERE tutorial_uuid=%s \
         AND username=%s AND rating_type=%s"
-        
+
     cur.execute(sql_delete, (tutorial_uuid, username, rating_type,))
     mysql.connection.commit()
     cur.close()

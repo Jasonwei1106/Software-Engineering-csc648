@@ -209,8 +209,10 @@ def create_tutorial_comment(current_user, tutorial_uuid):
     timestamp = date
 
     cur.execute("INSERT INTO diyup.comments(tutorial_uuid, username, \
-        content, created, timestamp, edited, image) VALUES (%s, %s, %s, %s, %s, %s, %s)", \
-        (tutorial_uuid, current_user[1], content, timestamp, timestamp, edited, image,)
+        content, created, timestamp, edited, image) \
+        VALUES (%s, %s, %s, %s, %s, %s, %s)", \
+        (tutorial_uuid, current_user[1], content, date, \
+        timestamp, edited, image,)
     )
 
     mysql.connection.commit()
