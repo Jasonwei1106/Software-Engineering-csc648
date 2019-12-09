@@ -175,7 +175,7 @@ def create_user():
 
     cur.execute("INSERT INTO diyup.users(email_address, username, \
         password, is_admin, avatar, uuid) \
-        VALUES(%s, %s, %s, %s, %s)", \
+        VALUES(%s, %s, %s, %s, %s, %s)", \
         (email_address, username, hashed_password, is_admin, avatar, user_uuid)
     )
 
