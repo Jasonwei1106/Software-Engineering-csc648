@@ -183,7 +183,7 @@ def create_user():
     cur.close()
 
     verification_url = "http://54.153.68.76:5000/api/user/%s/verify/%s" % \
-        (email_address, user_uuid)
+        (username, user_uuid)
 
     with app.app_context():
         msg = Message(
@@ -352,15 +352,15 @@ def login():
         401, {'WWW-Authenticate' : 'Basic realm="Login required!"'}
     )
 
-@app.route('/api/user/verify/<email_address>/<user_uuid>', methods=['POST'])
-def verify_user(email_address, user_uuid):
+@app.route('/api/user/verify/<username>/<user_uuid>', methods=['POST'])
+def verify_user(username, user_uuid):
 
     """
     User route to verify a user's email address
 
     Parameters
     ----------
-    email_address, user_uuid
+    username, user_uuid
 
     Returns
     -------
@@ -368,17 +368,17 @@ def verify_user(email_address, user_uuid):
 
     """
 
-    sql_query = "SELECT uuid FROM diyup.users WHERE email_address=%s"
+    sql_query = "SELECT uuid FROM diyup.users WHERE username=%s"
     cur = mysql.connection.cursor()
-    cur.execute(sql_query, (email_address,))
+    cur.execute(sql_query, (username,))
     real_user_uuid = cur.fetchall()[0][0]
     print(real_user_uuid)
     print(user_uuid)
 
     if user_uuid == real_user_uuid:
         sql_update = "UPDATE diyup.users SET is_verified=1 WHERE \
-            email_address=%s"
-        cur.execute(sql_update, (email_address,))
+            username=%s"
+        cur.execute(sql_update, (username,))
         cur.close()
         return jsonify({'message' : 'User successfully verified!'}), 200
     else:
