@@ -298,19 +298,19 @@ def delete_tutorial(current_user, tutorial_uuid):
         author_username=%s"
 
     cur.execute(sql_query, (tutorial_uuid, current_user[1],))
-    user = cur.fetchone()
+    tutorial = cur.fetchone()
 
-    if not user:
+    if current_user[1] not in tutorial and current_user[3] == False:
         return jsonify({'message' : \
-            'Cannot delete tutorial step for a different user!'}
-        ), 400
-    elif current_user[3] == False:
-        return jsonify({'message' : 'Not an admin!'}), 400
+            'Permission denied!'}
+        ), 401
 
     sql_query = "SELECT * FROM diyup.tutorials WHERE uuid=%s AND \
         author_username=%s"
 
-    cur.execute(sql_query, (tutorial_uuid, username,))
+    author_username = tutorial[1]
+
+    cur.execute(sql_query, (tutorial_uuid, author_username))
     tutorial = cur.fetchone()
 
     if not tutorial:
@@ -319,7 +319,7 @@ def delete_tutorial(current_user, tutorial_uuid):
     sql_delete = "DELETE FROM diyup.tutorials WHERE uuid=%s AND \
         author_username=%s"
 
-    cur.execute(sql_delete, (tutorial_uuid, username,))
+    cur.execute(sql_delete, (tutorial_uuid, author_username))
     mysql.connection.commit()
     cur.close()
 

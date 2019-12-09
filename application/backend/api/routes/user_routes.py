@@ -183,16 +183,18 @@ def create_user():
     cur.close()
 
     verification_url = "http://54.153.68.76:5000/api/user/%s/verify/%s" % \
-        (email_address, uuid)
+        (username, user_uuid)
 
     with app.app_context():
         msg = Message(
             subject="DIYup: Email Address Verification",
             sender=app.config.get("MAIL_USERNAME"),
             recipients=[email_address],
-            body="Hello %s, welcome to DIYup! Please click on this link to \
-                verify your email, address: %s" % \
-                (username, verification_url)
+            body="Hello %s, welcome to DIYup! Please click on this link to\n"
+                "verify your email address: %s\n\n" 
+                "If you did not sign up for an account, feel free to\n"
+                "ignore this email.\n\n"
+                "- DIYup Administration" % (username, verification_url)
         )
         mail.send(msg)
 
@@ -351,20 +353,33 @@ def login():
         401, {'WWW-Authenticate' : 'Basic realm="Login required!"'}
     )
 
-@app.route('/api/user/verify/<email_address>/<user_uuid>', methods=['POST'])
-def verify_user(email_address, user_uuid):
+@app.route('/api/user/verify/<username>/<user_uuid>', methods=['POST'])
+def verify_user(username, user_uuid):
 
-    sql_query = "SELECT uuid FROM diyup.users WHERE email_address=%s"
+    """
+    User route to verify a user's email address
+
+    Parameters
+    ----------
+    username, user_uuid
+
+    Returns
+    -------
+    None
+
+    """
+
+    sql_query = "SELECT uuid FROM diyup.users WHERE username=%s"
     cur = mysql.connection.cursor()
-    cur.execute(sql_query, (email_address,))
+    cur.execute(sql_query, (username,))
     real_user_uuid = cur.fetchall()[0][0]
     print(real_user_uuid)
     print(user_uuid)
 
     if user_uuid == real_user_uuid:
         sql_update = "UPDATE diyup.users SET is_verified=1 WHERE \
-            email_address=%s"
-        cur.execute(sql_update, (email_address,))
+            username=%s"
+        cur.execute(sql_update, (username,))
         cur.close()
         return jsonify({'message' : 'User successfully verified!'}), 200
     else:
@@ -376,6 +391,19 @@ def verify_user(email_address, user_uuid):
 
 @app.route('/api/user/forgot/send', methods=['POST'])
 def send_password_reset_code():
+
+    """
+    User route to email user a password reset code
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    """
 
     data = request.get_json()
 
@@ -389,17 +417,16 @@ def send_password_reset_code():
     cur.execute(sql_update, (password_reset_code, email_address,))
     mysql.connection.commit()
     cur.close()
-    
-    
 
     with app.app_context():
         msg = Message(
             subject="DIYup: Password Reset",
             sender=app.config.get("MAIL_USERNAME"),
             recipients=[email_address],
-            body="A request to reset a password for this user's \
-                DIYup account was made. Please use the password reset code \
-                \"%s\"" % password_reset_code
+            body="A request to reset a password for this user's DIYup\n"
+                " account was made. Please use the password reset code \n"
+                "\"%s\"\n\n" 
+                "- DIYup Administration"% password_reset_code
         )
         mail.send(msg)
 
@@ -407,6 +434,19 @@ def send_password_reset_code():
 
 @app.route('/api/user/forgot/verify', methods=['POST'])
 def verify_password_reset_code():
+
+    """
+    User route to verify a user's password reset code
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    """
 
     data = request.get_json()
 
@@ -429,20 +469,35 @@ def verify_password_reset_code():
 @app.route('/api/user/forgot/reset', methods=['POST'])
 def reset_password():
 
+    """
+    User route to reset a user's password
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    """
+
     data = request.get_json()
 
     email_address = data['email_address']
     new_password = data['password']
 
+    hashed_password = generate_password_hash(new_password, method='sha256')
+
     cur = mysql.connection.cursor()
 
     sql_update = "UPDATE diyup.users SET password=%s WHERE email_address=%s"
-    cur.execute(sql_update, (new_password, email_address,))
+    cur.execute(sql_update, (hashed_password, email_address,))
     mysql.connection.commit()
 
-    sql_update = "UPDATE diyup.users SET password_reset_code=null WHERE \
+    sql_update = "UPDATE diyup.users SET password_reset_code=%s WHERE \
         email_address=%s"
-    cur.execute(sql_update, (email_address,))
+    cur.execute(sql_update, (None, email_address,))
     mysql.connection.commit()
     cur.close()
 
