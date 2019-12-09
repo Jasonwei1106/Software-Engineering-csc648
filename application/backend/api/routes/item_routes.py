@@ -57,19 +57,37 @@ def create_items(current_user, tutorial_uuid):
     data = request.get_json()
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM diyup.items ORDER BY items.index DESC LIMIT 1")
+    cur.execute("SELECT * FROM diyup.items WHERE tutorial_uuid=%s \
+        ORDER BY items.index DESC LIMIT 1", (tutorial_uuid,)
+    )
     index = cur.fetchone()
-    cur_index = int(index[1]) + 1
+
+    if not index:
+        cur_index = 1
+    else:
+        cur_index = int(index[1]) + 1
+
+    indices = []
 
     name = data['name']
     category = data['category']
     link = data['link']
 
-    cur.execute("INSERT INTO diyup.items(tutorial_uuid, items.index, name, category, link) VALUES(%s, %s, %s, %s, %s)", (tutorial_uuid, cur_index, name, category, link))
-    mysql.connection.commit()
+    if len(name) != len(category) != len(link):
+        return jsonify({'message': 'Arrays are not the same length!'}), 400
+
+    for i in range(len(name)):
+        cur.execute("INSERT INTO diyup.items(tutorial_uuid, items.index, name, \
+            category, link) VALUES(%s, %s, %s, %s, %s)", \
+            (tutorial_uuid, cur_index, name[i], category[i], link[i])
+        )
+        mysql.connection.commit()
+        indices.append(cur_index)
+        cur_index += 1
+
     cur.close()
 
-    return jsonify({'message' : 'Item created!', 'item id' : cur_index}), 201
+    return jsonify({'message' : 'Items created!', 'item id' : indices}), 201
 
 @app.route('/api/items/<tutorial_uuid>/<item_index>/delete', methods=['DELETE'])
 @token_required
@@ -86,7 +104,9 @@ def delete_items(create_user, tutorial_uuid, item_index):
     None
 
     """
-    sql_query = "SELECT * FROM diyup.items WHERE tutorial_uuid=%s AND items.index=%s"
+    sql_query = "SELECT * FROM diyup.items WHERE tutorial_uuid=%s \
+        AND items.index=%s"
+
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (tutorial_uuid, item_index,))
     item = cur.fetchone()
@@ -99,4 +119,4 @@ def delete_items(create_user, tutorial_uuid, item_index):
     mysql.connection.commit()
     cur.close()
 
-    return jsonify({'message' : 'Item has been deleted!'})
+    return jsonify({'message' : 'Item has been deleted!'}), 200

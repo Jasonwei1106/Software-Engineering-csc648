@@ -70,7 +70,9 @@ def get_all_comments(tutorial_uuid):
     Comments with replies
 
     """
-    sql_query = "SELECT * FROM diyup.comments WHERE tutorial_uuid=%s AND reply_to IS null"
+    sql_query = "SELECT * FROM diyup.comments WHERE tutorial_uuid=%s \
+        AND reply_to IS null"
+
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (tutorial_uuid,))
     comments = cur.fetchall()
@@ -145,7 +147,8 @@ def get_one_reply(tutorial_uuid, reply_to):
     Comment replies
 
     """
-    sql_query = "SELECT * FROM diyup.comments WHERE tutorial_uuid=%s AND reply_to=%s"
+    sql_query = "SELECT * FROM diyup.comments WHERE tutorial_uuid=%s \
+        AND reply_to=%s"
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (tutorial_uuid, reply_to,))
     replies = cur.fetchall()
@@ -188,7 +191,9 @@ def create_tutorial_comment(current_user, tutorial_uuid):
 
     cur = mysql.connection.cursor()
 
-    uuid = cur.execute("SELECT * FROM diyup.comments WHERE tutorial_uuid=%s", (tutorial_uuid,))
+    cur.execute("SELECT * FROM diyup.tutorials WHERE uuid=%s", \
+        (tutorial_uuid,))
+    uuid = cur.fetchall()[0][0]
 
     if not uuid:
         return jsonify({'message' : 'No tutorial ID found!'}), 400
@@ -199,22 +204,29 @@ def create_tutorial_comment(current_user, tutorial_uuid):
     content = data['content']
     image = data['image']
     edited = 0
+    date = time.ctime()
+    timestamp = date
 
-    cur.execute("INSERT INTO diyup.comments(comments.tutorial_uuid, username, content, image, edited)", (tutorial_uuid, current_user[1], content, image, edited,))
+    cur.execute("INSERT INTO diyup.comments(tutorial_uuid, username, \
+        content, created, timestamp, edited, image) VALUES (%s, %s, %s, %s, %s, %s, %s)", \
+        (tutorial_uuid, current_user[1], content, timestamp, timestamp, edited, image,)
+    )
+
     mysql.connection.commit()
     cur.close()
 
-    return jsonify({'message' : 'Comment created!', 'comment id' : index[0]}), 201
+    return jsonify({'message' : 'Comment created!', \
+        'comment id' : index[0]}), 201
 
-@app.route('/api/comments/<tutorial_uuid>/create/<reply_comment_id>', methods=['POST'])
+@app.route('/api/comments/<tutorial_uuid>/create/<reply_id>', methods=['POST'])
 @token_required
-def reply_to_tutorial_comment(current_user, tutorial_uuid, reply_comment_id):
+def reply_to_tutorial_comment(current_user, tutorial_uuid, reply_id):
     """
     Comment route to create comment reply
 
     Parameters
     ----------
-    Registered/Admin User access, tutorial_uuid, reply_comment_id
+    Registered/Admin User access, tutorial_uuid, reply_id
 
     Returns
     -------
@@ -225,7 +237,10 @@ def reply_to_tutorial_comment(current_user, tutorial_uuid, reply_comment_id):
 
     cur = mysql.connection.cursor()
 
-    cur.execute("SELECT * FROM diyup.comments WHERE tutorial_uuid=%s AND reply_to=%s", (tutorial_uuid, reply_comment_id,))
+    cur.execute("SELECT * FROM diyup.comments WHERE tutorial_uuid=%s AND \
+        reply_to=%s", (tutorial_uuid, reply_id,)
+    )
+
     uuid = cur.fetchall()
 
     if not uuid:
@@ -237,13 +252,17 @@ def reply_to_tutorial_comment(current_user, tutorial_uuid, reply_comment_id):
 
     content = data['content']
     image = data['image']
-    reply_to = reply_comment_id
+    reply_to = reply_id
     edited = 0
-    date = time.ctime(1574039538)
+    date = time.ctime()
     timestamp = date
 
-    cur.execute("INSERT INTO diyup.comments(comments.tutorial_uuid, username, content, created, timestamp, edited, image, reply_to) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",
-                (tutorial_uuid, current_user[1], content, date, timestamp, edited, image, reply_to,))
+    cur.execute("INSERT INTO diyup.comments\
+        (comments.tutorial_uuid, username, content, created, timestamp, \
+        edited, image, reply_to) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)", \
+        (tutorial_uuid, current_user[1], content, date, timestamp, \
+        edited, image, reply_to,)
+    )
 
     mysql.connection.commit()
     cur.close()
