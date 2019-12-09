@@ -354,6 +354,19 @@ def login():
 @app.route('/api/user/verify/<email_address>/<user_uuid>', methods=['POST'])
 def verify_user(email_address, user_uuid):
 
+    """
+    User route to verify a user's email address
+
+    Parameters
+    ----------
+    email_address, user_uuid
+
+    Returns
+    -------
+    None
+
+    """
+
     sql_query = "SELECT uuid FROM diyup.users WHERE email_address=%s"
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (email_address,))
@@ -377,6 +390,19 @@ def verify_user(email_address, user_uuid):
 @app.route('/api/user/forgot/send', methods=['POST'])
 def send_password_reset_code():
 
+    """
+    User route to email user a password reset code
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    """
+
     data = request.get_json()
 
     email_address = data["email_address"]
@@ -389,8 +415,6 @@ def send_password_reset_code():
     cur.execute(sql_update, (password_reset_code, email_address,))
     mysql.connection.commit()
     cur.close()
-
-
 
     with app.app_context():
         msg = Message(
@@ -407,6 +431,19 @@ def send_password_reset_code():
 
 @app.route('/api/user/forgot/verify', methods=['POST'])
 def verify_password_reset_code():
+
+    """
+    User route to verify a user's password reset code
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    """
 
     data = request.get_json()
 
@@ -428,6 +465,19 @@ def verify_password_reset_code():
 
 @app.route('/api/user/forgot/reset', methods=['POST'])
 def reset_password():
+
+    """
+    User route to reset a user's password
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    """
 
     data = request.get_json()
 
