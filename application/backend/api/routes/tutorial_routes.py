@@ -34,8 +34,10 @@ def get_all_tutorials():
         tutorial_data['category'] = tutorial[4]
         tutorial_data['description'] = tutorial[5]
         tutorial_data['author_difficulty'] = str(tutorial[6])
-        tutorial_data['viewer_difficulty'] = str(average_rating_type_for_tutorial('difficulty', tutorial[0]))
-        tutorial_data['rating'] = str(average_rating_type_for_tutorial('score', tutorial[0]))
+        tutorial_data['viewer_difficulty'] = \
+            str(average_rating_type_for_tutorial('difficulty', tutorial[0]))
+        tutorial_data['rating'] = \
+            str(average_rating_type_for_tutorial('score', tutorial[0]))
         output.append(tutorial_data)
 
     cur.close()
@@ -74,8 +76,10 @@ def get_all_tutorial_info():
         tutorial_data['category'] = tutorial[4]
         tutorial_data['description'] = tutorial[5]
         tutorial_data['author_difficulty'] = str(tutorial[6])
-        tutorial_data['viewer_difficulty'] = str(average_rating_type_for_tutorial('difficulty', tutorial[0]))
-        tutorial_data['rating'] = str(average_rating_type_for_tutorial('score', tutorial[0]))
+        tutorial_data['viewer_difficulty'] = \
+            str(average_rating_type_for_tutorial('difficulty', tutorial[0]))
+        tutorial_data['rating'] = \
+            str(average_rating_type_for_tutorial('score', tutorial[0]))
 
         sql_query = "SELECT * FROM diyup.steps WHERE tutorial_uuid=%s"
         cur.execute(sql_query, (tutorial[0],))
@@ -137,8 +141,10 @@ def get_all_tutorials_by_user(username):
         tutorial_data['category'] = tutorial[4]
         tutorial_data['description'] = tutorial[5]
         tutorial_data['author_difficulty'] = str(tutorial[6])
-        tutorial_data['viewer_difficulty'] = str(average_rating_type_for_tutorial('difficulty', tutorial[0]))
-        tutorial_data['rating'] = str(average_rating_type_for_tutorial('score', tutorial[0]))
+        tutorial_data['viewer_difficulty'] = \
+            str(average_rating_type_for_tutorial('difficulty', tutorial[0]))
+        tutorial_data['rating'] = \
+            str(average_rating_type_for_tutorial('score', tutorial[0]))
 
         for step in steps:
             step_data = {}
@@ -169,7 +175,9 @@ def get_one_tutorial(username, tutorial_uuid):
     Tutorial
 
     """
-    sql_query = "SELECT * FROM diyup.tutorials WHERE author_username=%s AND uuid=%s"
+    sql_query = "SELECT * FROM diyup.tutorials WHERE \
+        author_username=%s AND uuid=%s"
+
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (username, tutorial_uuid))
     tutorial = cur.fetchone()
@@ -191,8 +199,10 @@ def get_one_tutorial(username, tutorial_uuid):
     tutorial_data['category'] = tutorial[4]
     tutorial_data['description'] = tutorial[5]
     tutorial_data['author_difficulty'] = str(tutorial[6])
-    tutorial_data['viewer_difficulty'] = str(average_rating_type_for_tutorial('difficulty', tutorial[0]))
-    tutorial_data['rating'] = str(average_rating_type_for_tutorial('score', tutorial[0]))
+    tutorial_data['viewer_difficulty'] = \
+        str(average_rating_type_for_tutorial('difficulty', tutorial[0]))
+    tutorial_data['rating'] = \
+        str(average_rating_type_for_tutorial('score', tutorial[0]))
 
     for step in steps:
         step_data = {}
@@ -254,11 +264,19 @@ def create_tutorial(current_user):
     author_username = current_user[1]
 
     cur = mysql.connection.cursor()
-    cur.execute("INSERT INTO diyup.tutorials(uuid, title, image, category, description, author_difficulty, author_username) VALUES(%s, %s, %s, %s, %s, %s, %s)", (tutorial_uuid, title, image, category, description, float(author_difficulty), author_username))
+    cur.execute("INSERT INTO diyup.tutorials(uuid, title, image, category, \
+        description, author_difficulty, author_username) \
+        VALUES(%s, %s, %s, %s, %s, %s, %s)", \
+        (tutorial_uuid, title, image, category, description, \
+        float(author_difficulty), author_username)
+    )
+
     mysql.connection.commit()
     cur.close()
 
-    return jsonify({'message' : 'New tutorial created!', 'token' : tutorial_uuid}), 201
+    return jsonify({'message' : 'New tutorial created!', \
+        'token' : tutorial_uuid}
+    ), 201
 
 @app.route('/api/tutorial/<tutorial_uuid>', methods=['DELETE'])
 @token_required
@@ -277,25 +295,33 @@ def delete_tutorial(current_user, tutorial_uuid):
     """
     cur = mysql.connection.cursor()
 
-    sql_query = "SELECT * FROM diyup.tutorials WHERE uuid=%s AND author_username=%s"
+    sql_query = "SELECT * FROM diyup.tutorials WHERE uuid=%s AND \
+        author_username=%s"
+
     cur.execute(sql_query, (tutorial_uuid, current_user[1],))
     user = cur.fetchone()
 
     if not user:
-        return jsonify({'message' : 'Cannot delete tutorial step for a different user!'}), 400
+        return jsonify({'message' : \
+            'Cannot delete tutorial step for a different user!'}
+        ), 400
     elif current_user[3] == False:
         return jsonify({'message' : 'Not an admin!'}), 400
 
-    sql_query = "SELECT * FROM diyup.tutorials WHERE uuid=%s AND author_username=%s"
+    sql_query = "SELECT * FROM diyup.tutorials WHERE uuid=%s AND \
+        author_username=%s"
+
     cur.execute(sql_query, (tutorial_uuid, username,))
     tutorial = cur.fetchone()
 
     if not tutorial:
         return jsonify({'message' : 'No tutorial found!'}), 400
 
-    sql_delete = "DELETE FROM diyup.tutorials WHERE uuid=%s AND author_username=%s"
+    sql_delete = "DELETE FROM diyup.tutorials WHERE uuid=%s AND \
+        author_username=%s"
+        
     cur.execute(sql_delete, (tutorial_uuid, username,))
     mysql.connection.commit()
     cur.close()
 
-    return jsonify({'message' : 'Tutorial been deleted'})
+    return jsonify({'message' : 'Tutorial been deleted'}), 200

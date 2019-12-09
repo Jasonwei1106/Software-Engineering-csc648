@@ -20,7 +20,9 @@ def get_all_users(current_user):
 
     """
     if current_user[3] != True:
-        return jsonify({'message' : 'Not an admin. Cannot perform that function!'}), 403
+        return jsonify({'message' : \
+            'Not an admin. Cannot perform that function!'}
+        ), 403
 
     sql_query = "SELECT * FROM diyup.users"
     cur = mysql.connection.cursor()
@@ -57,7 +59,9 @@ def get_one_user(current_user, email_address):
 
     """
     if current_user[3] != True:
-        return jsonify({'message' : 'Not an admin. Cannot perform that function!'}), 403
+        return jsonify({'message' : \
+            'Not an admin. Cannot perform that function!'}
+        ), 403
 
     sql_query = "SELECT * FROM diyup.users WHERE email_address=%s"
     cur = mysql.connection.cursor()
@@ -157,7 +161,10 @@ def create_user():
     hashed_password = generate_password_hash(password, method='sha256')
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM diyup.users WHERE email_address=%s OR username=%s", (email_address, username,))
+    cur.execute("SELECT * FROM diyup.users WHERE email_address=%s OR \
+        username=%s", (email_address, username,)
+    )
+
     user = cur.fetchone()
 
     if user:
@@ -166,21 +173,28 @@ def create_user():
         elif user[1] == username:
             return jsonify({'message' : 'Username already exists!'}), 400
 
-    cur.execute("INSERT INTO diyup.users(email_address, username, password, is_admin, avatar, uuid) VALUES(%s, %s, %s, %s, %s, %s)", (email_address, username, hashed_password, is_admin, avatar, user_uuid,))
+    cur.execute("INSERT INTO diyup.users(email_address, username, \
+        password, is_admin, avatar, uuid) \
+        VALUES(%s, %s, %s, %s, %s)", \
+        (email_address, username, hashed_password, is_admin, avatar, user_uuid)
+    )
+
     mysql.connection.commit()
     cur.close()
 
-    verification_url = "http://54.153.68.76:5000/api/user/%s/verify/%s" % (email_address, uuid)
+    verification_url = "http://54.153.68.76:5000/api/user/%s/verify/%s" % \
+        (email_address, uuid)
 
-    if __name__ == '__main__':
-        with app.app_context():
-            msg = Message(
-                subject="DIYup: Email Address Verification",
-                sender=app.config.get("MAIL_USERNAME"),
-                recipients=[email_address],
-                body="Hello %s, welcome to DIYup! Please click on this link to verify your email, address: %s" % (username, verification_url)
-            )
-            mail.send(msg)
+    with app.app_context():
+        msg = Message(
+            subject="DIYup: Email Address Verification",
+            sender=app.config.get("MAIL_USERNAME"),
+            recipients=[email_address],
+            body="Hello %s, welcome to DIYup! Please click on this link to \
+                verify your email, address: %s" % \
+                (username, verification_url)
+        )
+        mail.send(msg)
 
     return jsonify({'message' : 'New user created!'}), 201
 
@@ -200,7 +214,9 @@ def promote_user(current_user, email_address):
 
     """
     if current_user[3] != True:
-        return jsonify({'message' : 'Not an admin. Cannot perform that function!'}), 403
+        return jsonify({'message' : \
+            'Not an admin. Cannot perform that function!'}
+        ), 403
 
     sql_query = "SELECT * FROM diyup.users WHERE email_address=%s"
     cur = mysql.connection.cursor()
@@ -234,7 +250,9 @@ def demote_user(current_user, email_address):
 
     """
     if current_user[3] != True:
-        return jsonify({'message' : 'Not an admin. Cannot perform that function!'}), 403
+        return jsonify({'message' : \
+            'Not an admin. Cannot perform that function!'}
+        ), 403
 
     sql_query = "SELECT * FROM diyup.users WHERE email_address=%s"
     cur = mysql.connection.cursor()
@@ -268,7 +286,9 @@ def delete_user(current_user, email_address):
 
     """
     if current_user[3] != True:
-        return jsonify({'message' : 'Not an admin. Cannot perform that function!'}), 403
+        return jsonify({'message' : \
+            'Not an admin. Cannot perform that function!'}
+        ), 403
 
     sql_query = "SELECT * FROM diyup.users WHERE email_address=%s"
     cur = mysql.connection.cursor()
@@ -283,7 +303,7 @@ def delete_user(current_user, email_address):
     mysql.connection.commit()
     cur.close()
 
-    return jsonify({'message' : 'User has been deleted!'})
+    return jsonify({'message' : 'User has been deleted!'}), 200
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -305,7 +325,9 @@ def login():
     password = data['password']
 
     if not username:
-        return make_response('Could not verify auth', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+        return make_response('Could not verify auth',\
+            401, {'WWW-Authenticate' : 'Basic realm="Login required!"'}
+        )
 
     sql_query = "SELECT * FROM diyup.users WHERE username=%s"
     cur = mysql.connection.cursor()
@@ -314,14 +336,20 @@ def login():
     cur.close()
 
     if not user:
-        return make_response('Could not verify user', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
+        return make_response('Could not verify user', \
+            401, {'WWW-Authenticate' : 'Basic realm="Login required!"'}
+        )
 
     if check_password_hash(user[2], password):
-        token = jwt.encode({'email_address' : user[0]}, app.config['SECRET_KEY'])
+        token = jwt.encode({'email_address' : user[0]}, \
+            app.config['SECRET_KEY']
+        )
+
         return jsonify({'token' : token.decode('UTF-8')})
 
-    return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'}
-            )
+    return make_response('Could not verify', \
+        401, {'WWW-Authenticate' : 'Basic realm="Login required!"'}
+    )
 
 @app.route('/api/user/verify/<email_address>/<user_uuid>', methods=['POST'])
 def verify_user(email_address, user_uuid):
@@ -332,15 +360,18 @@ def verify_user(email_address, user_uuid):
     real_user_uuid = cur.fetchall()[0][0]
     print(real_user_uuid)
     print(user_uuid)
-    
+
     if user_uuid == real_user_uuid:
-        sql_update = "UPDATE diyup.users SET is_verified=1 WHERE email_address=%s"
+        sql_update = "UPDATE diyup.users SET is_verified=1 WHERE \
+            email_address=%s"
         cur.execute(sql_update, (email_address,))
         cur.close()
         return jsonify({'message' : 'User successfully verified!'}), 200
     else:
         cur.close()
-        return jsonify({'message' : 'User verification link does not exist.'}), 404
+        return jsonify({'message' : \
+            'User verification link does not exist.'}
+        ), 404
 
 
 @app.route('/api/user/forgot/send', methods=['POST'])
@@ -353,21 +384,24 @@ def send_password_reset_code():
     password_reset_code = str(uuid.uuid4())
 
     cur = mysql.connection.cursor()
-    sql_update = "UPDATE diyup.users SET password_reset_code=%s WHERE email_address=%s"
+    sql_update = "UPDATE diyup.users SET password_reset_code=%s WHERE \
+        email_address=%s"
     cur.execute(sql_update, (password_reset_code, email_address,))
     mysql.connection.commit()
     cur.close()
+    
+    
 
-    if __name__ == '__main__':
-        with app.app_context():
-            msg = Message(
-                subject="DIYup: Password Reset",
-                sender=app.config.get("MAIL_USERNAME"),
-                recipients=[email_address],
-                body="A request to reset a password for this user's DIYup account was made. Please use the password reset code \"%s\"" % password_reset_code
-            )
-            mail.send(msg)
-
+    with app.app_context():
+        msg = Message(
+            subject="DIYup: Password Reset",
+            sender=app.config.get("MAIL_USERNAME"),
+            recipients=[email_address],
+            body="A request to reset a password for this user's \
+                DIYup account was made. Please use the password reset code \
+                \"%s\"" % password_reset_code
+        )
+        mail.send(msg)
 
     return jsonify({'message' : 'Password reset code has been sent!'}), 200
 
@@ -389,7 +423,7 @@ def verify_password_reset_code():
         return jsonify({'message' : 'Password reset code is valid!'}), 200
     else:
         return jsonify({'message' : 'Password reset code is not valid.'}), 400
-    
+
 
 
 @app.route('/api/user/forgot/reset', methods=['POST'])
@@ -405,8 +439,9 @@ def reset_password():
     sql_update = "UPDATE diyup.users SET password=%s WHERE email_address=%s"
     cur.execute(sql_update, (new_password, email_address,))
     mysql.connection.commit()
-    
-    sql_update = "UPDATE diyup.users SET password_reset_code=null WHERE email_address=%s"
+
+    sql_update = "UPDATE diyup.users SET password_reset_code=null WHERE \
+        email_address=%s"
     cur.execute(sql_update, (email_address,))
     mysql.connection.commit()
     cur.close()

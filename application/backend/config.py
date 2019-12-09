@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_mysqldb import MySQL
-from flask_mail import Mail
+from flask_mail import Mail, Message
 from flask_cors import CORS
 import yaml
 
@@ -26,7 +26,6 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = fm['mail_username']
 app.config['MAIL_PASSWORD'] = fm['mail_password']
-app.config['MAIL_DEBUG'] = True
 app.config['MAIL_SUPPRESS_SEND'] = False
 
 mail = Mail(app)

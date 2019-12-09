@@ -1,5 +1,6 @@
 from flask import request, jsonify, make_response
-from api.config import app, db, mysql
+from flask_mail import Message
+from api.config import app, db, mysql, mail
 import yaml
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -68,7 +69,9 @@ def average_rating_type_for_tutorial(rating_type, tutorial_uuid):
     -------
 
     """
-    sql_query = "SELECT AVG(rating) FROM diyup.ratings WHERE rating_type=%s AND tutorial_uuid=%s"
+    sql_query = "SELECT AVG(rating) FROM diyup.ratings WHERE rating_type=%s \
+        AND tutorial_uuid=%s"
+        
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (rating_type, tutorial_uuid,))
     rating = cur.fetchone()

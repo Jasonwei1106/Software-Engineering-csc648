@@ -18,7 +18,9 @@ def get_all_steps(tutorial_uuid):
     Steps
 
     """
-    sql_query = "SELECT * FROM diyup.steps INNER JOIN diyup.tutorials ON steps.tutorial_uuid = tutorials.uuid WHERE tutorials.uuid=%s"
+    sql_query = "SELECT * FROM diyup.steps INNER JOIN diyup.tutorials \
+        ON steps.tutorial_uuid = tutorials.uuid WHERE tutorials.uuid=%s"
+
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (tutorial_uuid,))
     steps = cur.fetchall()
@@ -53,7 +55,9 @@ def get_one_step(tutorial_uuid, step_index):
     Step
 
     """
-    sql_query = "SELECT * FROM diyup.steps WHERE tutorial_uuid=%s AND steps.index=%s"
+    sql_query = "SELECT * FROM diyup.steps WHERE tutorial_uuid=%s \
+        AND steps.index=%s"
+
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (tutorial_uuid, step_index,))
     step = cur.fetchone()
@@ -88,19 +92,38 @@ def create_tutorial_step(current_user, tutorial_uuid):
     data = request.get_json()
 
     cur = mysql.connection.cursor()
-
-    cur.execute("SELECT * FROM diyup.steps ORDER BY steps.index DESC LIMIT 1")
+    cur.execute("SELECT * FROM diyup.steps WHERE tutorial_uuid=%s \
+        ORDER BY steps.index DESC LIMIT 1", (tutorial_uuid,)
+    )
     index = cur.fetchone()
-    cur_index = int(index[0]) + 1
+
+    if not index:
+        cur_index = 1
+    else:
+        cur_index = int(index[1]) + 1
+
+    indices = []
 
     content = data['content']
     image = data['image']
 
-    cur.execute("INSERT INTO diyup.steps(tutorial_uuid, steps.index, content, image) VALUES(%s, %s, %s, %s)", (tutorial_uuid, cur_index, content, image,))
-    mysql.connection.commit()
+    if len(content) != len(image):
+        return jsonify({'message': 'Arrays are not the same length!'}), 400
+
+    for i in range(len(content)):
+      cur.execute("INSERT INTO diyup.steps(tutorial_uuid, steps.index, \
+          content, image) VALUES(%s, %s, %s, %s)", \
+          (tutorial_uuid, cur_index, content[i], image[i],)
+      )
+      mysql.connection.commit()
+      indices.append(cur_index)
+      cur_index += 1
+
     cur.close()
 
-    return jsonify({'message' : 'Step has been created', 'step id' : cur_index}), 201
+    return jsonify({'message' : 'Step has been created', \
+        'step id' : indices}
+    ), 201
 
 @app.route('/api/step/<tutorial_uuid>/<step_index>', methods=['DELETE'])
 @token_required
@@ -119,25 +142,34 @@ def delete_tutorial_step(current_user, tutorial_uuid, step_index):
     """
     cur = mysql.connection.cursor()
 
-    sql_query = "SELECT * FROM diyup.tutorials WHERE uuid=%s AND author_username=%s"
+    sql_query = "SELECT * FROM diyup.tutorials WHERE uuid=%s \
+        AND author_username=%s"
+
     cur.execute(sql_query, (tutorial_uuid, current_user[1],))
     user = cur.fetchone()
 
     if not user:
-        return jsonify({'message' : 'Cannot delete tutorial step for a different user!'}), 400
+        return jsonify({'message' : \
+            'Cannot delete tutorial step for a different user!'}
+        ), 400
     elif current_user[3] == False:
         return jsonify({'message' : 'Not an admin!'}), 400
 
-    sql_query = "SELECT * FROM diyup.steps WHERE tutorial_uuid=%s AND steps.index=%s"
+    sql_query = "SELECT * FROM diyup.steps WHERE tutorial_uuid=%s \
+        AND steps.index=%s"
+
     cur.execute(sql_query, (tutorial_uuid, step_index,))
     step = cur.fetchone()
 
     if not step:
         return jsonify({'message' : 'No step found for tutorial!'}), 400
 
-    sql_delete = "DELETE FROM diyup.steps INNER JOIN diyup.tutorials ON steps.tutorial_uuid = tutorials.uuid WHERE tutorials.uuid=%s AND steps.index=%s"
+    sql_delete = "DELETE FROM diyup.steps INNER JOIN diyup.tutorials \
+        ON steps.tutorial_uuid = tutorials.uuid WHERE tutorials.uuid=%s \
+        AND steps.index=%s"
+
     cur.execute(sql_query, (tutorial_uuid, step_index,))
     mysql.connection.commit()
     cur.close()
 
-    return jsonify({'message' : 'Step has been deleted'})
+    return jsonify({'message' : 'Step has been deleted'}), 200
