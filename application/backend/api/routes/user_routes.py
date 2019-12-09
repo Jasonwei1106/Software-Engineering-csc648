@@ -190,9 +190,10 @@ def create_user():
             subject="DIYup: Email Address Verification",
             sender=app.config.get("MAIL_USERNAME"),
             recipients=[email_address],
-            body="Hello %s, welcome to DIYup! Please click on this link to \
-                verify your email, address: %s" % \
-                (username, verification_url)
+            body="Hello %s, welcome to DIYup! Please click on this link to\n"
+                "verify your email address: %s\n\n" 
+                "If you did not sign up for an account, feel free to\n"
+                "ignore this email." % (username, verification_url)
         )
         mail.send(msg)
 
@@ -421,9 +422,9 @@ def send_password_reset_code():
             subject="DIYup: Password Reset",
             sender=app.config.get("MAIL_USERNAME"),
             recipients=[email_address],
-            body="A request to reset a password for this user's \
-                DIYup account was made. Please use the password reset code \
-                \"%s\"" % password_reset_code
+            body="A request to reset a password for this user's DIYup\n"
+                " account was made. Please use the password reset code \n"
+                "\"%s\" " % password_reset_code
         )
         mail.send(msg)
 
