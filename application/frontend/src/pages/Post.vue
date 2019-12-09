@@ -169,7 +169,7 @@ export default {
       axios.post('https://api.imgur.com/3/image/', {
         image: files
       }).then(res => {
-        console.log(res)
+        // console.log(res)
       })
     },
     addList () {

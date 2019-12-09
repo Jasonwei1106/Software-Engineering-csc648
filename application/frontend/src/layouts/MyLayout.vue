@@ -2,16 +2,6 @@
   <q-layout view="hHh lpR fFf">
     <q-header reveal elevated class="bg-primary text-white">
       <q-toolbar>
-        <div style="min-width: 40px;" >
-          <q-btn
-            :hidden="leftDrawerOpen"
-            flat dense round
-            aria-label="Menu"
-            @click="leftDrawerOpen = !leftDrawerOpen"
-            icon="arrow_right"
-          />
-        </div>
-
         <q-space />
 
         <div
@@ -52,7 +42,11 @@
           <div v-else>
             <div class="row">
               <div class="col">
-                <q-btn dense round size="md">
+                <q-btn
+                  dense round
+                  size="md"
+                  @click="leftDrawerOpen = !leftDrawerOpen"
+                >
                   <q-avatar size="md" text-color="white" icon="person" />
                 </q-btn>
               </div>
@@ -90,7 +84,7 @@
       </q-toolbar>
 
       <q-toolbar
-        v-if="$route.name && $route.name === 'rootHome'"
+        v-if="$route.name && $route.name === 'rootHome' && !leftDrawerOpen"
         class="bg-white text-black"
         style="border: black solid 1px;"
       >
@@ -136,13 +130,26 @@
           </div>
         </q-item-label>
 
-        <q-item to="/">
+        <q-item to="/" exact>
           <q-item-section avatar>
             <q-icon name="list" />
           </q-item-section>
 
           <q-item-section>
             <q-item-label>Home</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item
+          :to="`/tutorials/${$q.localStorage.getItem('__diyup__username')}`"
+          exact
+        >
+          <q-item-section avatar>
+            <q-icon name="where_to_vote" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>My Tutorials</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>

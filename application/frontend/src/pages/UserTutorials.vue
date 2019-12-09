@@ -1,9 +1,7 @@
 <template>
   <div>
-      <!-- title="DIYup Tutorials" -->
     <q-table
       flat hide-header wrap-cells
-      separator="none"
       row-key="title"
       :data="curData"
       :columns="columns"
@@ -11,12 +9,8 @@
       :pagination.sync="pagination"
     >
       <template v-slot:top-left>
-        <q-btn
-          outline
-          label="Create a new project"
-          @click="goToPost"
-          v-if="$q.localStorage.has('__diyup__signedIn')"
-        />
+        <div class="text-h5 text-bold">My Tutorials</div>
+        <div class="text-italic">Click on tap to delete the tutorial.</div>
       </template>
 
       <template v-slot:top-right>
@@ -36,10 +30,7 @@
         <q-tr :props="props">
           <q-td colspan="100%" key="title" :props="props">
             <q-card class="q-pa-md" style="min-height: 15vh;">
-              <div
-                class="row cursor-pointer"
-                @click="routeToTutorial(props.row)"
-              >
+              <div class="row cursor-pointer" @click="invokeDelete(props.row)">
                 <div class="col-4" align="center">
                   <q-img
                     :src="
@@ -90,12 +81,19 @@
 import axios from 'axios'
 
 export default {
-  watch: {
-    $route: 'titleQueryFilter'
-  },
   created () {
-    this.fetchData()
-    this.filter = this.$route.query.title || ''
+    let username = this.$route.params.username
+    let path = `http://54.153.68.76:5000/api/tutorial/${username}`
+
+    if (username === 'admin') {
+      path = 'http://54.153.68.76:5000/api/tutorial/get'
+    }
+
+    axios.get(path).then(res => {
+      if (res.status === 200) {
+        this.curData = res.data.tutorials
+      }
+    })
   },
   data () {
     return {
@@ -131,7 +129,6 @@ export default {
           sortable: true
         }
       ],
-      data: [],
       curData: [],
       pagination: {
         rowsPerPage: 10,
@@ -141,48 +138,27 @@ export default {
     }
   },
   methods: {
-    routeToTutorial: function (entry) {
-      this.$router.push(`/tutorial/${entry.uuid}`)
-    },
-    titleQueryFilter: function () {
-      this.filter = this.$route.query.title
-      if (this.filter) {
-        this.curData = this.data.filter(v => v.title.toLowerCase().includes(this.filter.toLowerCase()))
-      } else {
-        this.curData = this.data
-      }
-    },
-    fetchData: function () {
-      axios.get('http://54.153.68.76:5000/api/tutorial/get')
-        .then(res => {
-          this.data = res.data.tutorials
-          this.data.forEach(element => {
-            this.curData.push(element)
-          })
+    invokeDelete: function (entry) {
+      this.$q.dialog({
+        title: 'Confirm Delete?',
+        persistent: true,
+        cancel: true
+      }).onOk(() => {
+        let path = `http://54.153.68.76:5000/api/tutorial/${entry.uuid}`
+        let headers = {
+          'x-access-token': this.$q.localStorage.getItem('__diyup__signedIn')
+        }
 
-          // console.log(this.data)
+        axios.delete(path, { headers }).then(res => {
+          this.curData = this.curData.filter(v => v.uuid !== entry.uuid)
         })
-    },
-    goToPost: function () {
-      if (this.$q.localStorage.has('__diyup__signedIn')) {
-        this.$router.push({ path: '/post' }).catch(err => {
-          if (err) {
-            // error
-          }
-        })
-      }
+      }).onCancel(() => {
+      })
     }
   }
 }
 </script>
 
-<style lang="stylus">
-.my-table-details {
-  font-size: 0.85em;
-  font-style: italic;
-  max-width: 200px;
-  white-space: normal;
-  color: #555;
-  margin-top: 4px;
-}
+<style>
+
 </style>

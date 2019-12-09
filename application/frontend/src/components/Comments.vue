@@ -188,7 +188,7 @@ export default {
           })
         // TODO: send axios to backend
       }).onCancel(() => {
-        console.log('nothing happens')
+        // console.log('nothing happens')
       })
     },
 
