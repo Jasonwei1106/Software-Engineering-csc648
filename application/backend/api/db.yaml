@@ -2,5 +2,4 @@
 mysql_host: 'ec2-54-153-68-76.us-west-1.compute.amazonaws.com'
 mysql_user: 'admin'
 mysql_password: 'team206pass'
-# mysql_db: 'team206'
 mysql_db: 'diyup'

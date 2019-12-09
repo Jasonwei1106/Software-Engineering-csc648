@@ -16,11 +16,10 @@ from . import *
 ########################
 ## COMMENTS FUNCTIONS ##
 ########################
-# Get all comments
 @app.route('/api/comments/get_all_comments', methods=['GET'])
 def get_comments():
     """
-    Comment route to get comment information
+    Comment route to get all comment information
 
     Parameters
     ----------
@@ -102,9 +101,11 @@ def get_all_comments(tutorial_uuid):
             reply_data['id'] = reply[0]
             reply_data['username'] = reply[2]
             reply_data['content'] = reply[3]
-            reply_data['image'] = reply[4]
-            reply_data['reply_to'] = reply[5]
+            reply_data['created'] = reply[4]
+            reply_data['timestamp'] = reply[5]
             reply_data['edited'] = reply[6]
+            reply_data['image'] = reply[7]
+            reply_data['reply_to'] = reply[8]
 
             sql_query = "SELECT * FROM diyup.comments WHERE reply_to=%s"
             cur.execute(sql_query, (reply[0],))
@@ -180,7 +181,7 @@ def create_tutorial_comment(current_user, tutorial_uuid):
 
     Parameters
     ----------
-    Registered/Admin User access, tutorial_uuid
+    Registered User access, tutorial_uuid
 
     Returns
     -------
@@ -208,8 +209,10 @@ def create_tutorial_comment(current_user, tutorial_uuid):
     timestamp = date
 
     cur.execute("INSERT INTO diyup.comments(tutorial_uuid, username, \
-        content, created, timestamp, edited, image) VALUES (%s, %s, %s, %s, %s, %s, %s)", \
-        (tutorial_uuid, current_user[1], content, timestamp, timestamp, edited, image,)
+        content, created, timestamp, edited, image) \
+        VALUES (%s, %s, %s, %s, %s, %s, %s)", \
+        (tutorial_uuid, current_user[1], content, date, \
+        timestamp, edited, image,)
     )
 
     mysql.connection.commit()
@@ -238,10 +241,10 @@ def reply_to_tutorial_comment(current_user, tutorial_uuid, reply_id):
     cur = mysql.connection.cursor()
 
     cur.execute("SELECT * FROM diyup.comments WHERE tutorial_uuid=%s AND \
-        reply_to=%s", (tutorial_uuid, reply_id,)
+        comments.id=%s", (tutorial_uuid, reply_id,)
     )
 
-    uuid = cur.fetchall()
+    uuid = cur.fetchone()
 
     if not uuid:
         return jsonify({'message' : 'No tutorial ID found!'}), 400
@@ -299,4 +302,4 @@ def delete_comment(current_user, comment_id):
     mysql.connection.commit()
     cur.close()
 
-    return jsonify({'message' : 'Comment deleted'})
+    return jsonify({'message' : 'Comment deleted'}), 200
