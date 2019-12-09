@@ -15,6 +15,7 @@
     />
 
     <q-separator />
+
     <div>
       <q-list>
         <q-item
@@ -35,11 +36,11 @@
               <div class="q-pa-md">
                 <q-item-label lines="1">
                   <p class="text-teal-14 text-bold">
-                    {{ comment.user }}
+                    {{ comment.username }}
                   </p>
                 </q-item-label>
                 <q-item-label lines="2" class="q-pl-lg">
-                  {{ comment.text }}
+                  {{ comment.content }}
                 </q-item-label>
               </div>
             </q-item-label>
@@ -49,8 +50,18 @@
                 <q-btn label="reply" @click.prevent="openReply(ind)" />
               </div>
             </q-item-label>
-          </q-item-section>
 
+            <q-item-label lines="3">
+              <q-list>
+                <q-item
+                  v-for="(comment, child_ind) in comments[ind].replies"
+                  :key="child_ind"
+                >
+                  Hello
+                </q-item>
+              </q-list>
+            </q-item-label>
+          </q-item-section>
         </q-item>
       </q-list>
     </div>
@@ -67,11 +78,10 @@ export default {
         this.data = res.data.comments
         this.data.forEach(element => {
           this.comments.push(
-            {
-              user: element.username,
-              text: element.content
-            })
+            { ...element }
+          )
         })
+        console.log(this.comments)
       })
   },
   props: {
@@ -79,17 +89,10 @@ export default {
   },
   data () {
     return {
-      commentdata: [],
       data: [],
       reply: '',
       replyMes: '',
-      comments: [
-        {
-          user: 'whoevercomment it',
-          text: 'balabla',
-          reply: {}
-        }
-      ]
+      comments: []
     }
   },
   methods: {
@@ -140,11 +143,13 @@ export default {
         persistent: true,
         cancel: true
       }).onOk(data => {
-        console.log(index)
-        this.comments.push({
-          user: this.$q.localStorage.getItem('__diyup__username'),
-          text: '@' + this.comments[index].user + ' ' + data
+        // local changes
+        this.comments[index].replies.push({
+          username: this.$q.localStorage.getItem('__diyup__username'),
+          content: `@${this.comments[index].username} ${data}`,
+          reply_to: this.comments[index].id
         })
+        // TODO: send axios to backend
       }).onCancel(() => {
         console.log('nothing happens')
       })

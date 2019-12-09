@@ -112,6 +112,7 @@ export default {
       logIn: {
         name: '',
         password: '',
+        code: '',
         conpassword: ''
       },
       previousLog: {
@@ -147,6 +148,61 @@ export default {
                 color: 'positive',
                 message: 'Check your email for the verify code'
               })
+            })
+            .catch(err => {
+              if (err) {
+                this.$q.notify({
+                  icon: 'warning',
+                  color: 'negative',
+                  message: 'Something went wrong!'
+                })
+              }
+            })
+        }
+        if (this.step === 2) {
+          axios.post('http://54.153.68.76:5000/api/user/forgot/verify',
+            {
+              email_address: this.logIn.name,
+              password_reset_code: this.logIn.code
+            })
+            .then(res => {
+              this.$q.notify({
+                icon: 'done',
+                color: 'positive',
+                message: 'submitted'
+              })
+            })
+            .catch(err => {
+              if (err) {
+                this.$q.notify({
+                  icon: 'warning',
+                  color: 'negative',
+                  message: 'Your account does not exsist!'
+                })
+              }
+            })
+        }
+        if (this.step === 4) {
+          axios.post('http://54.153.68.76:5000/api/user/forgot/reset',
+            {
+              email_address: this.logIn.name,
+              new_password: this.logIn.conpassword
+            })
+            .then(res => {
+              this.$q.notify({
+                icon: 'done',
+                color: 'positive',
+                message: 'reset your password'
+              })
+            })
+            .catch(err => {
+              if (err) {
+                this.$q.notify({
+                  icon: 'warning',
+                  color: 'negative',
+                  message: 'Something went wrong!'
+                })
+              }
             })
         }
         this.step++
