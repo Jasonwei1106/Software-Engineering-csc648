@@ -82,26 +82,21 @@
 
 <script>
 import Comment from '../components/Comments'
+import axios from 'axios'
 
 export default {
   created () {
     this.updateObjUuid()
-
-    if (this.$q.localStorage.has('__diyup__donetutorial')) {
-      this.tutorial = this.$q.localStorage.getItem('__diyup__donetutorial')
-      this.lists = this.$q.localStorage.getItem('__diyup__donematerial')
-      this.steps = this.$q.localStorage.getItem('__diyup__donestep')
-      this.$q.localStorage.remove('__diyup__donetutorial')
-      this.$q.localStorage.remove('__diyup__donematerial')
-      this.$q.localStorage.remove('__diyup__donestep')
-    } else if (this.$q.localStorage.has('__diyup__entry')) {
-      this.tutorial = this.$q.localStorage.getItem('__diyup__entry')
-      this.tutorial.description = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-    }
+    axios.get(`http://54.153.68.76:5000/api/tutorial/${this.$q.localStorage.getItem('__diyup__username')}/${this.obj_uuid}`)
+      .then(res => {
+        this.data = res.data.tutorial
+        console.log(this.data)
+      })
   },
   data () {
     return {
       obj_uuid: null,
+      data: [],
       tutorial: {
         title: 'Title',
         url: 'img',

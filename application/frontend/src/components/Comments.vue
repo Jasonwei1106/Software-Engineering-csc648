@@ -51,15 +51,44 @@
               </div>
             </q-item-label>
 
-            <q-item-label lines="3">
+            <q-item-label lines="3" class="q-pl-lg">
               <q-list>
-                <q-item
-                  v-for="(comment, child_ind) in comments[ind].replies"
-                  :key="child_ind"
-                >
-                  Hello
-                </q-item>
-              </q-list>
+            <q-item
+              v-for="(comment, child_Ind) in comments[ind].replies"
+              :key="child_Ind"
+            >
+            <q-item-section>
+            <q-item-label lines="1" class="row">
+              <div class="q-py-md">
+                <q-avatar>
+                  <q-img
+                    align= "left"
+                    src="https://cdn.quasar.dev/img/avatar3.jpg"
+                  />
+                </q-avatar>
+              </div>
+
+              <div class="q-pa-md">
+                <q-item-label lines="1">
+                  <p class="text-teal-14 text-bold">
+                    {{ comment.username }}
+                  </p>
+                </q-item-label>
+                <q-item-label lines="2" class="q-pl-lg">
+                  {{ comment.content }}
+                </q-item-label>
+              </div>
+            </q-item-label>
+
+            <q-item-label lines="2">
+              <div class="q-pa-sm">
+                <q-btn label="reply" @click.prevent="sendReply(ind,child_Ind)" />
+              </div>
+            </q-item-label>
+
+            </q-item-section>
+            </q-item>
+          </q-list>
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -81,7 +110,6 @@ export default {
             { ...element }
           )
         })
-        console.log(this.comments)
       })
   },
   props: {
@@ -97,7 +125,6 @@ export default {
   },
   methods: {
     sendMes () {
-      console.log(this.obj_uuid, this.$q.localStorage.getItem('__diyup__signedIn'))
       let headers = {
         'x-access-token': this.$q.localStorage.getItem('__diyup__signedIn')
       }
@@ -112,8 +139,8 @@ export default {
         axios.post(path, body, { headers })
           .then(res => {
             this.comments.push({
-              user: this.$q.localStorage.getItem('__diyup__username'),
-              text: this.reply
+              username: this.$q.localStorage.getItem('__diyup__username'),
+              content: this.reply
             })
             this.reply = ''
           })
@@ -132,10 +159,15 @@ export default {
         })
       }
     },
+
     openReply (index) {
+      let headers = {
+        'x-access-token': this.$q.localStorage.getItem('__diyup__signedIn')
+      }
+      let path = `http://54.153.68.76:5000/api/comments/${this.obj_uuid}/create/${this.comments[index].id}`
       this.$q.dialog({
-        title: 'Enter shit',
-        message: 'put stuffs',
+        title: 'Send Your Comments',
+        message: 'Put your comments',
         prompt: {
           model: '',
           type: 'text'
@@ -143,23 +175,54 @@ export default {
         persistent: true,
         cancel: true
       }).onOk(data => {
-        // local changes
-        this.comments[index].replies.push({
-          username: this.$q.localStorage.getItem('__diyup__username'),
-          content: `@${this.comments[index].username} ${data}`,
-          reply_to: this.comments[index].id
-        })
+        axios.post(path, {
+          content: `${data}`,
+          image: 'test.png'
+        }, { headers })
+          .then(res => {
+            // local changes
+            this.comments[index].replies.push({
+              username: this.$q.localStorage.getItem('__diyup__username'),
+              content: `${data}`
+            })
+          })
         // TODO: send axios to backend
       }).onCancel(() => {
         console.log('nothing happens')
       })
     },
-    sendReply (index) {
-      this.comments[0].reply.push({
-        user: this.$q.localStorage.getItem('__diyup__username'),
-        text: this.replyMes
+
+    sendReply (index, childIndex) {
+      let headers = {
+        'x-access-token': this.$q.localStorage.getItem('__diyup__signedIn')
+      }
+      let path = `http://54.153.68.76:5000/api/comments/${this.obj_uuid}/create/${this.comments[index].id}`
+      this.$q.dialog({
+        title: 'Send Your Comments',
+        message: 'Put your comments',
+        prompt: {
+          model: '',
+          type: 'text'
+        },
+        persistent: true,
+        cancel: true
+      }).onOk(data => {
+        axios.post(path, {
+          content: `${data}`,
+          image: 'test.png'
+        }, { headers })
+          .then(res => {
+            // local changes
+            this.comments[index].replies.push({
+              username: this.$q.localStorage.getItem('__diyup__username'),
+              content: `@${this.comments[index].replies[childIndex].username} ${data}`,
+              reply_to: this.comments[index].id
+            })
+          })
+        // TODO: send axios to backend
+      }).onCancel(() => {
+        console.log('nothing happens')
       })
-      this.replyMes = ''
     }
   }
 }

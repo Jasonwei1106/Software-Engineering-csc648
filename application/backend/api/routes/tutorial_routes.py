@@ -161,25 +161,24 @@ def get_all_tutorials_by_user(username):
 
     return jsonify({'tutorials' : output}), 200
 
-@app.route('/api/tutorial/<username>/<tutorial_uuid>', methods=['GET'])
-def get_one_tutorial(username, tutorial_uuid):
+@app.route('/api/tutorial/<tutorial_uuid>', methods=['GET'])
+def get_one_tutorial(tutorial_uuid):
     """
     Tutorial route to get one tutorial of a user
 
     Parameters
     ----------
-    username, tutorial_uuid
+    tutorial_uuid
 
     Returns
     -------
     Tutorial
 
     """
-    sql_query = "SELECT * FROM diyup.tutorials WHERE \
-        author_username=%s AND uuid=%s"
+    sql_query = "SELECT * FROM diyup.tutorials WHERE uuid=%s"
 
     cur = mysql.connection.cursor()
-    cur.execute(sql_query, (username, tutorial_uuid))
+    cur.execute(sql_query, (tutorial_uuid))
     tutorial = cur.fetchone()
 
     if not tutorial:
