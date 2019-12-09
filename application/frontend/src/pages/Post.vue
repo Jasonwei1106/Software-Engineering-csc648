@@ -57,7 +57,7 @@
 
                 <q-btn
                   class="col-2"
-                  label ="Add" color="darkd"
+                  label ="Add" color="dark"
                   @click="addList"
                 />
               </div>
