@@ -75,7 +75,7 @@
       </q-list>
     </div>
      <div>
-      <Comment style="margin-top:25px"/>
+      <Comment :obj_uuid="obj_uuid" style="margin-top:25px"/>
     </div>
   </div>
 </template>
@@ -85,6 +85,8 @@ import Comment from '../components/Comments'
 
 export default {
   created () {
+    this.updateObjUuid()
+
     if (this.$q.localStorage.has('__diyup__donetutorial')) {
       this.tutorial = this.$q.localStorage.getItem('__diyup__donetutorial')
       this.lists = this.$q.localStorage.getItem('__diyup__donematerial')
@@ -99,6 +101,7 @@ export default {
   },
   data () {
     return {
+      obj_uuid: null,
       tutorial: {
         title: 'Title',
         url: 'img',
@@ -112,6 +115,14 @@ export default {
   },
   components: {
     Comment
+  },
+  watch: {
+    $route: 'updateObjUuid'
+  },
+  methods: {
+    updateObjUuid: function () {
+      this.obj_uuid = this.$route.params.uuid
+    }
   }
 }
 </script>

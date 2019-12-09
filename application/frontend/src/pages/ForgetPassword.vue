@@ -103,6 +103,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data () {
     return {
@@ -123,7 +125,7 @@ export default {
     onSubmit: function () {
       if (this.step === 1 && this.logIn.name.length < 1) {
         this.$q.notify({
-          message: 'Please enter something here'
+          message: 'Please your email here'
         })
       } else if (this.step === 3 && this.logIn.password.length < 1) {
         this.$q.notify({
@@ -134,11 +136,22 @@ export default {
           message: 'Your confirm password doesn\'t match'
         })
       } else {
-        if (this.step !== 4) {
-          this.step++
-          this.previousLog = {
-            ...this.logIn
-          }
+        if (this.step === 1) {
+          axios.post('http://54.153.68.76:5000/api/user/forgot/send',
+            {
+              email_address: this.logIn.name
+            })
+            .then(res => {
+              this.$q.notify({
+                icon: 'done',
+                color: 'positive',
+                message: 'Check your email for the verify code'
+              })
+            })
+        }
+        this.step++
+        this.previousLog = {
+          ...this.logIn
         }
       }
     },

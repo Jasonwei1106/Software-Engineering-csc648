@@ -46,15 +46,7 @@
 
             <q-item-label lines="2">
               <div class="q-pa-sm">
-                <q-btn label="reply" @click.prevent="openReply" />
-
-                <q-input v-if= "display" v-model="replyMes" />
-
-                <q-btn
-                  v-if= "display"
-                  class="q-my-sm" label="send"
-                  @click.prevent="sendReply"
-                />
+                <q-btn label="reply" @click.prevent="openReply(ind)" />
               </div>
             </q-item-label>
           </q-item-section>
@@ -66,12 +58,31 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
+  created () {
+    axios.get(`http://54.153.68.76:5000/api/comments/${this.obj_uuid}/get_all`)
+      .then(res => {
+        this.data = res.data.comments
+        this.data.forEach(element => {
+          this.comments.push(
+            {
+              user: element.username,
+              text: element.content
+            })
+        })
+      })
+  },
+  props: {
+    obj_uuid: String
+  },
   data () {
     return {
+      commentdata: [],
+      data: [],
       reply: '',
       replyMes: '',
-      display: false,
       comments: [
         {
           user: 'whoevercomment it',
@@ -83,16 +94,42 @@ export default {
   },
   methods: {
     sendMes () {
+      console.log(this.obj_uuid, this.$q.localStorage.getItem('__diyup__signedIn'))
+      let headers = {
+        'x-access-token': this.$q.localStorage.getItem('__diyup__signedIn')
+      }
+
       if (this.reply !== '') {
-        this.comments.push({
-          user: this.$q.localStorage.getItem('__diyup__username'),
-          text: this.reply
+        let path = `http://54.153.68.76:5000/api/comments/${this.obj_uuid}/create`
+        let body = {
+          content: this.reply,
+          image: 'test.png'
+        }
+
+        axios.post(path, body, { headers })
+          .then(res => {
+            this.comments.push({
+              user: this.$q.localStorage.getItem('__diyup__username'),
+              text: this.reply
+            })
+            this.reply = ''
+          })
+          .catch(err => {
+            if (err) {
+              this.$q.notify({
+                icon: 'warning',
+                color: 'negative',
+                message: 'Something went wrong!'
+              })
+            }
+          })
+      } else {
+        this.$q.notify({
+          message: 'put something'
         })
-        this.reply = ''
       }
     },
-    openReply () {
-      // this.display = true
+    openReply (index) {
       this.$q.dialog({
         title: 'Enter shit',
         message: 'put stuffs',
@@ -103,18 +140,20 @@ export default {
         persistent: true,
         cancel: true
       }).onOk(data => {
-        console.log('okay was pressed and data is :', data)
+        console.log(index)
+        this.comments.push({
+          user: this.$q.localStorage.getItem('__diyup__username'),
+          text: '@' + this.comments[index].user + ' ' + data
+        })
       }).onCancel(() => {
         console.log('nothing happens')
       })
     },
-    sendReply () {
-      console.log(this.replyMes)
+    sendReply (index) {
       this.comments[0].reply.push({
         user: this.$q.localStorage.getItem('__diyup__username'),
         text: this.replyMes
       })
-      this.display = false
       this.replyMes = ''
     }
   }
