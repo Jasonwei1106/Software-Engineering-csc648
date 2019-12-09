@@ -44,7 +44,6 @@ def get_all_tutorials():
 
     return jsonify({'tutorials' : output}), 200
 
-# Get tutorials with steps
 @app.route('/api/tutorial/get_all', methods=['GET'])
 def get_all_tutorial_info():
     """
