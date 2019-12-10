@@ -153,7 +153,7 @@ export default {
       }
     },
     fetchData: function () {
-      axios.get('http://54.153.68.76:5000/api/tutorial/get')
+      axios.get('http://54.67.109.241:5000/api/tutorial/get')
         .then(res => {
           this.data = res.data.tutorials
           this.data.forEach(element => {

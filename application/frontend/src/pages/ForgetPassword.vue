@@ -138,7 +138,7 @@ export default {
         })
       } else {
         if (this.step === 1) {
-          axios.post('http://54.153.68.76:5000/api/user/forgot/send',
+          axios.post('http://54.67.109.241:5000/api/user/forgot/send',
             {
               email_address: this.logIn.name
             })
@@ -160,7 +160,7 @@ export default {
             })
         }
         if (this.step === 2) {
-          axios.post('http://54.153.68.76:5000/api/user/forgot/verify',
+          axios.post('http://54.67.109.241:5000/api/user/forgot/verify',
             {
               email_address: this.logIn.name,
               password_reset_code: this.logIn.code
@@ -183,7 +183,7 @@ export default {
             })
         }
         if (this.step === 4) {
-          axios.post('http://54.153.68.76:5000/api/user/forgot/reset',
+          axios.post('http://54.67.109.241:5000/api/user/forgot/reset',
             {
               email_address: this.logIn.name,
               password: this.logIn.conpassword
