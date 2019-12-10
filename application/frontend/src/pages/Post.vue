@@ -63,7 +63,7 @@
               </div>
 
               <q-item
-                v-for="(material, ind) in materials"
+                v-for="(material, ind) in materials.items"
                 :key="ind"
                 clickable
               >
@@ -73,7 +73,7 @@
 
                 <q-btn
                   icon="delete"
-                  @click="materials.splice(ind, 1)"
+                  @click="materials.items.splice(ind, 1)"
                 />
               </q-item>
             </div>
@@ -98,7 +98,7 @@
               </div>
 
               <q-item
-                v-for="(step, ind) in steps"
+                v-for="(step, ind) in steps.contents"
                 :key="ind"
                 clickable
                 style="overflow-wrap: break-word;"
@@ -109,7 +109,7 @@
 
                 <q-btn
                   icon="delete"
-                  @click="steps.splice(ind, 1)"
+                  @click="steps.contents.splice(ind, 1)"
                 />
               </q-item>
             </div>
@@ -137,6 +137,9 @@ export default {
       this.poster = this.$q.localStorage.getItem('__diyup__edittutorial')
       this.materials = this.$q.localStorage.getItem('__diyup__editmaterial')
       this.steps = this.$q.localStorage.getItem('__diyup__editstep')
+      this.$q.localStorage.remove('__diyup__edittutorial')
+      this.$q.localStorage.remove('__diyup__editmaterial')
+      this.$q.localStorage.remove('__diyup__editstep')
     }
   },
   data () {
@@ -150,8 +153,15 @@ export default {
       options: [
         'Craft', 'Cooking', 'Tech', 'Workshop', 'Home&Decor'
       ],
-      materials: [],
-      steps: []
+      materials: {
+        items: [],
+        categories: [],
+        links: []
+      },
+      steps: {
+        contents: [],
+        images: []
+      }
     }
   },
   methods: {
@@ -169,15 +179,17 @@ export default {
       axios.post('https://api.imgur.com/3/image/', {
         image: files
       }).then(res => {
-        // console.log(res)
       })
     },
     addList () {
-      this.materials.push(this.materialInput)
+      this.materials.items.push(this.materialInput)
+      this.materials.categories.push('tools')
+      this.materials.links.push('amazon.com')
       this.materialInput = ''
     },
     addStep () {
-      this.steps.push(this.stepInput)
+      this.steps.contents.push(this.stepInput)
+      this.steps.images.push('test.png')
       this.stepInput = ''
     }
   }

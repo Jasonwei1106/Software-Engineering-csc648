@@ -29,7 +29,7 @@
       >
         <q-list dense bordered padding class="rounded-borders">
           <q-item
-            v-for="(material, ind) in materials"
+            v-for="(material, ind) in materials.items"
             :key="ind"
           >
             <q-item-section>
@@ -45,7 +45,7 @@
 
       <q-list>
         <q-item
-          v-for="(step, ind) in steps"
+          v-for="(step, ind) in steps.contents"
           :key="ind"
         >
           <q-item-section style="max-width:20px">
@@ -88,6 +88,9 @@ export default {
     this.tutorial = this.$q.localStorage.getItem('__diyup__poster')
     this.materials = this.$q.localStorage.getItem('__diyup__material')
     this.steps = this.$q.localStorage.getItem('__diyup__step')
+    this.$q.localStorage.remove('__diyup__poster')
+    this.$q.localStorage.remove('__diyup__material')
+    this.$q.localStorage.remove('__diyup__step')
   },
   // name: 'Tutorial page',
   data () {
@@ -111,12 +114,26 @@ export default {
         author_difficulty: this.tutorial.difficulty
       }, { headers })
         .then(res => {
-          this.$router.push({ name: 'rootHome' }).catch(err => {
-            if (err) {
-              this.$router.go()
-            }
+          let path1 = `http://54.67.109.241:5000/api/step/${res.data.token}/create`
+          let path2 = `http://54.67.109.241:5000/api/items/${res.data.token}/create`
+          let promises = []
+
+          promises.push(axios.post(path1,
+            {
+              content: this.steps.contents,
+              image: this.steps.images
+            }, { headers }))
+          promises.push(axios.post(path2, {
+            name: this.materials.items,
+            category: this.materials.categories,
+            link: this.materials.links
+          }, { headers }))
+
+          Promise.all(promises).then(res => {
+            this.$router.push({ name: 'rootHome' })
           })
         })
+
         .catch(err => {
           if (err) {
             this.$q.notify({
