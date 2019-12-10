@@ -112,6 +112,7 @@ export default {
   },
   methods: {
     updateObjUuid: function () {
+      console.log(this.$route)
       this.obj_uuid = this.$route.params.uuid
     }
   }
