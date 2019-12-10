@@ -88,6 +88,9 @@ export default {
     this.tutorial = this.$q.localStorage.getItem('__diyup__poster')
     this.materials = this.$q.localStorage.getItem('__diyup__material')
     this.steps = this.$q.localStorage.getItem('__diyup__step')
+    this.$q.localStorage.remove('__diyup__poster')
+    this.$q.localStorage.remove('__diyup__material')
+    this.$q.localStorage.remove('__diyup__step')
   },
   // name: 'Tutorial page',
   data () {
@@ -111,8 +114,8 @@ export default {
         author_difficulty: this.tutorial.difficulty
       }, { headers })
         .then(res => {
-          let path1 = `http://54.153.68.76:5000/api/step/${res.data.token}/create`
-          let path2 = `http://54.153.68.76:5000/api/items/${res.data.token}/create`
+          let path1 = `http://54.67.109.241:5000/api/step/${res.data.token}/create`
+          let path2 = `http://54.67.109.241:5000/api/items/${res.data.token}/create`
           let promises = []
 
           promises.push(axios.post(path1,
@@ -127,7 +130,6 @@ export default {
           }, { headers }))
 
           Promise.all(promises).then(res => {
-            console.log(res.data)
             this.$router.push({ name: 'rootHome' })
           })
         })

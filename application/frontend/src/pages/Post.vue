@@ -138,7 +138,7 @@ export default {
       this.materials = this.$q.localStorage.getItem('__diyup__editmaterial')
       this.steps = this.$q.localStorage.getItem('__diyup__editstep')
       this.$q.localStorage.remove('__diyup__edittutorial')
-      this.$q.localStorage.remove('diyup__editmaterial')
+      this.$q.localStorage.remove('__diyup__editmaterial')
       this.$q.localStorage.remove('__diyup__editstep')
     }
   },
@@ -179,7 +179,6 @@ export default {
       axios.post('https://api.imgur.com/3/image/', {
         image: files
       }).then(res => {
-        // console.log(res)
       })
     },
     addList () {
