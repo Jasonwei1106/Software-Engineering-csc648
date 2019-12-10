@@ -88,8 +88,8 @@ export default {
   created () {
     this.updateObjUuid()
     axios.all([
-      axios.get(`http://54.153.68.76:5000/api/tutorial/${this.obj_uuid}/get`),
-      axios.get(`http://54.153.68.76:5000/api/items/${this.obj_uuid}/get`)])
+      axios.get(`http://54.67.109.241:5000/api/tutorial/${this.obj_uuid}/get`),
+      axios.get(`http://54.67.109.241:5000/api/items/${this.obj_uuid}/get`)])
       .then(([res1, res2]) => {
         this.data = res1.data.tutorial
         this.lists = res2.data.items

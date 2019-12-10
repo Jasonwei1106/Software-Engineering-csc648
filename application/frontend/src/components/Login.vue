@@ -68,7 +68,7 @@ export default {
   },
   methods: {
     onSubmit: function () {
-      axios.post('http://54.153.68.76:5000/api/login', {
+      axios.post('http://54.67.109.241:5000/api/login', {
         username: this.logIn.username,
         password: this.logIn.password
       })

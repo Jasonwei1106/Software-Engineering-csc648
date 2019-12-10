@@ -103,7 +103,7 @@ export default {
         'x-access-token': this.$q.localStorage.getItem('__diyup__signedIn')
       }
 
-      axios.post('http://54.153.68.76:5000/api/tutorial/create', {
+      axios.post('http://54.67.109.241:5000/api/tutorial/create', {
         title: this.tutorial.title,
         image: 'test.png',
         category: this.tutorial.category,

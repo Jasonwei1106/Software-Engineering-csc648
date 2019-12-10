@@ -102,7 +102,7 @@ import axios from 'axios'
 
 export default {
   created () {
-    axios.get(`http://54.153.68.76:5000/api/comments/${this.obj_uuid}/get_all`)
+    axios.get(`http://54.67.109.241:5000/api/comments/${this.obj_uuid}/get_all`)
       .then(res => {
         this.data = res.data.comments
         this.data.forEach(element => {
@@ -130,7 +130,7 @@ export default {
       }
 
       if (this.reply !== '') {
-        let path = `http://54.153.68.76:5000/api/comments/${this.obj_uuid}/create`
+        let path = `http://54.67.109.241:5000/api/comments/${this.obj_uuid}/create`
         let body = {
           content: this.reply,
           image: 'test.png'
@@ -164,7 +164,7 @@ export default {
       let headers = {
         'x-access-token': this.$q.localStorage.getItem('__diyup__signedIn')
       }
-      let path = `http://54.153.68.76:5000/api/comments/${this.obj_uuid}/create/${this.comments[index].id}`
+      let path = `http://54.67.109.241:5000/api/comments/${this.obj_uuid}/create/${this.comments[index].id}`
       this.$q.dialog({
         title: 'Send Your Comments',
         message: 'Put your comments',
@@ -196,7 +196,7 @@ export default {
       let headers = {
         'x-access-token': this.$q.localStorage.getItem('__diyup__signedIn')
       }
-      let path = `http://54.153.68.76:5000/api/comments/${this.obj_uuid}/create/${this.comments[index].id}`
+      let path = `http://54.67.109.241:5000/api/comments/${this.obj_uuid}/create/${this.comments[index].id}`
       this.$q.dialog({
         title: 'Send Your Comments',
         message: 'Put your comments',
@@ -221,7 +221,6 @@ export default {
           })
         // TODO: send axios to backend
       }).onCancel(() => {
-        console.log('nothing happens')
       })
     }
   }

@@ -71,7 +71,7 @@ export default {
           message: 'Your confirm password doesn\'t match'
         })
       } else {
-        axios.post('http://54.153.68.76:5000/api/user/create', {
+        axios.post('http://54.67.109.241:5000/api/user/create', {
           email_address: this.logIn.email,
           username: this.logIn.username,
           password: this.logIn.password

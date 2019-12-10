@@ -83,10 +83,10 @@ import axios from 'axios'
 export default {
   created () {
     let username = this.$route.params.username
-    let path = `http://54.153.68.76:5000/api/tutorial/${username}`
+    let path = `http://54.67.109.241:5000/api/tutorial/${username}`
 
     if (username === 'admin') {
-      path = 'http://54.153.68.76:5000/api/tutorial/get'
+      path = 'http://54.67.109.241:5000/api/tutorial/get'
     }
 
     axios.get(path).then(res => {
@@ -144,7 +144,7 @@ export default {
         persistent: true,
         cancel: true
       }).onOk(() => {
-        let path = `http://54.153.68.76:5000/api/tutorial/${entry.uuid}`
+        let path = `http://54.67.109.241:5000/api/tutorial/${entry.uuid}`
         let headers = {
           'x-access-token': this.$q.localStorage.getItem('__diyup__signedIn')
         }
