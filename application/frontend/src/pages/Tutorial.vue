@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-  <Strong style="font-size: 200%;"> {{ data.title }} </Strong>
+    <Strong style="font-size: 200%;"> {{ data.title }} </Strong>
 
     <!-- ---------- IMAGE CODEBLOCK ---------- -->
     <div
@@ -91,7 +91,6 @@ export default {
       axios.get(`http://54.67.109.241:5000/api/tutorial/${this.obj_uuid}/get`),
       axios.get(`http://54.67.109.241:5000/api/items/${this.obj_uuid}/get`)])
       .then(([res1, res2]) => {
-        console.log(res2.data)
         this.data = res1.data.tutorial
         this.lists = res2.data.items
       })
