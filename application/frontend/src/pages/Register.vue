@@ -83,6 +83,7 @@ export default {
               message: 'Submitted'
             })
             this.logIn = {}
+            this.$router.push({ name: 'rootHome' })
           })
           .catch(() => {
             this.$q.notify({
