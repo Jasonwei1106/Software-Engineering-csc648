@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect
 from flask_mysqldb import MySQL
 from flask_mail import Mail, Message
 from flask_cors import CORS

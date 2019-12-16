@@ -182,7 +182,7 @@ def create_user():
     mysql.connection.commit()
     cur.close()
 
-    verification_url = "http://54.153.68.76:5000/api/user/%s/verify/%s" % \
+    verification_url = "http://54.67.109.241:5000/api/user/%s/verify/%s" % \
         (username, user_uuid)
 
     with app.app_context():
@@ -381,7 +381,7 @@ def verify_user(username, user_uuid):
             username=%s"
         cur.execute(sql_update, (username,))
         cur.close()
-        return jsonify({'message' : 'User successfully verified!'}), 200
+        return redirect("http://54.67.109.241", code=302)
     else:
         cur.close()
         return jsonify({'message' : \
