@@ -74,6 +74,33 @@
         </q-item>
       </q-list>
     </div>
+
+    <div>
+      <div>
+        <strong>Current Tutorial Rating:</strong>
+
+        <q-rating
+          readonly
+          class="q-pl-sm"
+          size="2em" icon="thumb_up"
+          :value="data.rating === 'None' ? 5.0 : Number(data.rating)"
+        />
+      </div>
+
+      <div>
+        <strong>Rate this Tutorial:</strong>
+
+        <q-rating
+          class="q-pl-sm"
+          size="2em" icon="thumb_up"
+          v-model="userRate"
+          @input="invokeRating"
+        />
+      </div>
+    </div>
+
+    <q-separator color="black" />
+
      <div>
       <Comment :obj_uuid="obj_uuid" style="margin-top:25px"/>
     </div>
@@ -97,6 +124,7 @@ export default {
   },
   data () {
     return {
+      userRate: 0,
       obj_uuid: null,
       data: [],
       lists: [
@@ -113,6 +141,22 @@ export default {
   methods: {
     updateObjUuid: function () {
       this.obj_uuid = this.$route.params.uuid
+    },
+    invokeRating: function () {
+      let path = `http://54.67.109.241:5000/api/rate/${this.data.uuid}/score/create`
+      let headers = {
+        'x-access-token': this.$q.localStorage.getItem('__diyup__signedIn')
+      }
+
+      axios.post(path, {
+        rating: Number(this.userRate)
+      }, { headers }).then(() => {
+        this.$q.notify({
+          message: '<div align="center">Thank you for rating!<div>',
+          color: 'positive',
+          html: true
+        })
+      })
     }
   }
 }
