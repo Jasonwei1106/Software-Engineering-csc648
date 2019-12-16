@@ -63,11 +63,18 @@
                   <b>Author's Difficulty Rating:</b>
                   {{ props.row.author_difficulty }}<br>
 
-                  <b>Users' Difficulty Rating:</b>
-                  {{ props.row.viewer_difficulty === 'None' ? props.row.author_difficulty : props.row.viewer_difficulty }}<br>
+                  <!-- <b>Users' Difficulty Rating:</b>
+                  {{ props.row.viewer_difficulty === 'None' ? props.row.author_difficulty : props.row.viewer_difficulty }}<br> -->
 
                   <b>Users' Rating:</b>
-                  {{ props.row.rating === 'None' ? "5.0" : props.row.rating }}<br>
+                  <q-rating
+                    readonly
+                    class="q-pl-sm" size="1.5em" icon="thumb_up"
+                    :value="
+                      props.row.rating === 'None' ? 5.0 : Number(props.row.rating)
+                    "
+                  />
+                  <br>
 
                   <b>Category:</b>
                   {{ props.row.category }}<br>
