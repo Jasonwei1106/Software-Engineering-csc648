@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-  <Strong style="font-size: 200%;"> {{ data.title }} </Strong>
+    <Strong style="font-size: 200%;"> {{ data.title }} </Strong>
 
     <!-- ---------- IMAGE CODEBLOCK ---------- -->
     <div

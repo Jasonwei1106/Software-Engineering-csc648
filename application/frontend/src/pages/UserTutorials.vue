@@ -10,7 +10,6 @@
     >
       <template v-slot:top-left>
         <div class="text-h5 text-bold">My Tutorials</div>
-        <div class="text-italic">Click on tap to delete the tutorial.</div>
       </template>
 
       <template v-slot:top-right>
@@ -30,43 +29,59 @@
         <q-tr :props="props">
           <q-td colspan="100%" key="title" :props="props">
             <q-card class="q-pa-md" style="min-height: 15vh;">
-              <div class="row cursor-pointer" @click="invokeDelete(props.row)">
-                <div class="col-4" align="center">
-                  <q-img
-                    :src="
-                      'https://placeimg.com/500/300/nature?t=' + Math.random()
-                    "
-                    spinner-color="primary"
-                    style="max-height: 140px; max-width: 150px"
+              <div class="row cursor-pointer">
+                <div class="row col" @click="routeToTutorial(props.row)">
+                  <div class="col-4 q-pl-md" align="center">
+                    <q-img
+                      :src="
+                        'https://placeimg.com/500/300/nature?t=' + Math.random()
+                      "
+                      spinner-color="primary"
+                      style="max-height: 140px; max-width: 150px"
+                    />
+                  </div>
+
+                  <div class="col gt-xs">
+                    <b>Title:</b>
+                    {{ props.row.title }} by {{ props.row.author_username }}<br>
+
+                    <b>Author's Difficulty Rating:</b>
+                    {{ props.row.author_difficulty }}<br>
+
+                    <b>Users' Difficulty Rating:</b>
+                    {{ props.row.viewer_difficulty === 'None' ? props.row.author_difficulty : props.row.viewer_difficulty }}<br>
+
+                    <b>Users' Rating:</b>
+                    {{ props.row.rating === 'None' ? "5.0" : props.row.rating }}<br>
+
+                    <b>Category:</b>
+                    {{ props.row.category }}<br>
+                  </div>
+
+                  <div class="col-5 gt-xs" align="left">
+                    <b>Description:</b> {{ props.row.description }}
+                  </div>
+
+                  <div class="col xs" align="left">
+                    <b>Title:</b>
+                    {{ props.row.title }} by {{ props.row.author_username }}
+                    <br>
+
+                    <b>Description:</b> {{ props.row.description }}
+                  </div>
+                </div>
+
+                <div class="col-1" style="
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;"
+                >
+                  <q-btn
+                    round
+                    color="primary"
+                    @click="invokeDelete(props.row)"
+                    icon="delete"
                   />
-                </div>
-                <div class="col gt-xs">
-                  <b>Title:</b>
-                  {{ props.row.title }} by {{ props.row.author_username }}<br>
-
-                  <b>Author's Difficulty Rating:</b>
-                  {{ props.row.author_difficulty }}<br>
-
-                  <b>Users' Difficulty Rating:</b>
-                  {{ props.row.viewer_difficulty === 'None' ? props.row.author_difficulty : props.row.viewer_difficulty }}<br>
-
-                  <b>Users' Rating:</b>
-                  {{ props.row.rating === 'None' ? "5.0" : props.row.rating }}<br>
-
-                  <b>Category:</b>
-                  {{ props.row.category }}<br>
-                </div>
-
-                <div class="col-5 q-pr-xl gt-xs" align="left">
-                  <b>Description:</b> {{ props.row.description }}
-                </div>
-
-                <div class="col q-pl-xs xs" align="left">
-                  <b>Title:</b>
-                  {{ props.row.title }} by {{ props.row.author_username }}
-                  <br>
-
-                  <b>Description:</b> {{ props.row.description }}
                 </div>
               </div>
             </q-card>
@@ -138,6 +153,9 @@ export default {
     }
   },
   methods: {
+    routeToTutorial: function (entry) {
+      this.$router.push(`/tutorial/${entry.uuid}`)
+    },
     invokeDelete: function (entry) {
       this.$q.dialog({
         title: 'Confirm Delete?',
