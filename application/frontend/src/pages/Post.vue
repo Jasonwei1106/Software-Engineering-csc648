@@ -151,7 +151,7 @@ export default {
         difficulty: '1'
       },
       options: [
-        'Craft', 'Cooking', 'Tech', 'Workshop', 'Home&Decor'
+        'Crafts', 'Cooking', 'Tech', 'Workshop', 'Home&Decor'
       ],
       materials: {
         items: [],
@@ -166,14 +166,22 @@ export default {
   },
   methods: {
     onSubmit: function () {
-      this.$q.localStorage.set('__diyup__poster', this.poster)
-      this.$q.localStorage.set('__diyup__material', this.materials)
-      this.$q.localStorage.set('__diyup__step', this.steps)
-      this.$router.push({ path: '/preview' }).catch(err => {
-        if (err) {
-          this.$router.go()
-        }
-      })
+      if (this.steps.contents.length === 0 || this.materials.items.length === 0) {
+        this.$q.notify({
+          icon: 'warning',
+          color: 'negative',
+          message: 'put your steps and materials'
+        })
+      } else {
+        this.$q.localStorage.set('__diyup__poster', this.poster)
+        this.$q.localStorage.set('__diyup__material', this.materials)
+        this.$q.localStorage.set('__diyup__step', this.steps)
+        this.$router.push({ path: '/preview' }).catch(err => {
+          if (err) {
+            this.$router.go()
+          }
+        })
+      }
     },
     getUrl (files) {
       axios.post('https://api.imgur.com/3/image/', {
