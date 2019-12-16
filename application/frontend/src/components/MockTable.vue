@@ -21,6 +21,13 @@
 
       <template v-slot:top-right>
         <q-toolbar>
+          <q-btn
+            v-if="option !== ''"
+            flat dense round
+            class="q-mr-sm"
+            icon="close"
+            @click="option = ''"
+          />
           <q-select
             outlined dense
             class="q-mr-xs col-4" label="Category Filter"
@@ -107,8 +114,7 @@ export default {
         { label: 'Cooking', value: 'cooking' },
         { label: 'Crafts', value: 'crafts' },
         { label: 'Home & Decor', value: 'homeDecor' },
-        { label: 'Testing', value: 'testing' },
-        { label: 'All', value: '' }
+        { label: 'Testing', value: 'testing' }
       ],
       option: '',
       columns: [
