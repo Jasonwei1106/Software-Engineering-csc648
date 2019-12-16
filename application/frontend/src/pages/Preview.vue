@@ -66,6 +66,11 @@
     </div>
 
     <div>
+      <strong class="q-pr-sm">Level of Difficulty: </strong>
+      {{ tutorial.difficulty }}
+    </div>
+
+    <div>
       <q-btn
         label="EDIT"
         style="margin-right: 400px"

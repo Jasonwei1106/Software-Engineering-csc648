@@ -45,6 +45,17 @@
             </div>
 
             <div>
+              <strong> Rate Your Difficulty:</strong>
+              <q-input
+                dense outlined
+                type="number"
+                Label="Difficulty"
+                placeholder="put number between 1 and 5"
+                v-model="poster.difficulty"
+              />
+            </div>
+
+            <div>
               <strong>Material List:</strong>
 
               <div class="row q-gutter-sm">
@@ -147,8 +158,7 @@ export default {
       materialInput: '',
       stepInput: '',
       poster: {
-        img: 'testimg',
-        difficulty: '1'
+        img: 'testimg'
       },
       options: [
         'Crafts', 'Cooking', 'Tech', 'Workshop', 'Home&Decor'
@@ -171,6 +181,12 @@ export default {
           icon: 'warning',
           color: 'negative',
           message: 'put your steps and materials'
+        })
+      } else if (this.poster.difficulty > 5 || this.poster.difficulty < 0 || this.poster.difficulty === '') {
+        this.$q.notify({
+          icon: 'warning',
+          color: 'negative',
+          message: 'the level of difficulty have to be in between 0 and 5'
         })
       } else {
         this.$q.localStorage.set('__diyup__poster', this.poster)

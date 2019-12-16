@@ -76,6 +76,11 @@
     </div>
 
     <div>
+      <strong class="q-pr-sm">Level of Difficulty: </strong>
+      {{ data.author_difficulty }}
+    </div>
+
+    <div>
       <div>
         <strong>Current Tutorial Rating:</strong>
 
