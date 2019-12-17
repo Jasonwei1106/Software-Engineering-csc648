@@ -71,7 +71,8 @@ module.exports = function (ctx) {
         'QTd',
         'QBadge',
         'QMenu',
-        'QRating'
+        'QRating',
+        'QSlider'
       ],
 
       directives: [

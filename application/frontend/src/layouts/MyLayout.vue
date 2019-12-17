@@ -69,13 +69,14 @@
               bg-color="white" color="black"
               debounce="300" class="col"
               v-model="filter" placeholder = "Tutorial Title"
-              @keyup.enter="test"
+              @keyup.enter="titleSearch"
             >
               <template v-slot:append>
                 <q-icon v-if="filter === ''" name="search" />
                 <q-icon
                   v-else
-                  name="clear" class="cursor-pointer" @click="filter = ''"
+                  name="clear" class="cursor-pointer"
+                  @click="refreshSearch"
                 />
               </template>
             </q-input>
@@ -239,14 +240,17 @@ export default {
     }
   },
   methods: {
-    test: function (e) {
+    refreshSearch: function () {
+      this.filter = ''
+      this.titleSearch(event)
+    },
+    titleSearch: function (e) {
       if (e.target.value) {
         this.$router.push(`/?title=${e.target.value}`).catch(err => {
           if (err) {
             // error
           }
         })
-        this.filter = ''
       } else {
         this.$router.push('/').catch(err => {
           if (err) {

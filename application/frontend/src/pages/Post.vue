@@ -24,7 +24,7 @@
               />
             </div>
 
-            <div>
+            <!-- <div>
               <q-uploader
                 auto-upload
                 color="dark" class="full-width"
@@ -32,37 +32,37 @@
                 v-model="poster.img"
                 :url="getUrl"
               />
-            </div>
+            </div> -->
 
             <div>
               <q-input
                 dense outlined required
                 type="textarea"
-                Label="Description"
+                label="Description"
                 placeholder="Tutorial description goes here..."
                 v-model="poster.description"
               />
             </div>
 
             <div>
-              <strong> Rate Your Difficulty:</strong>
-              <q-input
-                dense outlined
-                type="number"
-                Label="Difficulty"
-                placeholder="put number between 1 and 5"
+              <q-badge color="primary">
+                Difficulty Rating: {{ poster.difficulty || 1 }} (1 to 5)
+              </q-badge>
+              <q-slider
+                markers
                 v-model="poster.difficulty"
+                :min="1" :max="5"
               />
             </div>
 
             <div>
               <strong>Material List:</strong>
 
-              <div class="row q-gutter-sm">
+              <div class="row q-gutter-sm q-mb-sm">
                 <q-input
                   dense outlined
                   class="col"
-                  type="text" placeholder="Put your tools Here"
+                  type="text" placeholder="Put your tools here. ie) Egg x 2"
                   v-model="materialInput"
                 />
 
@@ -73,31 +73,36 @@
                 />
               </div>
 
-              <q-item
-                v-for="(material, ind) in materials.items"
-                :key="ind"
-                clickable
+              <q-list
+                bordered separator
+                v-if="materials.items.length > 0"
               >
-                <q-item-section>
-                  {{ material }}
-                </q-item-section>
+                <q-item
+                  v-for="(material, ind) in materials.items"
+                  :key="ind"
+                  dense
+                >
+                  <q-item-section>
+                    {{ material }}
+                  </q-item-section>
 
-                <q-btn
-                  icon="delete"
-                  @click="materials.items.splice(ind, 1)"
-                />
-              </q-item>
+                  <q-btn
+                    round flat
+                    icon="delete"
+                    @click="materials.items.splice(ind, 1)"
+                  />
+                </q-item>
+              </q-list>
             </div>
 
             <div>
               <strong>Step List:</strong>
 
-              <div class="row q-gutter-sm">
+              <div class="row q-gutter-sm q-mb-sm">
                 <q-input
-                  class="col"
                   dense outlined
-                  type="textarea"
-                  placeholder="Put your description Here"
+                  class="col" type="textarea"
+                  placeholder="Step description goes here."
                   v-model="stepInput"
                 />
 
@@ -108,21 +113,27 @@
                 />
               </div>
 
-              <q-item
-                v-for="(step, ind) in steps.contents"
-                :key="ind"
-                clickable
-                style="overflow-wrap: break-word;"
+              <q-list
+                bordered separator
+                v-if="steps.contents.length > 0"
               >
-                <q-item-section>
-                  {{ step }}
-                </q-item-section>
+                <q-item
+                  v-for="(step, ind) in steps.contents"
+                  :key="ind"
+                  dense
+                  style="overflow-wrap: break-word;"
+                >
+                  <q-item-section>
+                    {{ step }}
+                  </q-item-section>
 
-                <q-btn
-                  icon="delete"
-                  @click="steps.contents.splice(ind, 1)"
-                />
-              </q-item>
+                  <q-btn
+                    round flat
+                    icon="delete"
+                    @click="steps.contents.splice(ind, 1)"
+                  />
+                </q-item>
+              </q-list>
             </div>
           </div>
 
@@ -161,7 +172,13 @@ export default {
         img: 'testimg'
       },
       options: [
-        'Crafts', 'Cooking', 'Tech', 'Workshop', 'Home&Decor'
+        { label: 'Electronics', value: 'electronics' },
+        { label: 'Coding', value: 'coding' },
+        { label: 'Robotics', value: 'robotics' },
+        { label: 'Cooking', value: 'cooking' },
+        { label: 'Crafts', value: 'crafts' },
+        { label: 'Home & Decor', value: 'homeDecor' },
+        { label: 'Testing', value: 'testing' }
       ],
       materials: {
         items: [],
@@ -176,17 +193,14 @@ export default {
   },
   methods: {
     onSubmit: function () {
+      this.poster.difficulty = this.poster.difficulty || 1
+      this.poster.difficulty = Number(this.poster.difficulty)
+
       if (this.steps.contents.length === 0 || this.materials.items.length === 0) {
         this.$q.notify({
           icon: 'warning',
           color: 'negative',
           message: 'put your steps and materials'
-        })
-      } else if (this.poster.difficulty > 5 || this.poster.difficulty < 0 || this.poster.difficulty === '') {
-        this.$q.notify({
-          icon: 'warning',
-          color: 'negative',
-          message: 'the level of difficulty have to be in between 0 and 5'
         })
       } else {
         this.$q.localStorage.set('__diyup__poster', this.poster)
