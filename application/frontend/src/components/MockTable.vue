@@ -12,10 +12,16 @@
     >
       <template v-slot:top-left>
         <q-btn
+          v-if="$q.localStorage.has('__diyup__signedIn')"
           outline
           label="Create a new project"
           @click="goToPost"
-          v-if="$q.localStorage.has('__diyup__signedIn')"
+        />
+        <q-btn
+          v-else
+          outline
+          label="Please sign in to create tutorials"
+          @click="icon = true"
         />
       </template>
 
@@ -30,10 +36,10 @@
           />
           <q-select
             outlined dense
-            class="q-mr-xs col-4" label="Category Filter"
+            class="col-4" label="Category Filter"
             bg-color="white" color="black"
             v-model="option"
-            style="width: 150px;"
+            style="min-width: 200px;"
             :options="categories"
           />
         </q-toolbar>
@@ -97,15 +103,25 @@
         </q-tr>
       </template>
     </q-table>
+
+    <q-dialog v-model="icon">
+      <q-card >
+        <LogIn @close="icon = false" />
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import LogIn from '../components/Login'
 
 export default {
   watch: {
     $route: 'titleQueryFilter'
+  },
+  components: {
+    LogIn
   },
   created () {
     this.fetchData()
@@ -113,6 +129,7 @@ export default {
   },
   data () {
     return {
+      icon: false,
       filter: '',
       categories: [
         { label: 'Electronics', value: 'electronics' },

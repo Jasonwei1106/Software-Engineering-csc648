@@ -21,15 +21,14 @@
           v-for="(comment, ind) in comments"
           :key="ind"
         >
-          <q-item-section>
+          <q-item-section
+            class="q-pa-md"
+            style="border: solid grey 1.2px; border-radius: 3px;"
+          >
             <q-item-label lines="1" class="row">
               <div class="q-py-md">
-                <q-avatar>
-                  <!-- <q-img
-                    align= "left"
-                    src="https://cdn.quasar.dev/img/avatar3.jpg"
-                  /> -->
-                  {{ comment.username[0] }}
+                <q-avatar color="orange">
+                  {{ comment.username[0].toUpperCase() }}
                 </q-avatar>
               </div>
 
@@ -39,6 +38,7 @@
                     {{ comment.username }}
                   </p>
                 </q-item-label>
+
                 <q-item-label lines="2" class="q-pl-lg">
                   {{ comment.content }}
                 </q-item-label>
@@ -48,53 +48,51 @@
             <q-item-label lines="2">
               <div class="q-pa-sm">
                 <q-btn
-                  outline label="reply" @click.prevent="openReply(ind)" />
+                  outline label="reply" @click.prevent="openReply(ind)"
+                />
               </div>
             </q-item-label>
 
             <q-item-label lines="3" class="q-pl-lg">
               <q-list>
-            <q-item
-              v-for="(comment, child_Ind) in comments[ind].replies"
-              :key="child_Ind"
-            >
-            <q-item-section>
-            <q-item-label lines="1" class="row">
-              <div class="q-py-md">
-                <q-avatar>
-                  <!-- <q-img
-                    align= "left"
-                    src="https://cdn.quasar.dev/img/avatar3.jpg"
-                  /> -->
-                  {{ comment.username[0] }}
-                </q-avatar>
-              </div>
+                <q-item
+                  v-for="(comment, child_Ind) in comments[ind].replies"
+                  :key="child_Ind"
+                  style="border-top: solid 1px;"
+                >
+                  <q-item-section>
+                    <q-item-label lines="1" class="row">
+                      <div class="q-py-md">
+                        <q-avatar color="red-3">
+                          {{ comment.username[0].toUpperCase() }}
+                        </q-avatar>
+                      </div>
 
-              <div class="q-pa-md">
-                <q-item-label lines="1">
-                  <p class="text-teal-14 text-bold">
-                    {{ comment.username }}
-                  </p>
-                </q-item-label>
-                <q-item-label lines="2" class="q-pl-lg">
-                  {{ comment.content }}
-                </q-item-label>
-              </div>
-            </q-item-label>
+                      <div class="q-pa-md">
+                        <q-item-label lines="1">
+                          <p class="text-teal-14 text-bold">
+                            {{ comment.username }}
+                          </p>
+                        </q-item-label>
+                        <q-item-label lines="2" class="q-pl-lg">
+                          {{ comment.content }}
+                        </q-item-label>
+                      </div>
+                    </q-item-label>
 
-            <q-item-label lines="2">
-              <div class="q-pa-sm">
-                <q-btn
-                  outline
-                  label="reply"
-                  @click.prevent="sendReply(ind,child_Ind)"
-                />
-              </div>
-            </q-item-label>
+                    <q-item-label lines="2">
+                      <div class="q-pa-sm">
+                        <q-btn
+                          outline
+                          label="reply"
+                          @click.prevent="sendReply(ind,child_Ind)"
+                        />
+                      </div>
+                    </q-item-label>
 
-            </q-item-section>
-            </q-item>
-          </q-list>
+                  </q-item-section>
+                </q-item>
+              </q-list>
             </q-item-label>
           </q-item-section>
         </q-item>
