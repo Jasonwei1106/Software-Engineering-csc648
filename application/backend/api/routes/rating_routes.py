@@ -96,7 +96,7 @@ def create_rating(current_user, tutorial_uuid, rating_type):
 
     cur = mysql.connection.cursor()
 
-    cur.execute("INSERT INTO diyup.ratings(tutorial_uuid, username, \
+    cur.execute("REPLACE INTO diyup.ratings(tutorial_uuid, username, \
         ratings.rating_type, rating) VALUES(%s, %s, %s, %s)", \
         (tutorial_uuid, current_user[1], rating_type, float(rating),)
     )
