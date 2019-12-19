@@ -13,14 +13,38 @@
       <q-separator color="dark" />
     </div>
 
-    <!-- ---------- IMAGE CODEBLOCK ---------- -->
-    <div class="row q-pa-md">
-      <div class="col-3">
+    <div class="xs">
+      <div class="q-pa-md">
         <q-img
           placeholder-src="https://placeimg.com/500/300/nature"
           :src="'https://placeimg.com/500/300/nature=t' + Math.random()"
           style="
-            height: 150px;
+            max-height: 150px;
+            align: left;
+            vertical-align: top;
+            border: solid black 1px;
+          "
+        />
+      </div>
+
+      <div
+        align="center"
+        class="bg-primary text-white"
+        style="border-radius: 3px; width: 92%; margin: 0 auto;"
+      >
+        <strong>Level of Difficulty:</strong>
+        {{ data.author_difficulty }}
+      </div>
+    </div>
+
+    <!-- ---------- IMAGE CODEBLOCK ---------- -->
+    <div class="row q-pa-md">
+      <div class="col-4 gt-xs">
+        <q-img
+          placeholder-src="https://placeimg.com/500/300/nature"
+          :src="'https://placeimg.com/500/300/nature=t' + Math.random()"
+          style="
+            max-height: 300px;
             align: left;
             vertical-align: top;
             border: solid black 1px;
@@ -106,7 +130,7 @@
         />
       </div>
 
-      <div>
+      <div class="q-mt-sm">
         <strong>Rate this Tutorial: </strong>
 
         <q-rating
@@ -119,7 +143,7 @@
 
         <q-btn
           v-else
-          outline
+          outline dense
           label="Please sign in to rate this tutorial"
           @click="icon = true"
         />

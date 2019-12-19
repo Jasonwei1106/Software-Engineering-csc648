@@ -178,10 +178,10 @@
     <div style="background-color: #027BE3; height: 100px;" >
       <div class="row" style="width: 96%; margin: 0 auto;">
         <div class="q-pa-md">
-          <q-img src="../statics/icons/96p.png" style="width: 70px;" />
+          <q-img src="../statics/icons/96p.png" style="width: 17vw; max-width: 70px;" />
         </div>
 
-        <q-space/>
+        <q-space />
 
         <div class="q-pa-md" align="center">
           <div class="text-white cursor-pointer" @click="routeTo('rootAbout')">
@@ -212,6 +212,7 @@
             />
           </div>
         </div>
+
       </div>
     </div>
 
