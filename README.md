@@ -14,6 +14,9 @@
 For most hobbyists, web-surfing for Do-It-Yourself (DIY) projects can sometimes be difficult since they are all scattered all over the internet. We believed that it would be nice if there were a large hub of DIY projects, and as a result, the idea for DIYup was born. With DIYup, guests and creators alike can browse and upload their own step-by-step DIY tutorials. Creator or not, our site makes it easy for anyone to pick up a variety of projects and follow step-by-step instructions with pictures to easily complete their project. Users can easily browse through the hottest projects on our site and sort depending on the difficulty or on the category of the project to suit their interests and level of building knowledge. Becoming a registered user comes with its own perks. As a registered user, users can become authors and upload their own projects, share their experience making a project from our site, rate, and save their favorite projects. As an author, authors can view and respond to comments to posts they’ve made as well as edit their original post in case of any typos or other errors. Any posts that are reported and found to be violating our site’s rules will be deleted by site administrators. With site administrators there will be a team looking at reported posts to ensure users follow our site’s rules and guidelines in order for our users to have the most enjoyable experience.
 
 
+# Server URL: http://54.67.109.241/
+
+
 # Running and Installation Guide
 ## Frontend
 ### Dependencies
