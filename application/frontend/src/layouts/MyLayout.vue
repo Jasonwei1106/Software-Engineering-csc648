@@ -87,15 +87,30 @@
       <q-toolbar
         v-if="$route.name && $route.name === 'rootHome' && !leftDrawerOpen"
         class="bg-white text-black"
-        style="border: black solid 1px;"
       >
         <q-toolbar-title class="row q-pa-md">
-          <div class="col" align="center">
-            <strong class="gt-sm" style="font-size: 1.5em;">
+          <div class="col" align="center" >
+            <strong
+              class="gt-sm"
+              style="
+                font-size: 1.5em;
+                position: relative;
+                top: 15%;
+                transform: translateY(-50%);
+              "
+            >
               STEP-BY-STEP PROJECTS BY USERS FOR USERS
             </strong>
 
-            <strong class="sm" style="font-size: 1em;">
+            <strong
+              class="sm"
+              style="
+                font-size: 1em;
+                position: relative;
+                top: 20%;
+                transform: translateY(-50%);
+              "
+            >
               STEP-BY-STEP PROJECTS BY USERS FOR USERS
             </strong>
 
@@ -160,43 +175,42 @@
       <router-view />
     </q-page-container>
 
-    <div
-      class="row"
-      style="background-color: #027BE3; height: 100px;"
-    >
-      <div class="q-pa-md">
-        <q-img src="../statics/icons/96p.png" style="width: 70px;" />
-      </div>
-
-      <q-space/>
-
-      <div class="q-pa-md" align="center">
-        <div class="text-white cursor-pointer" @click="routeTo('rootAbout')">
-          About Us
-        </div>
-      </div>
-
-      <div class="q-pa-md" align="center">
-        <div class="text-white">
-          Follow Us On
+    <div style="background-color: #027BE3; height: 100px;" >
+      <div class="row" style="width: 96%; margin: 0 auto;">
+        <div class="q-pa-md">
+          <q-img src="../statics/icons/96p.png" style="width: 70px;" />
         </div>
 
-        <div>
-          <q-icon
-            class="cursor-pointer"
-            name="fab fa-facebook-square" size="2rem"
-            @click="goTo('https://www.facebook.com')"
-          />
-          <q-icon
-            class="cursor-pointer"
-            name="fab fa-instagram" size="2rem"
-            @click="goTo('https://www.instagram.com/')"
-          />
-          <q-icon
-            class="cursor-pointer"
-            name="fab fa-twitter-square" size="2rem"
-            @click="goTo('https://twitter.com/')"
-          />
+        <q-space/>
+
+        <div class="q-pa-md" align="center">
+          <div class="text-white cursor-pointer" @click="routeTo('rootAbout')">
+            About Us
+          </div>
+        </div>
+
+        <div class="q-pa-md" align="center">
+          <div class="text-white">
+            Follow Us On
+          </div>
+
+          <div>
+            <q-icon
+              class="cursor-pointer"
+              name="fab fa-facebook-square" size="2rem"
+              @click="goTo('https://www.facebook.com')"
+            />
+            <q-icon
+              class="cursor-pointer"
+              name="fab fa-instagram" size="2rem"
+              @click="goTo('https://www.instagram.com/')"
+            />
+            <q-icon
+              class="cursor-pointer"
+              name="fab fa-twitter-square" size="2rem"
+              @click="goTo('https://twitter.com/')"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -211,17 +225,6 @@
 
 <script>
 import LogIn from '../components/Login'
-
-// window.addEventListener('beforeunload', function (e) {
-//   // Cancel the event
-//   e.preventDefault()
-//   // Chrome requires returnValue to be set
-//   e.returnValue = ''
-// })
-
-// window.onbeforeunload = function () {
-//   return 'Are you sure you want to close the window?'
-// }
 
 export default {
   name: 'MyLayout',
