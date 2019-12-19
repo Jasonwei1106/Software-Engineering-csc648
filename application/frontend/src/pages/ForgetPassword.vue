@@ -179,6 +179,7 @@ export default {
                   color: 'negative',
                   message: 'Verfied code is wrong'
                 })
+                this.step = 2
               }
             })
         }
