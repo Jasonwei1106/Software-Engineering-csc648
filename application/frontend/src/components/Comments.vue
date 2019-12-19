@@ -143,11 +143,11 @@ export default {
 
         axios.post(path, body, { headers })
           .then(res => {
-            console.log(res.data)
             this.comments.push({
               username: this.$q.localStorage.getItem('__diyup__username'),
               content: this.reply,
-              id: res.data['comment id']
+              id: res.data['comment id'],
+              replies: []
             })
             this.reply = ''
           })
@@ -196,7 +196,6 @@ export default {
           })
         // TODO: send axios to backend
       }).onCancel(() => {
-        // console.log('nothing happens')
       })
     },
 
