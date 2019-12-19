@@ -1,4 +1,4 @@
-# csc648 section 04 team 206
+# CSC648 Section 04 Team 206
 ## Members
 | Name                   | Email                  | Role             |
 |------------------------|------------------------|------------------|
@@ -8,16 +8,37 @@
 | Antonio Damaso Carmona | acarmona@mail.sfsu.edu | Git & DB Master  |
 | Zijie (Jason) Wei      | zwei@mail.sfsu.edu     | Frontend Lead    |
 
-# csc648 Repository
+# Project Summary
 
-## Please when ready add your teams application URL or IP to the repository description. This will help with grading. Teams are expected to keep this value up to date.
 
-## Please do the following steps before completing Milestone 0.
-1. Change the name of the repository. All that needs to change is the NN to your respective team number. Team numbers whose value is less than 10, please pad with a 0. Ex team 1 is Team01 team 11 is Team11. Please make sure to also remove the username from the repository as well. Teams with incorrectly name repository will have points deducted from their milestone 0 grades.
-      - Please follow the naming convention assigned by your instructor.
+For most hobbyists, web-surfing for Do-It-Yourself (DIY) projects can sometimes be difficult since they are all scattered all over the internet. We believed that it would be nice if there were a large hub of DIY projects, and as a result, the idea for DIYup was born. With DIYup, guests and creators alike can browse and upload their own step-by-step DIY tutorials. Creator or not, our site makes it easy for anyone to pick up a variety of projects and follow step-by-step instructions with pictures to easily complete their project. Users can easily browse through the hottest projects on our site and sort depending on the difficulty or on the category of the project to suit their interests and level of building knowledge. Becoming a registered user comes with its own perks. As a registered user, users can become authors and upload their own projects, share their experience making a project from our site, rate, and save their favorite projects. As an author, authors can view and respond to comments to posts they’ve made as well as edit their original post in case of any typos or other errors. Any posts that are reported and found to be violating our site’s rules will be deleted by site administrators. With site administrators there will be a team looking at reported posts to ensure users follow our site’s rules and guidelines in order for our users to have the most enjoyable experience.
 
-1. PLEASE REMOVE THE USERNAME FROM THE REPOSITORY NAME!!!
 
-2. Add ALL members of your team to this repository. For it to count, they must ACCEPT the invite.
+# Running and Installation Guide
+## Frontend
+### Dependencies
+* Node >= 8.9.0
+* npm >= 5.6.0
+* Apache >= v2.4.0
+```sh
+# instruction on how to install Apache2.0 and start
+https://phoenixnap.com/kb/how-to-install-apache-web-server-on-ubuntu-18-04
+```
 
-## NO code needs to be stored in the root of your repository. You may rename the application folder if you like to your team's application name. But all source code related to your team's application should be stored inside the application folder.
+#### Deploying the Single-Page Application to Server
+**Note:** It is important the aforementioned dependencies are installed prior to proceeding.
+
+If all the dependecies are installed, run the following commands from the root from your AWS or host machine.
+
+```sh
+$ git clone https://github.com/CSC-648-SFSU/csc648-04-fa19-Team206.git
+$ cd csc648-04-fa19-Team206
+$ sudo cp -r application/frontend/dist/spa/. /var/www/html/
+```
+
+You have just sucessfully deploy the frontend on our server.
+
+## Backend
+* Python >= v3.5.0
+* MySQL v5.7.27
+
