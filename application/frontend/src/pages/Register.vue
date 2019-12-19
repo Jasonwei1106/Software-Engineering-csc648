@@ -66,7 +66,11 @@ export default {
   },
   methods: {
     onSubmit: function () {
-      if (this.logIn.conpassword !== this.logIn.password) {
+      if (!(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(this.logIn.email))) {
+        this.$q.notify({
+          message: 'Your email is not in the vaild format!'
+        })
+      } else if (this.logIn.conpassword !== this.logIn.password) {
         this.$q.notify({
           message: 'Your confirm password doesn\'t match'
         })
