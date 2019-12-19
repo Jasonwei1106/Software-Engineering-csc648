@@ -72,7 +72,11 @@ export default {
         })
       } else if (this.logIn.conpassword !== this.logIn.password) {
         this.$q.notify({
-          message: 'Your confirm password doesn\'t match'
+          message: 'Your confirm password doesn\'t match!'
+        })
+      } else if (this.logIn.username.includes(' ')) {
+        this.$q.notify({
+          message: 'Username must be one non-spaced string!'
         })
       } else {
         axios.post('http://54.67.109.241:5000/api/user/create', {

@@ -10,17 +10,41 @@
   >
     <div align="center">
       <Strong style="font-size: 200%;">{{ data.title }}</Strong>
-      <q-separator color="red" />
+      <q-separator color="dark" />
     </div>
 
-    <!-- ---------- IMAGE CODEBLOCK ---------- -->
-    <div class="row q-pa-md">
-      <div class="col-3">
+    <div class="xs">
+      <div class="q-pa-md">
         <q-img
           placeholder-src="https://placeimg.com/500/300/nature"
           :src="'https://placeimg.com/500/300/nature=t' + Math.random()"
           style="
-            height: 150px;
+            max-height: 150px;
+            align: left;
+            vertical-align: top;
+            border: solid black 1px;
+          "
+        />
+      </div>
+
+      <div
+        align="center"
+        class="bg-primary text-white"
+        style="border-radius: 3px; width: 92%; margin: 0 auto;"
+      >
+        <strong>Level of Difficulty:</strong>
+        {{ data.author_difficulty }}
+      </div>
+    </div>
+
+    <!-- ---------- IMAGE CODEBLOCK ---------- -->
+    <div class="row q-pa-md">
+      <div class="col-4 gt-xs">
+        <q-img
+          placeholder-src="https://placeimg.com/500/300/nature"
+          :src="'https://placeimg.com/500/300/nature=t' + Math.random()"
+          style="
+            max-height: 300px;
             align: left;
             vertical-align: top;
             border: solid black 1px;
@@ -39,7 +63,7 @@
       <div class="col q-pl-md">
         <strong class="text-h4">
           Description
-          <q-separator color="red" />
+          <q-separator color="dark" />
         </strong>
         <div class="q-px-lg q-my-sm">
           {{ data.description }}
@@ -73,7 +97,7 @@
     <div class="q-pa-md">
       <strong class="text-h4">
         Steps
-        <q-separator color="red" />
+        <q-separator color="dark" />
       </strong>
       <q-list>
         <q-item
@@ -106,15 +130,22 @@
         />
       </div>
 
-      <div>
+      <div class="q-mt-sm">
         <strong>Rate this Tutorial: </strong>
 
         <q-rating
+          v-if="$q.localStorage.has('__diyup__signedIn')"
           class="q-pl-sm"
           size="2em" icon="thumb_up"
           v-model="userRate"
-          v-if="$q.localStorage.has('__diyup__signedIn')"
           @input="invokeRating"
+        />
+
+        <q-btn
+          v-else
+          outline dense
+          label="Please sign in to rate this tutorial"
+          @click="icon = true"
         />
       </div>
     </div>
@@ -128,14 +159,29 @@
       </strong>
       <Comment :obj_uuid="obj_uuid" style="margin-top:25px"/>
     </div>
+
+    <q-dialog v-model="icon">
+      <q-card >
+        <LogIn @close="icon = false" />
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
-import Comment from '../components/Comments'
 import axios from 'axios'
 
+import Comment from '../components/Comments'
+import LogIn from '../components/Login'
+
 export default {
+  watch: {
+    $route: 'updateObjUuid'
+  },
+  components: {
+    LogIn,
+    Comment
+  },
   created () {
     this.updateObjUuid()
     axios.all([
@@ -148,6 +194,7 @@ export default {
   },
   data () {
     return {
+      icon: false,
       userRate: 0,
       obj_uuid: null,
       data: [],
@@ -155,12 +202,6 @@ export default {
         'None'
       ]
     }
-  },
-  components: {
-    Comment
-  },
-  watch: {
-    $route: 'updateObjUuid'
   },
   methods: {
     updateObjUuid: function () {

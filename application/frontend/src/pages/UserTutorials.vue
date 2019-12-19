@@ -43,13 +43,14 @@
 
                   <div class="col gt-xs">
                     <b>Title:</b>
-                    {{ props.row.title }} by {{ props.row.author_username }}<br>
+                    {{ props.row.title }}
+                    <i class="text-grey">
+                      <small>by {{ props.row.author_username }}</small>
+                    </i>
+                    <br>
 
                     <b>Author's Difficulty Rating:</b>
                     {{ props.row.author_difficulty }}<br>
-
-                    <!-- <b>Users' Difficulty Rating:</b>
-                    {{ props.row.viewer_difficulty === 'None' ? props.row.author_difficulty : props.row.viewer_difficulty }}<br> -->
 
                     <b>Users' Rating:</b>
                     <q-rating
@@ -71,7 +72,10 @@
 
                   <div class="col xs" align="left">
                     <b>Title:</b>
-                    {{ props.row.title }} by {{ props.row.author_username }}
+                    {{ props.row.title }}
+                    <i class="text-grey">
+                      <small>by {{ props.row.author_username }}</small>
+                    </i>
                     <br>
 
                     <b>Description:</b> {{ props.row.description }}

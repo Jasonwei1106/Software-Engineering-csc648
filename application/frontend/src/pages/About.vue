@@ -6,7 +6,7 @@
         style="
           margin: auto;
           max-width: 70%;
-          min-width: 30px;
+          min-width: 280px;
         "
       >
         <q-list separator bordered>
