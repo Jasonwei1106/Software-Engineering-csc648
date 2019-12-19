@@ -107,12 +107,13 @@
       </div>
 
       <div>
-        <strong>Rate this Tutorial:</strong>
+        <strong>Rate this Tutorial: </strong>
 
         <q-rating
           class="q-pl-sm"
           size="2em" icon="thumb_up"
           v-model="userRate"
+          v-if="$q.localStorage.has('__diyup__signedIn')"
           @input="invokeRating"
         />
       </div>
