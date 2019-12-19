@@ -89,7 +89,7 @@ def create_rating(current_user, tutorial_uuid, rating_type):
     -------
     None
 
-    """
+    """    
     data = request.get_json()
 
     rating = data['rating']
