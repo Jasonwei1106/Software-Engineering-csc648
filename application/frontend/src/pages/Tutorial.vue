@@ -110,11 +110,18 @@
         <strong>Rate this Tutorial: </strong>
 
         <q-rating
+          v-if="$q.localStorage.has('__diyup__signedIn')"
           class="q-pl-sm"
           size="2em" icon="thumb_up"
           v-model="userRate"
-          v-if="$q.localStorage.has('__diyup__signedIn')"
           @input="invokeRating"
+        />
+
+        <q-btn
+          v-else
+          outline
+          label="Please sign in to rate this tutorial"
+          @click="icon = true"
         />
       </div>
     </div>
@@ -128,14 +135,29 @@
       </strong>
       <Comment :obj_uuid="obj_uuid" style="margin-top:25px"/>
     </div>
+
+    <q-dialog v-model="icon">
+      <q-card >
+        <LogIn @close="icon = false" />
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
-import Comment from '../components/Comments'
 import axios from 'axios'
 
+import Comment from '../components/Comments'
+import LogIn from '../components/Login'
+
 export default {
+  watch: {
+    $route: 'updateObjUuid'
+  },
+  components: {
+    LogIn,
+    Comment
+  },
   created () {
     this.updateObjUuid()
     axios.all([
@@ -148,6 +170,7 @@ export default {
   },
   data () {
     return {
+      icon: false,
       userRate: 0,
       obj_uuid: null,
       data: [],
@@ -155,12 +178,6 @@ export default {
         'None'
       ]
     }
-  },
-  components: {
-    Comment
-  },
-  watch: {
-    $route: 'updateObjUuid'
   },
   methods: {
     updateObjUuid: function () {
