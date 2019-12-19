@@ -17,9 +17,11 @@
 
             <div>
               <q-select
-                outlined required
+                outlined required emit-value map-options
                 label="Category"
                 v-model="poster.category"
+                option-value="value"
+                option-label="label"
                 :options="options"
               />
             </div>

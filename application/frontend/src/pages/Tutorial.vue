@@ -10,7 +10,7 @@
   >
     <div align="center">
       <Strong style="font-size: 200%;">{{ data.title }}</Strong>
-      <q-separator color="red" />
+      <q-separator color="dark" />
     </div>
 
     <!-- ---------- IMAGE CODEBLOCK ---------- -->
@@ -39,7 +39,7 @@
       <div class="col q-pl-md">
         <strong class="text-h4">
           Description
-          <q-separator color="red" />
+          <q-separator color="dark" />
         </strong>
         <div class="q-px-lg q-my-sm">
           {{ data.description }}
@@ -73,7 +73,7 @@
     <div class="q-pa-md">
       <strong class="text-h4">
         Steps
-        <q-separator color="red" />
+        <q-separator color="dark" />
       </strong>
       <q-list>
         <q-item
