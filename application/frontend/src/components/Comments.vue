@@ -121,6 +121,7 @@ export default {
   },
   data () {
     return {
+      comid: null,
       data: [],
       reply: '',
       replyMes: '',
@@ -132,7 +133,6 @@ export default {
       let headers = {
         'x-access-token': this.$q.localStorage.getItem('__diyup__signedIn')
       }
-
       if (this.reply !== '') {
         let domain = 'http://54.67.109.241:5000'
         let path = `${domain}/api/comments/${this.obj_uuid}/create`
@@ -143,9 +143,11 @@ export default {
 
         axios.post(path, body, { headers })
           .then(res => {
+            console.log(res.data)
             this.comments.push({
               username: this.$q.localStorage.getItem('__diyup__username'),
-              content: this.reply
+              content: this.reply,
+              id: res.data['comment id']
             })
             this.reply = ''
           })
@@ -164,8 +166,8 @@ export default {
         })
       }
     },
-
     openReply (index) {
+      console.log(this.comments[index])
       let headers = {
         'x-access-token': this.$q.localStorage.getItem('__diyup__signedIn')
       }
