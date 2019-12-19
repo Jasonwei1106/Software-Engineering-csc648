@@ -1,15 +1,14 @@
 <template>
-  <div class ="q-pa-md q-gutter-md">
-    <strong>Add your comment</strong>
+  <div class ="q-px-md q-gutter-md">
     <q-input
       filled
       type="textarea"
       v-model="reply"
-      maxlength="250"
-      placeholder="Leave your comments"
-      style="max-width:500px;"
+      placeholder="Please leave your comments..."
     />
+
     <q-btn
+      outline
       @click.prevent="sendMes"
       label="send"
     />
@@ -26,10 +25,11 @@
             <q-item-label lines="1" class="row">
               <div class="q-py-md">
                 <q-avatar>
-                  <q-img
+                  <!-- <q-img
                     align= "left"
                     src="https://cdn.quasar.dev/img/avatar3.jpg"
-                  />
+                  /> -->
+                  {{ comment.username[0] }}
                 </q-avatar>
               </div>
 
@@ -47,7 +47,8 @@
 
             <q-item-label lines="2">
               <div class="q-pa-sm">
-                <q-btn label="reply" @click.prevent="openReply(ind)" />
+                <q-btn
+                  outline label="reply" @click.prevent="openReply(ind)" />
               </div>
             </q-item-label>
 
@@ -61,10 +62,11 @@
             <q-item-label lines="1" class="row">
               <div class="q-py-md">
                 <q-avatar>
-                  <q-img
+                  <!-- <q-img
                     align= "left"
                     src="https://cdn.quasar.dev/img/avatar3.jpg"
-                  />
+                  /> -->
+                  {{ comment.username[0] }}
                 </q-avatar>
               </div>
 
@@ -82,7 +84,11 @@
 
             <q-item-label lines="2">
               <div class="q-pa-sm">
-                <q-btn label="reply" @click.prevent="sendReply(ind,child_Ind)" />
+                <q-btn
+                  outline
+                  label="reply"
+                  @click.prevent="sendReply(ind,child_Ind)"
+                />
               </div>
             </q-item-label>
 
@@ -130,7 +136,8 @@ export default {
       }
 
       if (this.reply !== '') {
-        let path = `http://54.67.109.241:5000/api/comments/${this.obj_uuid}/create`
+        let domain = 'http://54.67.109.241:5000'
+        let path = `${domain}/api/comments/${this.obj_uuid}/create`
         let body = {
           content: this.reply,
           image: 'test.png'

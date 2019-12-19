@@ -21,6 +21,13 @@
 
       <template v-slot:top-right>
         <q-toolbar>
+          <q-btn
+            v-if="option !== ''"
+            flat dense round
+            class="q-mr-sm"
+            icon="close"
+            @click="option = ''"
+          />
           <q-select
             outlined dense
             class="q-mr-xs col-4" label="Category Filter"
@@ -56,11 +63,18 @@
                   <b>Author's Difficulty Rating:</b>
                   {{ props.row.author_difficulty }}<br>
 
-                  <b>Users' Difficulty Rating:</b>
-                  {{ props.row.viewer_difficulty === 'None' ? props.row.author_difficulty : props.row.viewer_difficulty }}<br>
+                  <!-- <b>Users' Difficulty Rating:</b>
+                  {{ props.row.viewer_difficulty === 'None' ? props.row.author_difficulty : props.row.viewer_difficulty }}<br> -->
 
                   <b>Users' Rating:</b>
-                  {{ props.row.rating === 'None' ? "5.0" : props.row.rating }}<br>
+                  <q-rating
+                    readonly
+                    class="q-pl-sm" size="1.5em" icon="thumb_up"
+                    :value="
+                      props.row.rating === 'None' ? 5.0 : Number(props.row.rating)
+                    "
+                  />
+                  <br>
 
                   <b>Category:</b>
                   {{ props.row.category }}<br>
@@ -107,8 +121,7 @@ export default {
         { label: 'Cooking', value: 'cooking' },
         { label: 'Crafts', value: 'crafts' },
         { label: 'Home & Decor', value: 'homeDecor' },
-        { label: 'Testing', value: 'testing' },
-        { label: 'All', value: '' }
+        { label: 'Testing', value: 'testing' }
       ],
       option: '',
       columns: [

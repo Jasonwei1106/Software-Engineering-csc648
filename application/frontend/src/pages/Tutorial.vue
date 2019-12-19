@@ -1,30 +1,46 @@
 <template>
-  <div class="q-pa-md">
-  <Strong style="font-size: 200%;"> {{ data.title }} </Strong>
+  <div
+    class="q-pa-md shadow-2"
+    style="
+      width: 98%;
+      max-width: 1000px;
+      margin: 1em auto;
+      border-radius: 3px;
+    "
+  >
+    <div align="center">
+      <Strong style="font-size: 200%;">{{ data.title }}</Strong>
+      <q-separator color="red" />
+    </div>
 
     <!-- ---------- IMAGE CODEBLOCK ---------- -->
-    <div
-      class="row justify-start"
-      style="margin:20px;"
-    >
-      <div class="col-2">
+    <div class="row q-pa-md">
+      <div class="col-3">
         <q-img
-          :src="'https://placeimg.com/500/300/nature?t=' + Math.random()"
+          placeholder-src="https://placeimg.com/500/300/nature"
+          :src="'https://placeimg.com/500/300/nature=t' + Math.random()"
           style="
-            max-width: 200px;
             height: 150px;
             align: left;
             vertical-align: top;
             border: solid black 1px;
           "
         />
+        <div
+          align="center"
+          class="q-mt-xs bg-primary text-white"
+          style="border-radius: 3px;"
+        >
+          <strong>Level of Difficulty:</strong>
+          {{ data.author_difficulty }}
+        </div>
       </div>
 
-      <div class="col q-py-md">
+      <div class="col q-pl-md">
         <strong class="text-h4">
           Description
+          <q-separator color="red" />
         </strong>
-        <br>
         <div class="q-px-lg q-my-sm">
           {{ data.description }}
         </div>
@@ -37,7 +53,7 @@
         expand-separator
         icon="list"
         label="Material list"
-        style="max-width: 400px; padding: 10px;"
+        style="padding: 10px;"
         default-opened
       >
         <q-list dense bordered padding class="rounded-borders">
@@ -54,8 +70,11 @@
     </div>
 
     <!-- ---------- STEP CODEBLOCK ---------- -->
-    <div class="q-pa-md" style="max-width: 650px;">
-      <strong>Steps</strong>
+    <div class="q-pa-md">
+      <strong class="text-h4">
+        Steps
+        <q-separator color="red" />
+      </strong>
       <q-list>
         <q-item
           v-for="(step, ind) in data.steps"
@@ -74,7 +93,38 @@
         </q-item>
       </q-list>
     </div>
-     <div>
+
+    <div class="q-pb-lg q-pl-md">
+      <div>
+        <strong>Current Tutorial Rating:</strong>
+
+        <q-rating
+          readonly
+          class="q-pl-sm"
+          size="2em" icon="thumb_up"
+          :value="data.rating === 'None' ? 5.0 : Number(data.rating)"
+        />
+      </div>
+
+      <div>
+        <strong>Rate this Tutorial:</strong>
+
+        <q-rating
+          class="q-pl-sm"
+          size="2em" icon="thumb_up"
+          v-model="userRate"
+          @input="invokeRating"
+        />
+      </div>
+    </div>
+
+    <q-separator color="black" />
+
+    <div class="q-pa-md">
+      <strong class="text-h4">
+        Comment Section
+        <q-separator />
+      </strong>
       <Comment :obj_uuid="obj_uuid" style="margin-top:25px"/>
     </div>
   </div>
@@ -97,6 +147,7 @@ export default {
   },
   data () {
     return {
+      userRate: 0,
       obj_uuid: null,
       data: [],
       lists: [
@@ -113,6 +164,23 @@ export default {
   methods: {
     updateObjUuid: function () {
       this.obj_uuid = this.$route.params.uuid
+    },
+    invokeRating: function () {
+      let domain = 'http://54.67.109.241:5000'
+      let path = `${domain}/api/rate/${this.data.uuid}/score/create`
+      let headers = {
+        'x-access-token': this.$q.localStorage.getItem('__diyup__signedIn')
+      }
+
+      axios.post(path, {
+        rating: Number(this.userRate)
+      }, { headers }).then(() => {
+        this.$q.notify({
+          message: '<div align="center">Thank you for rating!<div>',
+          color: 'positive',
+          html: true
+        })
+      })
     }
   }
 }

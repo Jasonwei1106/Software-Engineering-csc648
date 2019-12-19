@@ -24,7 +24,7 @@
               />
             </div>
 
-            <div>
+            <!-- <div>
               <q-uploader
                 auto-upload
                 color="dark" class="full-width"
@@ -32,26 +32,37 @@
                 v-model="poster.img"
                 :url="getUrl"
               />
-            </div>
+            </div> -->
 
             <div>
               <q-input
                 dense outlined required
                 type="textarea"
-                Label="Description"
+                label="Description"
                 placeholder="Tutorial description goes here..."
                 v-model="poster.description"
               />
             </div>
 
             <div>
+              <q-badge color="primary">
+                Difficulty Rating: {{ poster.difficulty || 1 }} (1 to 5)
+              </q-badge>
+              <q-slider
+                markers
+                v-model="poster.difficulty"
+                :min="1" :max="5"
+              />
+            </div>
+
+            <div>
               <strong>Material List:</strong>
 
-              <div class="row q-gutter-sm">
+              <div class="row q-gutter-sm q-mb-sm">
                 <q-input
                   dense outlined
                   class="col"
-                  type="text" placeholder="Put your tools Here"
+                  type="text" placeholder="Put your tools here. ie) Egg x 2"
                   v-model="materialInput"
                 />
 
@@ -62,31 +73,36 @@
                 />
               </div>
 
-              <q-item
-                v-for="(material, ind) in materials"
-                :key="ind"
-                clickable
+              <q-list
+                bordered separator
+                v-if="materials.items.length > 0"
               >
-                <q-item-section>
-                  {{ material }}
-                </q-item-section>
+                <q-item
+                  v-for="(material, ind) in materials.items"
+                  :key="ind"
+                  dense
+                >
+                  <q-item-section>
+                    {{ material }}
+                  </q-item-section>
 
-                <q-btn
-                  icon="delete"
-                  @click="materials.splice(ind, 1)"
-                />
-              </q-item>
+                  <q-btn
+                    round flat
+                    icon="delete"
+                    @click="materials.items.splice(ind, 1)"
+                  />
+                </q-item>
+              </q-list>
             </div>
 
             <div>
               <strong>Step List:</strong>
 
-              <div class="row q-gutter-sm">
+              <div class="row q-gutter-sm q-mb-sm">
                 <q-input
-                  class="col"
                   dense outlined
-                  type="textarea"
-                  placeholder="Put your description Here"
+                  class="col" type="textarea"
+                  placeholder="Step description goes here."
                   v-model="stepInput"
                 />
 
@@ -97,21 +113,27 @@
                 />
               </div>
 
-              <q-item
-                v-for="(step, ind) in steps"
-                :key="ind"
-                clickable
-                style="overflow-wrap: break-word;"
+              <q-list
+                bordered separator
+                v-if="steps.contents.length > 0"
               >
-                <q-item-section>
-                  {{ step }}
-                </q-item-section>
+                <q-item
+                  v-for="(step, ind) in steps.contents"
+                  :key="ind"
+                  dense
+                  style="overflow-wrap: break-word;"
+                >
+                  <q-item-section>
+                    {{ step }}
+                  </q-item-section>
 
-                <q-btn
-                  icon="delete"
-                  @click="steps.splice(ind, 1)"
-                />
-              </q-item>
+                  <q-btn
+                    round flat
+                    icon="delete"
+                    @click="steps.contents.splice(ind, 1)"
+                  />
+                </q-item>
+              </q-list>
             </div>
           </div>
 
@@ -137,6 +159,9 @@ export default {
       this.poster = this.$q.localStorage.getItem('__diyup__edittutorial')
       this.materials = this.$q.localStorage.getItem('__diyup__editmaterial')
       this.steps = this.$q.localStorage.getItem('__diyup__editstep')
+      this.$q.localStorage.remove('__diyup__edittutorial')
+      this.$q.localStorage.remove('__diyup__editmaterial')
+      this.$q.localStorage.remove('__diyup__editstep')
     }
   },
   data () {
@@ -144,40 +169,65 @@ export default {
       materialInput: '',
       stepInput: '',
       poster: {
-        img: 'testimg',
-        difficulty: '1'
+        img: 'testimg'
       },
       options: [
-        'Craft', 'Cooking', 'Tech', 'Workshop', 'Home&Decor'
+        { label: 'Electronics', value: 'electronics' },
+        { label: 'Coding', value: 'coding' },
+        { label: 'Robotics', value: 'robotics' },
+        { label: 'Cooking', value: 'cooking' },
+        { label: 'Crafts', value: 'crafts' },
+        { label: 'Home & Decor', value: 'homeDecor' },
+        { label: 'Testing', value: 'testing' }
       ],
-      materials: [],
-      steps: []
+      materials: {
+        items: [],
+        categories: [],
+        links: []
+      },
+      steps: {
+        contents: [],
+        images: []
+      }
     }
   },
   methods: {
     onSubmit: function () {
-      this.$q.localStorage.set('__diyup__poster', this.poster)
-      this.$q.localStorage.set('__diyup__material', this.materials)
-      this.$q.localStorage.set('__diyup__step', this.steps)
-      this.$router.push({ path: '/preview' }).catch(err => {
-        if (err) {
-          this.$router.go()
-        }
-      })
+      this.poster.difficulty = this.poster.difficulty || 1
+      this.poster.difficulty = Number(this.poster.difficulty)
+
+      if (this.steps.contents.length === 0 || this.materials.items.length === 0) {
+        this.$q.notify({
+          icon: 'warning',
+          color: 'negative',
+          message: 'put your steps and materials'
+        })
+      } else {
+        this.$q.localStorage.set('__diyup__poster', this.poster)
+        this.$q.localStorage.set('__diyup__material', this.materials)
+        this.$q.localStorage.set('__diyup__step', this.steps)
+        this.$router.push({ path: '/preview' }).catch(err => {
+          if (err) {
+            this.$router.go()
+          }
+        })
+      }
     },
     getUrl (files) {
       axios.post('https://api.imgur.com/3/image/', {
         image: files
       }).then(res => {
-        // console.log(res)
       })
     },
     addList () {
-      this.materials.push(this.materialInput)
+      this.materials.items.push(this.materialInput)
+      this.materials.categories.push('tools')
+      this.materials.links.push('amazon.com')
       this.materialInput = ''
     },
     addStep () {
-      this.steps.push(this.stepInput)
+      this.steps.contents.push(this.stepInput)
+      this.steps.images.push('test.png')
       this.stepInput = ''
     }
   }
