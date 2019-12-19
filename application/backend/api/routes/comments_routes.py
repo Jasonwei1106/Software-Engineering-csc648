@@ -201,6 +201,7 @@ def create_tutorial_comment(current_user, tutorial_uuid):
 
     cur.execute("SELECT * FROM diyup.comments ORDER BY id DESC LIMIT 1")
     index = cur.fetchone()
+    id = int(index[0]) + 1
 
     content = data['content']
     image = data['image']
@@ -208,10 +209,10 @@ def create_tutorial_comment(current_user, tutorial_uuid):
     date = time.ctime()
     timestamp = date
 
-    cur.execute("INSERT INTO diyup.comments(tutorial_uuid, username, \
-        content, created, timestamp, edited, image) \
-        VALUES (%s, %s, %s, %s, %s, %s, %s)", \
-        (tutorial_uuid, current_user[1], content, date, \
+    cur.execute("INSERT INTO diyup.comments(comments.id, tutorial_uuid,\
+        username, content, created, timestamp, edited, image) \
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", \
+        (id, tutorial_uuid, current_user[1], content, date, \
         timestamp, edited, image,)
     )
 
@@ -219,7 +220,7 @@ def create_tutorial_comment(current_user, tutorial_uuid):
     cur.close()
 
     return jsonify({'message' : 'Comment created!', \
-        'comment id' : index[0]}), 201
+        'comment id' : id}), 201
 
 @app.route('/api/comments/<tutorial_uuid>/create/<reply_id>', methods=['POST'])
 @token_required
@@ -261,9 +262,9 @@ def reply_to_tutorial_comment(current_user, tutorial_uuid, reply_id):
     timestamp = date
 
     cur.execute("INSERT INTO diyup.comments\
-        (comments.tutorial_uuid, username, content, created, timestamp, \
-        edited, image, reply_to) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)", \
-        (tutorial_uuid, current_user[1], content, date, timestamp, \
+        (comments.id, tutorial_uuid, username, content, created, timestamp, \
+        edited, image, reply_to) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)", \
+        (id, tutorial_uuid, current_user[1], content, date, timestamp, \
         edited, image, reply_to,)
     )
 
