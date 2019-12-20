@@ -1,18 +1,25 @@
 <template>
-  <div class="q-pa-md">
-  <Strong style="font-size: 200%;"> {{ tutorial.title }} </Strong>
+  <div
+    class="q-pa-md shadow-2"
+    style="
+      width: 98%;
+      max-width: 1000px;
+      margin: 1em auto;
+      border-radius: 3px;
+    "
+  >
+    <div align="center">
+      <Strong style="font-size: 200%;">{{ data.title }}</Strong>
+      <q-separator color="dark" />
+    </div>
 
-    <!-- ---------- IMAGE CODEBLOCK ---------- -->
-    <div
-      class="row justify-start"
-      style="margin:20px;"
-    >
-      <div class="col-2">
+    <div class="xs">
+      <div class="q-pa-md">
         <q-img
-          :src="'https://placeimg.com/500/300/nature?t=' + Math.random()"
+          placeholder-src="https://placeimg.com/500/300/nature"
+          :src="'https://placeimg.com/500/300/nature=t' + Math.random()"
           style="
-            max-width: 200px;
-            height: 150px;
+            max-height: 150px;
             align: left;
             vertical-align: top;
             border: solid black 1px;
@@ -20,13 +27,46 @@
         />
       </div>
 
-      <div class="col q-py-md">
+      <div
+        align="center"
+        class="bg-primary text-white"
+        style="border-radius: 3px; width: 92%; margin: 0 auto;"
+      >
+        <strong>Level of Difficulty:</strong>
+        {{ data.author_difficulty }}
+      </div>
+    </div>
+
+    <!-- ---------- IMAGE CODEBLOCK ---------- -->
+    <div class="row q-pa-md">
+      <div class="col-4 gt-xs">
+        <q-img
+          placeholder-src="https://placeimg.com/500/300/nature"
+          :src="'https://placeimg.com/500/300/nature=t' + Math.random()"
+          style="
+            max-height: 300px;
+            align: left;
+            vertical-align: top;
+            border: solid black 1px;
+          "
+        />
+        <div
+          align="center"
+          class="q-mt-xs bg-primary text-white"
+          style="border-radius: 3px;"
+        >
+          <strong>Level of Difficulty:</strong>
+          {{ data.author_difficulty }}
+        </div>
+      </div>
+
+      <div class="col q-pl-md">
         <strong class="text-h4">
           Description
+          <q-separator color="dark" />
         </strong>
-        <br>
         <div class="q-px-lg q-my-sm">
-          {{ tutorial.description }}
+          {{ data.description }}
         </div>
       </div>
     </div >
@@ -37,7 +77,7 @@
         expand-separator
         icon="list"
         label="Material list"
-        style="max-width: 400px; padding: 10px;"
+        style="padding: 10px;"
         default-opened
       >
         <q-list dense bordered padding class="rounded-borders">
@@ -46,7 +86,7 @@
             :key="ind"
           >
             <q-item-section>
-              {{ ind + 1 }}.  {{ list }}
+              {{ ind + 1 }}.  {{ list.name }}
             </q-item-section>
           </q-item>
         </q-list>
@@ -54,11 +94,14 @@
     </div>
 
     <!-- ---------- STEP CODEBLOCK ---------- -->
-    <div class="q-pa-md" style="max-width: 650px;">
-      <strong>Steps</strong>
+    <div class="q-pa-md">
+      <strong class="text-h4">
+        Steps
+        <q-separator color="dark" />
+      </strong>
       <q-list>
         <q-item
-          v-for="(step, ind) in steps"
+          v-for="(step, ind) in data.steps"
           :key="ind"
         >
           <q-item-section style="max-width:20px">
@@ -69,49 +112,118 @@
             <img src="https://cdn.quasar.dev/img/mountains.jpg">
           </q-item-section>
           <q-item-section>
-            <q-item-label style="padding:10px;">{{ step }}</q-item-label>
+            <q-item-label style="padding:10px;">{{ step.content }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
     </div>
-     <div>
-      <Comment style="margin-top:25px"/>
+
+    <div class="q-pb-lg q-pl-md">
+      <div>
+        <strong>Current Tutorial Rating:</strong>
+
+        <q-rating
+          readonly
+          class="q-pl-sm"
+          size="2em" icon="thumb_up"
+          :value="data.rating === 'None' ? 5.0 : Number(data.rating)"
+        />
+      </div>
+
+      <div class="q-mt-sm">
+        <strong>Rate this Tutorial: </strong>
+
+        <q-rating
+          v-if="$q.localStorage.has('__diyup__signedIn')"
+          class="q-pl-sm"
+          size="2em" icon="thumb_up"
+          v-model="userRate"
+          @input="invokeRating"
+        />
+
+        <q-btn
+          v-else
+          outline dense
+          label="Please sign in to rate this tutorial"
+          @click="icon = true"
+        />
+      </div>
     </div>
+
+    <q-separator color="black" />
+
+    <div class="q-pa-md">
+      <strong class="text-h4">
+        Comment Section
+        <q-separator />
+      </strong>
+      <Comment :obj_uuid="obj_uuid" style="margin-top:25px"/>
+    </div>
+
+    <q-dialog v-model="icon">
+      <q-card >
+        <LogIn @close="icon = false" />
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+
 import Comment from '../components/Comments'
+import LogIn from '../components/Login'
 
 export default {
+  watch: {
+    $route: 'updateObjUuid'
+  },
+  components: {
+    LogIn,
+    Comment
+  },
   created () {
-    if (this.$q.localStorage.has('__diyup__donetutorial')) {
-      this.tutorial = this.$q.localStorage.getItem('__diyup__donetutorial')
-      this.lists = this.$q.localStorage.getItem('__diyup__donematerial')
-      this.steps = this.$q.localStorage.getItem('__diyup__donestep')
-      this.$q.localStorage.remove('__diyup__donetutorial')
-      this.$q.localStorage.remove('__diyup__donematerial')
-      this.$q.localStorage.remove('__diyup__donestep')
-    } else if (this.$q.localStorage.has('__diyup__entry')) {
-      this.tutorial = this.$q.localStorage.getItem('__diyup__entry')
-      this.tutorial.description = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-    }
+    this.updateObjUuid()
+    axios.all([
+      axios.get(`http://54.67.109.241:5000/api/tutorial/${this.obj_uuid}/get`),
+      axios.get(`http://54.67.109.241:5000/api/items/${this.obj_uuid}/get`)])
+      .then(([res1, res2]) => {
+        this.data = res1.data.tutorial
+        this.lists = res2.data.items
+      })
   },
   data () {
     return {
-      tutorial: {
-        title: 'Title',
-        url: 'img',
-        description: 'some description'
-      },
+      icon: false,
+      userRate: 0,
+      obj_uuid: null,
+      data: [],
       lists: [
         'None'
-      ],
-      steps: null
+      ]
     }
   },
-  components: {
-    Comment
+  methods: {
+    updateObjUuid: function () {
+      this.obj_uuid = this.$route.params.uuid
+    },
+    invokeRating: function () {
+      let domain = 'http://54.67.109.241:5000'
+      let path = `${domain}/api/rate/${this.data.uuid}/score/create`
+      let headers = {
+        'x-access-token': this.$q.localStorage.getItem('__diyup__signedIn')
+      }
+
+      axios.post(path, {
+        rating: Number(this.userRate)
+      }, { headers }).then(() => {
+        this.$q.notify({
+          message: '<div align="center">Thank you for rating!<div>',
+          color: 'positive',
+          html: true
+        })
+      })
+    }
   }
 }
 </script>

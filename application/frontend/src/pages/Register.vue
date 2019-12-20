@@ -66,12 +66,20 @@ export default {
   },
   methods: {
     onSubmit: function () {
-      if (this.logIn.conpassword !== this.logIn.password) {
+      if (!(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(this.logIn.email))) {
         this.$q.notify({
-          message: 'Your confirm password doesn\'t match'
+          message: 'Your email is not in the vaild format!'
+        })
+      } else if (this.logIn.conpassword !== this.logIn.password) {
+        this.$q.notify({
+          message: 'Your confirm password doesn\'t match!'
+        })
+      } else if (this.logIn.username.includes(' ')) {
+        this.$q.notify({
+          message: 'Username must be one non-spaced string!'
         })
       } else {
-        axios.post('http://54.153.68.76:5000/api/user/create', {
+        axios.post('http://54.67.109.241:5000/api/user/create', {
           email_address: this.logIn.email,
           username: this.logIn.username,
           password: this.logIn.password
@@ -83,6 +91,7 @@ export default {
               message: 'Submitted'
             })
             this.logIn = {}
+            this.$router.push({ name: 'rootHome' })
           })
           .catch(() => {
             this.$q.notify({

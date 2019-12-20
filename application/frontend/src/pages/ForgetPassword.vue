@@ -103,6 +103,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data () {
     return {
@@ -110,6 +112,7 @@ export default {
       logIn: {
         name: '',
         password: '',
+        code: '',
         conpassword: ''
       },
       previousLog: {
@@ -123,7 +126,7 @@ export default {
     onSubmit: function () {
       if (this.step === 1 && this.logIn.name.length < 1) {
         this.$q.notify({
-          message: 'Please enter something here'
+          message: 'Please your email here'
         })
       } else if (this.step === 3 && this.logIn.password.length < 1) {
         this.$q.notify({
@@ -134,11 +137,79 @@ export default {
           message: 'Your confirm password doesn\'t match'
         })
       } else {
-        if (this.step !== 4) {
-          this.step++
-          this.previousLog = {
-            ...this.logIn
-          }
+        if (this.step === 1) {
+          axios.post('http://54.67.109.241:5000/api/user/forgot/send',
+            {
+              email_address: this.logIn.name
+            })
+            .then(res => {
+              this.$q.notify({
+                icon: 'done',
+                color: 'positive',
+                message: 'Check your email for the verify code'
+              })
+            })
+            .catch(err => {
+              if (err) {
+                this.$q.notify({
+                  icon: 'warning',
+                  color: 'negative',
+                  message: 'Your account does not exsist!'
+                })
+              }
+            })
+        }
+        if (this.step === 2) {
+          axios.post('http://54.67.109.241:5000/api/user/forgot/verify',
+            {
+              email_address: this.logIn.name,
+              password_reset_code: this.logIn.code
+            })
+            .then(res => {
+              this.$q.notify({
+                icon: 'done',
+                color: 'positive',
+                message: 'submitted'
+              })
+            })
+            .catch(err => {
+              if (err) {
+                this.$q.notify({
+                  icon: 'warning',
+                  color: 'negative',
+                  message: 'Verfied code is wrong'
+                })
+                this.step = 2
+              }
+            })
+        }
+        if (this.step === 4) {
+          axios.post('http://54.67.109.241:5000/api/user/forgot/reset',
+            {
+              email_address: this.logIn.name,
+              password: this.logIn.conpassword
+            })
+            .then(res => {
+              this.$q.notify({
+                icon: 'done',
+                color: 'positive',
+                message: 'reset your password'
+              })
+              this.$router.push({ name: 'rootHome' })
+            })
+            .catch(err => {
+              if (err) {
+                this.$q.notify({
+                  icon: 'warning',
+                  color: 'negative',
+                  message: 'Something went wrong!'
+                })
+              }
+            })
+        }
+        this.step++
+        this.previousLog = {
+          ...this.logIn
         }
       }
     },

@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div>
       <!-- title="DIYup Tutorials" -->
     <q-table
       flat hide-header wrap-cells
@@ -12,65 +12,97 @@
     >
       <template v-slot:top-left>
         <q-btn
+          v-if="$q.localStorage.has('__diyup__signedIn')"
           outline
           label="Create a new project"
           @click="goToPost"
-          v-if="$q.localStorage.has('__diyup__signedIn')"
+        />
+        <q-btn
+          v-else
+          outline
+          label="Please sign in to create tutorials"
+          @click="icon = true"
         />
       </template>
 
       <template v-slot:top-right>
         <q-toolbar>
+          <q-btn
+            v-if="option !== ''"
+            flat dense round
+            class="q-mr-sm"
+            icon="close"
+            @click="option = ''"
+          />
           <q-select
             outlined dense
-            class="q-mr-xs col-4" label="Filter"
+            class="col-4" label="Category Filter"
             bg-color="white" color="black"
             v-model="option"
-            style="width: 150px;"
+            style="min-width: 200px;"
             :options="categories"
           />
         </q-toolbar>
       </template>
 
-      <!-- <template v-slot:body-cell-title="props">
-        <q-td :props="props">
-          <div>
-            <q-badge color="purple" :label="props.value" />
-          </div>
-        </q-td>
-      </template> -->
-
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td colspan="100%" key="title" :props="props">
             <q-card class="q-pa-md" style="min-height: 15vh;">
-              <div class="row cursor-pointer" @click="routeToTutorial(props.row)">
+              <div
+                class="row cursor-pointer"
+                @click="routeToTutorial(props.row)"
+              >
                 <div class="col-4" align="center">
                   <q-img
-                    :src="'https://placeimg.com/500/300/nature?t=' + Math.random()"
+                    :src="
+                      'https://placeimg.com/500/300/nature?t=' + Math.random()
+                    "
                     spinner-color="primary"
-                    style="height: 140px; max-width: 150px"
+                    style="max-height: 140px; max-width: 150px"
                   />
                 </div>
-                <div class="col">
+                <div class="col gt-xs">
                   <b>Title:</b>
-                  {{ props.row.title }} by {{ props.row.author_id }}<br>
+                  {{ props.row.title }}
+                  <i class="text-grey">
+                    <small>by {{ props.row.author_username }}</small>
+                  </i>
+                  <br>
 
                   <b>Author's Difficulty Rating:</b>
                   {{ props.row.author_difficulty }}<br>
 
-                  <b>Users' Difficulty Rating:</b>
-                  {{ props.viewer_difficulty }}<br>
+                  <!-- <b>Users' Difficulty Rating:</b>
+                  {{ props.row.viewer_difficulty === 'None' ? props.row.author_difficulty : props.row.viewer_difficulty }}<br> -->
 
                   <b>Users' Rating:</b>
-                  {{ props.row.rating }}<br>
+                  <q-rating
+                    readonly
+                    class="q-pl-sm" size="1.5em" icon="thumb_up"
+                    :value="
+                      props.row.rating === 'None' ? 5.0 : Number(props.row.rating)
+                    "
+                  />
+                  <br>
 
                   <b>Category:</b>
                   {{ props.row.category }}<br>
                 </div>
 
-                <div class="col-5 q-pr-xl" align="left">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                <div class="col-5 q-pr-xl gt-xs" align="left">
+                  <b>Description:</b> {{ props.row.description }}
+                </div>
+
+                <div class="col q-pl-xs xs" align="left">
+                  <b>Title:</b>
+                  {{ props.row.title }}
+                  <i class="text-grey">
+                    <small>by {{ props.row.author_username }}</small>
+                  </i>
+                  <br>
+
+                  <b>Description:</b> {{ props.row.description }}
                 </div>
               </div>
             </q-card>
@@ -78,18 +110,25 @@
         </q-tr>
       </template>
     </q-table>
+
+    <q-dialog v-model="icon">
+      <q-card >
+        <LogIn @close="icon = false" />
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import LogIn from '../components/Login'
 
 export default {
-  // props: {
-  //   filter: String
-  // },
   watch: {
     $route: 'titleQueryFilter'
+  },
+  components: {
+    LogIn
   },
   created () {
     this.fetchData()
@@ -97,6 +136,7 @@ export default {
   },
   data () {
     return {
+      icon: false,
       filter: '',
       categories: [
         { label: 'Electronics', value: 'electronics' },
@@ -105,8 +145,7 @@ export default {
         { label: 'Cooking', value: 'cooking' },
         { label: 'Crafts', value: 'crafts' },
         { label: 'Home & Decor', value: 'homeDecor' },
-        { label: 'Testing', value: 'testing' },
-        { label: 'All', value: '' }
+        { label: 'Testing', value: 'testing' }
       ],
       option: '',
       columns: [
@@ -116,15 +155,6 @@ export default {
           required: true,
           align: 'left',
           field: row => row.title,
-          format: val => `${val}`,
-          sortable: true
-        },
-        {
-          name: 'author_difficulty',
-          label: `Creator's Difficulty`,
-          required: true,
-          align: 'left',
-          field: row => row.author_difficulty,
           format: val => `${val}`,
           sortable: true
         },
@@ -142,18 +172,14 @@ export default {
       curData: [],
       pagination: {
         rowsPerPage: 10,
-        sortBy: 'name',
+        sortBy: 'title',
         descending: false
       }
     }
   },
   methods: {
     routeToTutorial: function (entry) {
-      // console.log(entry)
-      this.$q.localStorage.set('__diyup  __entry', entry)
-      // let routeData = this.$router.resolve(`challenge/${entry}`, '/')
-      // window.open(routeData.href, '_self')
-      this.$router.push('/tutorial/' + entry.__index)
+      this.$router.push(`/tutorial/${entry.uuid}`)
     },
     titleQueryFilter: function () {
       this.filter = this.$route.query.title
@@ -164,7 +190,7 @@ export default {
       }
     },
     fetchData: function () {
-      axios.get('http://54.153.68.76:5000/api/tutorial/get')
+      axios.get('http://54.67.109.241:5000/api/tutorial/get')
         .then(res => {
           this.data = res.data.tutorials
           this.data.forEach(element => {

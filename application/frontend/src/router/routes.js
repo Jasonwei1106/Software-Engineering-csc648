@@ -61,6 +61,13 @@ const routes = [
       { path: '', component: () => import('pages/Tutorial.vue') },
       { path: ':uuid', component: () => import('pages/Tutorial.vue') }
     ]
+  },
+  {
+    path: '/tutorials',
+    component: () => import('layouts/MyLayout.vue'),
+    children: [
+      { path: ':username', component: () => import('pages/UserTutorials.vue') }
+    ]
   }
   // {
   //   path: '/test',

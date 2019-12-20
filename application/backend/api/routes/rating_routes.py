@@ -52,7 +52,9 @@ def get_rating(tutorial_uuid, rating_type,):
     Rating
 
     """
-    sql_query = "SELECT * FROM diyup.ratings WHERE tutorial_uuid=%s AND rating_type=%s"
+    sql_query = "SELECT * FROM diyup.ratings WHERE tutorial_uuid=%s \
+        AND rating_type=%s"
+
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (tutorial_uuid, rating_type,))
     ratings = cur.fetchall()
@@ -87,19 +89,25 @@ def create_rating(current_user, tutorial_uuid, rating_type):
     -------
     None
 
-    """
+    """    
     data = request.get_json()
 
     rating = data['rating']
 
     cur = mysql.connection.cursor()
-    cur.execute("INSERT INTO diyup.ratings(tutorial_uuid, username, ratings.rating_type, rating) VALUES(%s, %s, %s, %s)", (tutorial_uuid, current_user[1], rating_type, float(rating),))
+
+    cur.execute("REPLACE INTO diyup.ratings(tutorial_uuid, username, \
+        ratings.rating_type, rating) VALUES(%s, %s, %s, %s)", \
+        (tutorial_uuid, current_user[1], rating_type, float(rating),)
+    )
+
     mysql.connection.commit()
     cur.close()
 
     return jsonify({'message' : 'Rating has been created!'}), 201
 
-@app.route('/api/rate/<tutorial_uuid>/<rating_type>/<username>/delete', methods=['DELETE'])
+@app.route('/api/rate/<tutorial_uuid>/<rating_type>/<username>/delete', \
+    methods=['DELETE'])
 @token_required
 def delete_rating(current_user, tutorial_uuid, rating_type, username,):
     """
@@ -115,9 +123,13 @@ def delete_rating(current_user, tutorial_uuid, rating_type, username,):
 
     """
     if current_user[3] == False:
-        return jsonify({'message' : 'Cannot create tutorial for a different user!'}), 403
+        return jsonify({'message' : \
+            'Cannot create tutorial for a different user!'}
+        ), 403
 
-    sql_query = "SELECT * FROM diyup.ratings WHERE tutorial_uuid=%s AND username=%s AND rating_type=%s"
+    sql_query = "SELECT * FROM diyup.ratings WHERE tutorial_uuid=%s \
+        AND username=%s AND rating_type=%s"
+
     cur = mysql.connection.cursor()
     cur.execute(sql_query, (tutorial_uuid, username, rating_type,))
     rating = cur.fetchone()
@@ -125,9 +137,11 @@ def delete_rating(current_user, tutorial_uuid, rating_type, username,):
     if not rating:
         return jsonify({'message' : 'No rating found!'}), 400
 
-    sql_delete = "DELETE FROM diyup.ratings WHERE tutorial_uuid=%s AND username=%s AND rating_type=%s"
+    sql_delete = "DELETE FROM diyup.ratings WHERE tutorial_uuid=%s \
+        AND username=%s AND rating_type=%s"
+
     cur.execute(sql_delete, (tutorial_uuid, username, rating_type,))
     mysql.connection.commit()
     cur.close()
 
-    return jsonify({'message' : 'Rating has been deleted'})
+    return jsonify({'message' : 'Rating has been deleted'}), 200

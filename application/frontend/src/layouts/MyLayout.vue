@@ -2,16 +2,6 @@
   <q-layout view="hHh lpR fFf">
     <q-header reveal elevated class="bg-primary text-white">
       <q-toolbar>
-        <div style="min-width: 40px;" >
-          <q-btn
-            :hidden="leftDrawerOpen"
-            flat dense round
-            aria-label="Menu"
-            @click="leftDrawerOpen = !leftDrawerOpen"
-            icon="arrow_right"
-          />
-        </div>
-
         <q-space />
 
         <div
@@ -52,7 +42,11 @@
           <div v-else>
             <div class="row">
               <div class="col">
-                <q-btn dense round size="md">
+                <q-btn
+                  dense round
+                  size="md"
+                  @click="leftDrawerOpen = !leftDrawerOpen"
+                >
                   <q-avatar size="md" text-color="white" icon="person" />
                 </q-btn>
               </div>
@@ -75,13 +69,14 @@
               bg-color="white" color="black"
               debounce="300" class="col"
               v-model="filter" placeholder = "Tutorial Title"
-              @keyup.enter="test"
+              @keyup.enter="titleSearch"
             >
               <template v-slot:append>
                 <q-icon v-if="filter === ''" name="search" />
                 <q-icon
                   v-else
-                  name="clear" class="cursor-pointer" @click="filter = ''"
+                  name="clear" class="cursor-pointer"
+                  @click="refreshSearch"
                 />
               </template>
             </q-input>
@@ -90,17 +85,32 @@
       </q-toolbar>
 
       <q-toolbar
-        v-if="$route.name && $route.name === 'rootHome'"
+        v-if="$route.name && $route.name === 'rootHome' && !leftDrawerOpen"
         class="bg-white text-black"
-        style="border: black solid 1px;"
       >
         <q-toolbar-title class="row q-pa-md">
-          <div class="col" align="center">
-            <strong class="gt-sm" style="font-size: 1.5em;">
+          <div class="col" align="center" >
+            <strong
+              class="gt-sm"
+              style="
+                font-size: 1.5em;
+                position: relative;
+                top: 15%;
+                transform: translateY(-50%);
+              "
+            >
               STEP-BY-STEP PROJECTS BY USERS FOR USERS
             </strong>
 
-            <strong class="sm" style="font-size: 1em;">
+            <strong
+              class="sm"
+              style="
+                font-size: 1em;
+                position: relative;
+                top: 20%;
+                transform: translateY(-50%);
+              "
+            >
               STEP-BY-STEP PROJECTS BY USERS FOR USERS
             </strong>
 
@@ -136,13 +146,26 @@
           </div>
         </q-item-label>
 
-        <q-item to="/">
+        <q-item to="/" exact>
           <q-item-section avatar>
             <q-icon name="list" />
           </q-item-section>
 
           <q-item-section>
             <q-item-label>Home</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item
+          :to="`/tutorials/${$q.localStorage.getItem('__diyup__username')}`"
+          exact
+        >
+          <q-item-section avatar>
+            <q-icon name="where_to_vote" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>My Tutorials</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -152,44 +175,44 @@
       <router-view />
     </q-page-container>
 
-    <div
-      class="row"
-      style="background-color: #027BE3; height: 100px;"
-    >
-      <div class="q-pa-md">
-        <q-img src="../statics/icons/96p.png" style="width: 70px;" />
-      </div>
-
-      <q-space/>
-
-      <div class="q-pa-md" align="center">
-        <div class="text-white cursor-pointer" @click="routeTo('rootAbout')">
-          About Us
-        </div>
-      </div>
-
-      <div class="q-pa-md" align="center">
-        <div class="text-white">
-          Follow Us On
+    <div style="background-color: #027BE3; height: 100px;" >
+      <div class="row" style="width: 96%; margin: 0 auto;">
+        <div class="q-pa-md">
+          <q-img src="../statics/icons/96p.png" style="width: 17vw; max-width: 70px;" />
         </div>
 
-        <div>
-          <q-icon
-            class="cursor-pointer"
-            name="fab fa-facebook-square" size="2rem"
-            @click="goTo('https://www.facebook.com')"
-          />
-          <q-icon
-            class="cursor-pointer"
-            name="fab fa-instagram" size="2rem"
-            @click="goTo('https://www.instagram.com/')"
-          />
-          <q-icon
-            class="cursor-pointer"
-            name="fab fa-twitter-square" size="2rem"
-            @click="goTo('https://twitter.com/')"
-          />
+        <q-space />
+
+        <div class="q-pa-md" align="center">
+          <div class="text-white cursor-pointer" @click="routeTo('rootAbout')">
+            About Us
+          </div>
         </div>
+
+        <div class="q-pa-md" align="center">
+          <div class="text-white">
+            Follow Us On
+          </div>
+
+          <div>
+            <q-icon
+              class="cursor-pointer"
+              name="fab fa-facebook-square" size="2rem"
+              @click="goTo('https://www.facebook.com')"
+            />
+            <q-icon
+              class="cursor-pointer"
+              name="fab fa-instagram" size="2rem"
+              @click="goTo('https://www.instagram.com/')"
+            />
+            <q-icon
+              class="cursor-pointer"
+              name="fab fa-twitter-square" size="2rem"
+              @click="goTo('https://twitter.com/')"
+            />
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -203,17 +226,6 @@
 
 <script>
 import LogIn from '../components/Login'
-
-// window.addEventListener('beforeunload', function (e) {
-//   // Cancel the event
-//   e.preventDefault()
-//   // Chrome requires returnValue to be set
-//   e.returnValue = ''
-// })
-
-// window.onbeforeunload = function () {
-//   return 'Are you sure you want to close the window?'
-// }
 
 export default {
   name: 'MyLayout',
@@ -232,14 +244,17 @@ export default {
     }
   },
   methods: {
-    test: function (e) {
+    refreshSearch: function () {
+      this.filter = ''
+      this.titleSearch(event)
+    },
+    titleSearch: function (e) {
       if (e.target.value) {
         this.$router.push(`/?title=${e.target.value}`).catch(err => {
           if (err) {
             // error
           }
         })
-        this.filter = ''
       } else {
         this.$router.push('/').catch(err => {
           if (err) {
