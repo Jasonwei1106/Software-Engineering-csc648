@@ -49,7 +49,16 @@ You have just sucessfully deploy the frontend on our server.
 https://dev.mysql.com/doc/workbench/en/wb-installing-windows.html
 ```
 
-#### Accessing the existing MySQL Server
+#### Running the backend
+
+1. Navigate into csc648-04-fa19-Team206/application/backend
+2. Run:
+```sh
+$ pip install -r requirements.txt
+$ nohup python3 run.py &
+```
+
+#### Accessing the existing MySQL Server directly
 
 1. Run MySQL Workbench
 2. Navigate to Database > Connect to Database
