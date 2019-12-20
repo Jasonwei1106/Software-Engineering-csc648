@@ -54,7 +54,7 @@ https://dev.mysql.com/doc/workbench/en/wb-installing-windows.html
 1. Navigate into csc648-04-fa19-Team206/application/backend
 2. Run:
 ```sh
-$ pip install -r requirements.txt
+$ pip3 install -r requirements.txt
 $ nohup python3 run.py &
 ```
 
