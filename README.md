@@ -44,4 +44,24 @@ You have just sucessfully deploy the frontend on our server.
 ## Backend
 * Python >= v3.5.0
 * MySQL v5.7.27
+```sh
+# instruction on how to install MySQL Workbench
+https://dev.mysql.com/doc/workbench/en/wb-installing-windows.html
+```
 
+#### Accessing the existing MySQL Server
+
+1. Run MySQL Workbench
+2. Navigate to Database > Connect to Database
+3. Use the following parameters to connect:
+```sh
+Hostname: 54.67.109.241
+Port: 3306
+Username: admin
+Default Schema: diyup
+```
+4. Click "OK" and enter the following password:
+```sh
+Password: team206pass
+```
+5. Click "OK" to connect
