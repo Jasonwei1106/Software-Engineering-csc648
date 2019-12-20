@@ -198,6 +198,9 @@ export default {
       this.poster.difficulty = this.poster.difficulty || 1
       this.poster.difficulty = Number(this.poster.difficulty)
 
+      let string = this.poster.category
+      this.poster.category = string.charAt(0).toUpperCase() + string.slice(1)
+
       if (this.steps.contents.length === 0 || this.materials.items.length === 0) {
         this.$q.notify({
           icon: 'warning',
